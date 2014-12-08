@@ -6,14 +6,14 @@
 from flask import *
 from flask.blueprints import Blueprint
 from dao.commentdao import CommentDao
-from dao.fields import Comment
+from dao.fields import *
 from utils.jsonutil import *
 import uuid
 
 comment_blueprint = Blueprint('comment', __name__)
 commentdao = CommentDao('dao_setting.cfg')
 
-@comment_blueprint.route('makeComment')
+@comment_blueprint.route('makeComment', methods=['GET', 'POST'])
 def make_comment():
 	try:
 		object_id = request.values[Comment.OBJECT_ID]
@@ -23,7 +23,8 @@ def make_comment():
 		floor = int(request.values[Comment.FLOOR])
 	except:
 		return 'failed'
-	comment_id = uuid.uuid1()
+	# add comment
+	comment_id = str(uuid.uuid1())
 	comment_info = {}
 	comment_info[Comment.COMMEND_ID] = comment_id
 	comment_info[Comment.OBJECT_ID] = object_id
@@ -32,9 +33,12 @@ def make_comment():
 	comment_info[Comment.CONTENT] = content
 	comment_info[Comment.FLOOR] = floor
 	commentdao.insert_comment(**comment_info)
+	# add message
+	message_id = str(uuid.uuid1())
+	commentdao.insert_comment_message(message, user_id, object_id)
 	return 'success'
 
-@comment_blueprint.route('getComments')
+@comment_blueprint.route('getComments', methods=['GET', 'POST'])
 def get_comments():
 	try:
 		object_id = request.values[Comment.OBJECT_ID]

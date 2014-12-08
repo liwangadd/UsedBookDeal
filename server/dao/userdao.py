@@ -15,8 +15,8 @@ class UserDao(BaseDao):
 		self.collection = self.db.user
 
 	def check_login(self, user_id, password):
-		result = self.collection.find({User.USER_ID: user_id, User.PASSWORD: \
-			password})
+		result = self.collection.find_one({User.USER_ID: user_id,
+			User.PASSWORD: password})
 		if result:
 			return True
 		else:
@@ -25,8 +25,8 @@ class UserDao(BaseDao):
 	def insert_user(self, user_id, password):
 		result = self.collection.find_one({User.USER_ID: user_id})
 		if result == None:
-			self.collection.insert({User.USER_ID: user_id, User.PASSWORD:\
-				password})
+			self.collection.insert({User.USER_ID: user_id, User.PASSWORD:
+				password, User.BOOKS: [], User.WISHES: []})
 			return True
 		else:
 			return False
@@ -47,8 +47,12 @@ class UserDao(BaseDao):
 		else:
 			img_id = user.get(User.IMG)
 			if img_id == None:
-				img_id = uuid.uuid1()
-				self.insert_img(img_id, file, object_id=user_id)
+				img_id = str(uuid.uuid1())
+				self.insert_img(img_id, file, user_id)
 			else:
-				self.set_img(img_id, file)
-			return True
+				self.delete_img(img_id)
+				img_id = str(uuid.uuid1())
+				self.insert_img(img_id, file, user_id)
+			result = self.collection.update({User.USER_ID: user_id},
+				{'$set': {User.IMG: img_id}})
+			return result['updatedExisting']

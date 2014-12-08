@@ -18,8 +18,11 @@ def cursor2list(cursor, *keys):
 		for key in keys:
 			value = dbobject.get(key)
 			if value != None:
-				if key == 'imgs':
-					d['img'] = value[0]
+				if key == 'imgs' and isinstance(value, list):
+					try:
+						d['img'] = value[0]
+					except:
+						d['img'] = None
 				else:
 					d[key] = value
 		result.append(d)

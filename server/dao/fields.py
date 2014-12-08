@@ -7,13 +7,15 @@ class User(object):
 	"""field names of user collection"""
 	USER_ID = 'user_id'
 	USERNAME = 'username'
-	PASSWORD = 'PASSWORD'
+	PASSWORD = 'password'
 	GENDER = 'gender'  # 1: male, 0: female
+	UNIVERSITY = 'university'
+	SCHOOL = 'school'
 	IMG = 'IMG'
 	MOBILE = 'mobile'
 	QQ = 'qq'
 	WEIXIN = 'weixin'
-	RELEASED_BOOKS = 'released_books'
+	BOOKS = 'books'
 	WISHES = 'wishes'
 
 class Book(object):
@@ -68,3 +70,20 @@ class Comment(object):
 	TIME = 'time'
 	FLOOR = 'floor'
 	CONTENT = 'content'
+
+class Message(object):
+	"""field names of message collection"""
+	MESSAGE_ID = 'message_id'
+	USER_ID = 'user_id'
+	TYPE = 'type' # 0: system message, 1: user's book is commented, 2: user's wish is commented, 3: others can achieve user's wish
+	CONTENT = 'content'
+	ANOTHER_USER_ID = 'another_user_id'
+	OBJECT_ID = 'object_id'
+	TIME = 'time '
+	IMG = 'img'
+	STATUS = 'status' # 0: unread, 1: read
+	# message types
+	SYSTEM_MESSAGE = 0
+	BOOK_COMMENTED = 1
+	WISH_COMMENTED = 2
+	WISH_TOKEN = 3
