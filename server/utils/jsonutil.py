@@ -14,16 +14,5 @@ def dbobject2dict(dbobject, *keys):
 def cursor2list(cursor, *keys):
 	result = []
 	for dbobject in cursor:
-		d = {}
-		for key in keys:
-			value = dbobject.get(key)
-			if value != None:
-				if key == 'imgs' and isinstance(value, list):
-					try:
-						d['img'] = value[0]
-					except:
-						d['img'] = None
-				else:
-					d[key] = value
-		result.append(d)
+		result.append(dbobject2dict(dbobject, *keys))
 	return result

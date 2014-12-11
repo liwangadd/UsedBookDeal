@@ -11,8 +11,8 @@ import uuid
 
 class CommentDao(BaseDao):
 	''' @args configfile: filename of config file'''
-	def __init__(self, configfile):
-		super(CommentDao, self).__init__(configfile)
+	def __init__(self):
+		super(CommentDao, self).__init__()
 		self.collection = self.db.comment
 
 	def get_comments_by_object(self, object_id, page, pagesize):
@@ -24,3 +24,5 @@ class CommentDao(BaseDao):
 		self.collection.insert({Comment.OBJECT_ID: object_id, Comment.USER_ID:\
 			user_id, Comment.USERNAME: username, Comment.CONTENT: content})
 		return True
+
+commentdao = CommentDao()

@@ -10,8 +10,8 @@ import uuid
 
 class UserDao(BaseDao):
 	''' @args configfile: filename of config file'''
-	def __init__(self, configfile):
-		super(UserDao, self).__init__(configfile)
+	def __init__(self):
+		super(UserDao, self).__init__()
 		self.collection = self.db.user
 
 	def check_login(self, user_id, password):
@@ -56,3 +56,5 @@ class UserDao(BaseDao):
 			result = self.collection.update({User.USER_ID: user_id},
 				{'$set': {User.IMG: img_id}})
 			return result['updatedExisting']
+
+userdao = UserDao()

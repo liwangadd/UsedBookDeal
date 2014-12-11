@@ -5,13 +5,13 @@
 
 from flask import *
 from flask.blueprints import Blueprint
-from dao.commentdao import CommentDao
+from dao.commentdao import commentdao
 from dao.fields import *
 from utils.jsonutil import *
 import uuid
 
 comment_blueprint = Blueprint('comment', __name__)
-commentdao = CommentDao('dao_setting.cfg')
+# commentdao = CommentDao('dao_setting.cfg')
 
 @comment_blueprint.route('makeComment', methods=['GET', 'POST'])
 def make_comment():

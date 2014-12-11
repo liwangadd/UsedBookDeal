@@ -5,13 +5,13 @@
 
 from flask import *
 from flask.blueprints import Blueprint
-from dao.userdao import UserDao
+from dao.userdao import userdao
 from dao.fields import User, Message
 from utils.jsonutil import dbobject2dict
 import base64
 
 user_blueprint = Blueprint('user', __name__)
-userdao = UserDao('dao_setting.cfg')
+# userdao = UserDao('dao_setting.cfg')
 
 @user_blueprint.route('login', methods=['GET', 'POST'])
 def login():

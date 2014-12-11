@@ -13,8 +13,8 @@ from fields import *
 import setting
 
 class BaseDao(object):
-	'''@arg configfile: file name of config file '''
-	def __init__(self, configfile):
+	''':param configfile: file name of config file '''
+	def __init__(self):
 		super(BaseDao, self).__init__()
 		# config_parser = ConfigParser()
 		# f = open(configfile)
@@ -111,7 +111,8 @@ class BaseDao(object):
 			return self.fs.get(f_id)
 
 	def get_imgs_by_bookname(self, bookname, limit):
-		pass
+		imgs = self.image.find({Image.BOOKNAME: bookname}).limit(limit)
+		return imgs
 
 	def insert_comment_message(self, message_id, user_id, object_id):
 		message = {}

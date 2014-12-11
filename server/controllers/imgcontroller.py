@@ -11,7 +11,7 @@ from utils.jsonutil import *
 import uuid
 
 image_blueprint = Blueprint('image', __name__)
-imagedao = BaseDao('dao_setting.cfg')
+imagedao = BaseDao()
 
 @image_blueprint.route('getUserImg', methods=['GET', 'POST'])
 def get_user_img():
@@ -20,6 +20,8 @@ def get_user_img():
 	except:
 		return 'failed'
 	img = imagedao.get_user_img(user_id)
+	if img == None:
+		return 'failed'
 	return send_file(img, add_etags=False, mimetype='image/jpeg')
 
 @image_blueprint.route('getImg', methods=['GET', 'POST'])
@@ -32,7 +34,7 @@ def get_img():
 	# 	return 'failed'
 	img = imagedao.get_img(img_id)
 	if not hasattr(img, 'read'):
-		return None
+		return 'failed'
 	return send_file(img, add_etags=False, mimetype='image/jpeg')
 
 @image_blueprint.route('deleteImg', methods=['GET', 'POST'])

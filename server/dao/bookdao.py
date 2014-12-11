@@ -12,8 +12,8 @@ import uuid
 
 class BookDao(BaseDao):
 	''' @args configfile: filename of config file'''
-	def __init__(self, configfile):
-		super(BookDao, self).__init__(configfile)
+	def __init__(self):
+		super(BookDao, self).__init__()
 		self.book = self.db.book
 		self.user = self.db.user
 
@@ -44,9 +44,17 @@ class BookDao(BaseDao):
 			return None
 		return self.book.find_one({Book.BOOK_ID: book_id})
 
-	def set_book_info(self, book_id, **book_info):
-		result = self.book.update({Book.BOOK_ID: book_id}, \
-			{'$set': book_info})
+	def set_book_info(self, book_id, files, **book_info):
+		if files != None and files != []:
+			self.delete_img_by_object(book_id)
+			imgs = []
+			for f in files:
+				img_id = str(uuid.uuid1())
+				self.insert_img(img_id, f, book_id,
+					book_info.get(Book.BOOKNAME))
+				imgs.append(img_id)
+			book_info[Book.IMGS] = imgs
+		result = self.book.update({Book.BOOK_ID: book_id}, {'$set': book_info})
 		return result['updatedExisting']
 
 	def set_book_status(self, book_id, status):
@@ -58,11 +66,15 @@ class BookDao(BaseDao):
 		return self.book.find({Book.USER_ID: user_id})
 
  	def get_book_by_type(self, type, order_by, page, pagesize):
-		pipeline = [{'$group': {'_id': '$'+Book.BOOKNAME, count:{'$sum':1} } }]
+		pipeline = [{'$group': {'_id': '$'+Book.BOOKNAME,
+			'count':{'$sum':1} } }]
 		cursor = self.book.aggregate(pipeline)
 		for unit in cursor:
-			unit[Book.IMGS] = self.get_imgs_by_bookname(bookname=unit. \
-				get('_id'), limit=1)
+			imgs = self.get_imgs_by_bookname(bookname=unit.get('_id'), limit=1)
+			try:
+				unit['img'] = imgs[0][Image.IMG_ID]
+			except:
+				raise
 		return cursor
 
 	def get_book_by_name(self, bookname):
@@ -74,3 +86,5 @@ class BookDao(BaseDao):
 
 	def search_book(self, keyword, page, pagesize):
 		pass
+
+bookdao = BookDao()
