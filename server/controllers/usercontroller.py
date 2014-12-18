@@ -7,7 +7,7 @@ from flask import *
 from flask.blueprints import Blueprint
 from dao.userdao import userdao
 from dao.fields import User, Message
-from utils.jsonutil import dbobject2dict
+from utils.jsonutil import *
 import base64
 
 user_blueprint = Blueprint('user', __name__)
@@ -89,7 +89,7 @@ def set_user_img():
 	else:
 		return 'failed'
 
-@user_blueprint.route('getMessages', methods=['POST'])
+@user_blueprint.route('getMessages', methods=['POST', 'GET'])
 def get_messages_by_user():
 	try:
 		user_id = request.values[User.USER_ID]

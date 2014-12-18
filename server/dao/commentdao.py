@@ -21,8 +21,7 @@ class CommentDao(BaseDao):
 			.skip(skip).limit(pagesize)
 
 	def insert_comment(self, **comment_info):
-		self.collection.insert({Comment.OBJECT_ID: object_id, Comment.USER_ID:\
-			user_id, Comment.USERNAME: username, Comment.CONTENT: content})
+		self.collection.insert(comment_info)
 		return True
 
 commentdao = CommentDao()

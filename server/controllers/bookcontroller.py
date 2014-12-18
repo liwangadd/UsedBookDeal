@@ -165,24 +165,21 @@ def get_book_by_user():
 @book_blueprint.route('getBooksByType', methods=['GET', 'POST'])
 def get_book_by_type():
 	try:
-		booktype = request.values[Book.TYPE]
-		page = request.values['page']
-		pagesize = request.values['pagesize']
-	except:
-		return 'failed'
-	try:
-		page = int(page)
-		pagesize = int(pagesize)
+		booktype = int(request.values[Book.TYPE])
+		page = int(request.values['page'])
+		pagesize = int(request.values['pagesize'])
 	except:
 		return 'failed'
 	# order_by is defaulted as added time
 	order_by = request.values.get('order_by')
 	if order_by == None:
 		order_by = Book.ADDED_TIME
+	if order_by != Book.ADDED_TIME and order_by != Book.CLICKS:
+		return 'failed'
 	books = []
 	cursor = bookdao.get_book_by_type(booktype, order_by, page, pagesize)
 	for dbobject in cursor:
-		book = []
+		book = {}
 		book[Book.BOOKNAME] = dbobject.get('_id')
 		book['img'] = dbobject.get('img')
 		book['count'] = dbobject.get('count')
@@ -197,8 +194,6 @@ def get_book_by_name():
 	if bookname == None:
 		return 'failed'
 	books = bookdao.get_book_by_name(bookname)
-	if books == None or books.count() == 0:
-		return jsonify({})
 	books = cursor2list(books,Book.BOOK_ID,Book.BOOKNAME,Book.TYPE,Book.PRICE,\
 		Book.USER_ID, Book.USERNAME, Book.IMGS, Book.NEWNESS, Book.AUDIENCE, \
 		Book.DESCRIPTION, Book.ADDED_TIME, Book.STATUS, Book.MOBILE, Book.QQ, \
@@ -213,7 +208,7 @@ def get_book_by_name():
 	# for book in books[1:]:
 	# 	other_book_ids.append(book[Book.BOOK_ID])
 	# result['other_book_ids'] = other_book_ids
-	return jsonify(books)
+	return jsonify(books=books)
 
 @book_blueprint.route('getSimilarBookname', methods=['GET', 'POST'])
 def get_similar_name():
@@ -230,7 +225,16 @@ def get_similar_name():
 
 @book_blueprint.route('searchBook', methods=['GET', 'POST'])
 def search_book():
-	keyword = request.values.get('keyword')
-	if keyword == None:
+	try:
+		keyword = request.values['keyword']
+		page = int(request.values['page'])
+		pagesize = int(request.values['pagesize'])
+	except:
 		return 'failed'
-	return 'failed'
+	keywords = keyword.split(' ')
+	books = bookdao.search_book(keywords, page, pagesize)
+	books = cursor2list(books,Book.BOOK_ID,Book.BOOKNAME,Book.TYPE,Book.PRICE,\
+		Book.USER_ID, Book.USERNAME, Book.IMGS, Book.NEWNESS, Book.AUDIENCE, \
+		Book.DESCRIPTION, Book.ADDED_TIME, Book.STATUS, Book.MOBILE, Book.QQ, \
+		Book.WEIXIN)
+	return jsonify(books=books)

@@ -5,7 +5,9 @@
 from flask import Flask
 from logging.handlers import RotatingFileHandler
 from controllers import user_blueprint, book_blueprint, wish_blueprint, comment_blueprint, image_blueprint
-import base64, os, logging
+import base64, os, logging, sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 def register_blueprint(app):
 	blueprints = [

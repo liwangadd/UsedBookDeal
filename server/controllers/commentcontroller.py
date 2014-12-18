@@ -13,29 +13,29 @@ import uuid
 comment_blueprint = Blueprint('comment', __name__)
 # commentdao = CommentDao('dao_setting.cfg')
 
-@comment_blueprint.route('makeComment', methods=['GET', 'POST'])
+@comment_blueprint.route('makeComments', methods=['GET', 'POST'])
 def make_comment():
 	try:
 		object_id = request.values[Comment.OBJECT_ID]
 		user_id = request.values[Comment.USER_ID]
 		username = request.values[Comment.USERNAME]
 		content = request.values[Comment.CONTENT]
-		floor = int(request.values[Comment.FLOOR])
+		# floor = int(request.values[Comment.FLOOR])
 	except:
 		return 'failed'
 	# add comment
 	comment_id = str(uuid.uuid1())
 	comment_info = {}
-	comment_info[Comment.COMMEND_ID] = comment_id
+	comment_info[Comment.COMMENT_ID] = comment_id
 	comment_info[Comment.OBJECT_ID] = object_id
 	comment_info[Comment.USER_ID] = user_id
 	comment_info[Comment.USERNAME] = username
 	comment_info[Comment.CONTENT] = content
-	comment_info[Comment.FLOOR] = floor
+	# comment_info[Comment.FLOOR] = floor
 	commentdao.insert_comment(**comment_info)
 	# add message
 	message_id = str(uuid.uuid1())
-	commentdao.insert_comment_message(message, user_id, object_id)
+	commentdao.insert_comment_message(message_id, user_id, username, object_id)
 	return 'success'
 
 @comment_blueprint.route('getComments', methods=['GET', 'POST'])
@@ -49,6 +49,6 @@ def get_comments():
 	comments = commentdao.get_comments_by_object(object_id, page, pagesize)
 	if comments == None:
 		return None
-	comments = dbobject2dict(comments, Comment.COMMEND_ID, Comment.USER_ID, \
+	comments = cursor2list(comments, Comment.COMMENT_ID, Comment.USER_ID, \
 		Comment.USERNAME, Comment.TIME, Comment.FLOOR, Comment.CONTENT)
 	return jsonify(comments=comments)

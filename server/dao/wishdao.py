@@ -20,7 +20,7 @@ class WishDao(BaseDao):
 		sort = [(order_by, -1)]
 		skip = (page - 1) * pagesize
 		return self.wish.find({Wish.STATUS: status}, sort=sort, \
-			skip=skip, limit=limit)
+			skip=skip, limit=pagesize)
 
 	def get_wish_info(self, wish_id):
 		return self.wish.find_one({Wish.WISH_ID: wish_id})

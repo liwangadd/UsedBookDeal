@@ -10,6 +10,7 @@ from bson import ObjectId
 from ConfigParser import ConfigParser
 from time import localtime, strftime
 from fields import *
+from gridfs.errors import *
 import setting
 
 class BaseDao(object):
@@ -29,6 +30,7 @@ class BaseDao(object):
 		# 	f.close()
 		self.mongo = MongoClient(setting.HOST, setting.PORT)
 		self.db = self.mongo[setting.DATABASE]
+		self.user = self.db.user
 		self.image = self.db.image
 		self.message = self.db.message
 		self.book = self.db.book
@@ -99,7 +101,11 @@ class BaseDao(object):
 		else:
 			f_id = img.get(Image.FILE_ID)
 			f_id = ObjectId(f_id)
-			return self.fs.get(f_id)
+			try:
+				f =  self.fs.get(f_id)
+			except NoFile:
+				return None
+			return f
 
 	def get_user_img(self, user_id):
 		img = self.image.find_one({Image.OBJECT_ID: user_id})
@@ -111,27 +117,28 @@ class BaseDao(object):
 			return self.fs.get(f_id)
 
 	def get_imgs_by_bookname(self, bookname, limit):
-		imgs = self.image.find({Image.BOOKNAME: bookname}).limit(limit)
-		return imgs
+		return self.image.find({Image.BOOKNAME: '/'+bookname+'/'}). \
+			distinct(Book.BOOKNAME).limit(limit)
 
-	def insert_comment_message(self, message_id, user_id, object_id):
+	def insert_comment_message(self, message_id, user_id, username, object_id):
 		message = {}
 		message[Message.MESSAGE_ID] = message_id
 		message[Message.OBJECT_ID] = object_id
 		message[Message.ANOTHER_USER_ID] = user_id
+		message[Message.USERNAME] = username
 		book = self.book.find_one({Book.BOOK_ID: object_id})
 		if book != None:
 			message[Message.TYPE] = Message.BOOK_COMMENTED
 			message[Message.USER_ID] = book[Book.USER_ID]
+			message[Message.BOOKNAME] = book[Book.BOOKNAME]
 			message[Message.IMG] = book[Book.IMGS][0]
-			message[Message.CONTENT] = book[Book.BOOKNAME]
 			self.message.insert(message)
 			return True
 		wish = self.wish.find_one({Wish.WISH_ID: object_id})
 		if wish != None:
 			message[Message.TYPE] = Message.WISH_COMMENTED
 			message[Message.USER_ID] = wish[Wish.USER_ID]
-			message[Message.CONTENT] = wish[Wish.BOOKNAME]
+			message[Message.BOOKNAME] = wish[Wish.BOOKNAME]
 			# if there if no image for this wish, the user' head image
 			# will be set as message's image
 			wish_imgs = wish.get(Wish.IMGS)
@@ -146,16 +153,18 @@ class BaseDao(object):
 			return True
 		return False
 
-	def insert_wish_token_message(self, message_id, user_id, object_id):
+	def insert_wish_token_message(self, message_id, user_id, username,
+			object_id):
 		message = {}
 		message[Message.MESSAGE_ID] = message_id
 		message[Message.OBJECT_ID] = object_id
 		message[Message.ANOTHER_USER_ID] = user_id
+		message[Message.USERNAME] = username
 		message[Message.TYPE] = Message.WISH_TOKEN
 		wish = self.wish.find_one({Wish.WISH_ID: object_id})
 		if wish != None:
 			message[Message.USER_ID] = wish[Wish.USER_ID]
-			message[Message.CONTENT] = wish[Wish.BOOKNAME]
+			message[Message.BOOKNAME] = wish[Wish.BOOKNAME]
 			# if there if no image for this wish, the user' head image
 			# will be set as message's image
 			wish_imgs = wish.get(Wish.IMGS)
@@ -181,8 +190,6 @@ class BaseDao(object):
 		message[Message.TYPE] = Message.SYSTEM_MESSAGE
 		message[Message.CONTENT] = content
 		message[Message.IMG] = user[User.IMG]
-		message[Message.ANOTHER_USER_ID] = None
-		message[Message.OBJECT_ID] = None
 		self.message.insert(message)
 		return True
 
@@ -191,3 +198,5 @@ class BaseDao(object):
 
 	def get_messages_by_user(self, user_id):
 		return self.message.find({Message.USER_ID: user_id})
+
+basedao = BaseDao()

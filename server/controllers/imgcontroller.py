@@ -5,13 +5,12 @@
 
 from flask import *
 from flask.blueprints import Blueprint
-from dao.basedao import BaseDao
+from dao.basedao import basedao as imagedao
 from dao.fields import Image
 from utils.jsonutil import *
 import uuid
 
 image_blueprint = Blueprint('image', __name__)
-imagedao = BaseDao()
 
 @image_blueprint.route('getUserImg', methods=['GET', 'POST'])
 def get_user_img():
@@ -50,6 +49,9 @@ def delete_img():
 def get_imgs_by_bookname():
 	try:
 		bookname = request.values[Image.BOOKNAME]
+		limit = int(request.values['limit'])
 	except:
-		return None
-	pass
+		return 'failed'
+	imgs = imagedao.get_imgs_by_bookname(bookname, limit)
+	imgs = cursor2list(imgs, Image.IMG_ID)
+	return jsonify(imgs=imgs)

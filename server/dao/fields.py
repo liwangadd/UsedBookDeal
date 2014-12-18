@@ -43,6 +43,7 @@ class Wish(object):
 	BOOKNAME = 'bookname'
 	USER_ID = 'user_id'
 	USERNAME = 'username'
+	TYPE = 'type'
 	IMGS = 'imgs'
 	DESCRIPTION = 'description'
 	MOBILE = 'mobile'
@@ -78,7 +79,9 @@ class Message(object):
 	TYPE = 'type' # 0: system message, 1: user's book is commented, 2: user's wish is commented, 3: others can achieve user's wish
 	CONTENT = 'content'
 	ANOTHER_USER_ID = 'another_user_id'
+	USERNAME = 'username'
 	OBJECT_ID = 'object_id'
+	BOOKNAME = 'bookname'
 	TIME = 'time '
 	IMG = 'img'
 	STATUS = 'status' # 0: unread, 1: read

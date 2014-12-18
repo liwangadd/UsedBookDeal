@@ -13,6 +13,9 @@ HOST = 'localhost'
 PORT = 27017
 DATABASE = 'used_book_deal'
 
+# xapian datebase path
+XAPIAN_DB_PATH = 'xapian_db'
+
 # days for users to contact offline to achieve another user's wish. the
 # status of the wish will be reset 0(not achieved) if the status was not
 # set 1(achieved) after that time.

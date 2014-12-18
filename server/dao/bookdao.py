@@ -7,8 +7,8 @@ from basedao import BaseDao
 from fields import *
 from pymongo import MongoClient
 from time import localtime, strftime
-
-import uuid
+from utils.xapiansearch import xapian_tool
+import uuid, re
 
 class BookDao(BaseDao):
 	''' @args configfile: filename of config file'''
@@ -65,10 +65,14 @@ class BookDao(BaseDao):
 	def get_book_by_user(self, user_id):
 		return self.book.find({Book.USER_ID: user_id})
 
- 	def get_book_by_type(self, type, order_by, page, pagesize):
-		pipeline = [{'$group': {'_id': '$'+Book.BOOKNAME,
-			'count':{'$sum':1} } }]
-		cursor = self.book.aggregate(pipeline)
+	def get_book_by_type(self, booktype, order_by, page, pagesize):
+		pipeline = [
+				{'$match': {Book.TYPE: booktype}},
+				{'$group': {'_id': '$'+Book.BOOKNAME,'count':{'$sum':1},
+					order_by: {'$max': order_by}} },
+				{'$sort': {Book.ADDED_TIME: -1} }]
+		result = self.book.aggregate(pipeline)
+		cursor = result['result']
 		for unit in cursor:
 			imgs = self.get_imgs_by_bookname(bookname=unit.get('_id'), limit=1)
 			try:
@@ -84,7 +88,11 @@ class BookDao(BaseDao):
 		return self.book.find({Book.BOOKNAME: '/'+bookname+'/'}). \
 			distinct(Book.BOOKNAME).limit(limit)
 
-	def search_book(self, keyword, page, pagesize):
-		pass
+	def get_books_by_ids(self, book_ids):
+		return self.book.find({Book.BOOK_ID: {'$in': book_ids}})
+
+	def search_book(self, keywords, page, pagesize):
+		book_ids = xapian_tool.search(keywords, page, pagesize)
+		return self.get_books_by_ids(book_ids)
 
 bookdao = BookDao()
