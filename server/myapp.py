@@ -6,6 +6,7 @@ from flask import Flask
 from logging.handlers import RotatingFileHandler
 from controllers import user_blueprint, book_blueprint, wish_blueprint, comment_blueprint, image_blueprint
 import base64, os, logging, sys
+
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -52,7 +53,7 @@ def function():
 	return 'hello'
 
 if __name__ == '__main__':
-	app.run(host='0.0.0.0', debug=True)
+	app.run(host='0.0.0.0', debug=False)
 
 	# app.config['TESTING'] = True
 	# test_app = app.test_client()

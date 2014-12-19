@@ -7,7 +7,10 @@ from dao.basedao import basedao
 from setting import XAPIAN_DB_PATH
 
 def _fields_txt_2_dict(*txts):
-	return seg_txt_2_dict(u' '.join(txts))
+	txt = u' '.join(txts)
+	txt = txt.encode('utf-8')
+	# print txt
+	return seg_txt_2_dict(txt)
 
 
 class XapianTool(object):
@@ -17,9 +20,10 @@ class XapianTool(object):
 		self.db = xapian.WritableDatabase(db_path, xapian.DB_CREATE_OR_OPEN)
 		self.enquire = xapian.Enquire(self.db)
 		self.dao = dao
+		self.index()
 
 	def index(self):
-		cursor = self.dao.book.find({Book.STATUS: 1})
+		cursor = self.dao.book.find({Book.STATUS: 0})
 		for book in cursor:
 			self.set_document(book[Book.BOOK_ID], book[Book.BOOKNAME],
 				book[Book.NEWNESS], book[Book.AUDIENCE],
@@ -28,10 +32,11 @@ class XapianTool(object):
 
 	def set_document(self, book_id, *fields):
 		doc = xapian.Document()
-		dos.set_data(book_id)
+		doc.set_data(book_id)
 
 		term_dict = _fields_txt_2_dict(*fields)
 		for key, value in term_dict.iteritems():
+			# print key, value
 			doc.add_term(key, value)
 
 		self.db.replace_document(book_id, doc)

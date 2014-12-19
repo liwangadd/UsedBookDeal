@@ -60,6 +60,8 @@ class BookDao(BaseDao):
 	def set_book_status(self, book_id, status):
 		result = self.book.update({Book.BOOK_ID: book_id}, \
 			{'$set':{Book.STATUS: status} })
+		if status == 1:
+			xapian_tool.delete_document(book_id)
 		return result['updatedExisting']
 
 	def get_book_by_user(self, user_id):
