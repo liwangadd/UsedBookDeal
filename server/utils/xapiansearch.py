@@ -2,9 +2,9 @@
 
 import xapian
 from mmseg.search import seg_txt_2_dict, seg_txt_search
-from dao.fields import Book
-from dao.basedao import basedao
-from setting import XAPIAN_DB_PATH
+from ..dao.fields import Book
+from ..dao.basedao import basedao
+from ..setting import XAPIAN_DB_PATH
 
 def _fields_txt_2_dict(*txts):
 	txt = u' '.join(txts)

@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from dao.wishdao import wishdao
-from dao.bookdao import bookdao
+from ..dao.wishdao import wishdao
+from ..dao.bookdao import bookdao
 from apscheduler.schedulers.background import BackgroundScheduler
-from .xapiansearch import xapian_tool
+from xapiansearch import xapian_tool
 from datetime import datetime, timedelta
-import setting
+from .. import setting
 
 def _reset_wish_status(wish_id):
 	print datetime.now()

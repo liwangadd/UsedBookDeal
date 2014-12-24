@@ -5,10 +5,10 @@
 
 from flask import *
 from flask.blueprints import Blueprint
-from dao.bookdao import bookdao
-from dao.fields import Book
-from utils.jsonutil import *
-from utils.scheduler import scheduler
+from ..dao.bookdao import bookdao
+from ..dao.fields import Book
+from ..utils.jsonutil import *
+from ..utils.scheduler import scheduler
 import uuid, base64
 
 book_blueprint = Blueprint('book', __name__)
@@ -228,6 +228,7 @@ def search_book():
 		pagesize = int(request.values['pagesize'])
 	except:
 		return 'failed'
+	booktype = request.values.get(Book.TYPE)
 	keywords = keyword.split(' ')
 	books = bookdao.search_book(keywords, page, pagesize)
 	books = cursor2list(books,Book.BOOK_ID,Book.BOOKNAME,Book.TYPE,Book.PRICE,\

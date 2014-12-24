@@ -5,9 +5,9 @@
 
 from flask import *
 from flask.blueprints import Blueprint
-from dao.basedao import basedao as imagedao
-from dao.fields import Image
-from utils.jsonutil import *
+from ..dao.basedao import basedao as imagedao
+from ..dao.fields import Image
+from ..utils.jsonutil import *
 import uuid
 
 image_blueprint = Blueprint('image', __name__)

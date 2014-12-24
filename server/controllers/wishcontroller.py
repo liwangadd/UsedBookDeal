@@ -5,10 +5,10 @@
 
 from flask import *
 from flask.blueprints import Blueprint
-from dao.wishdao import wishdao
-from dao.fields import Wish
-from utils.jsonutil import *
-from utils.scheduler import scheduler
+from ..dao.wishdao import wishdao
+from ..dao.fields import Wish
+from ..utils.jsonutil import *
+from ..utils.scheduler import scheduler
 import uuid, base64
 
 wish_blueprint = Blueprint('wish', __name__)

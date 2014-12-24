@@ -1,12 +1,14 @@
 # coding: utf-8
 
+''' basic settings '''
+
 DEBUG = False
 SECRET_KEY = 'usedbook_deal_app_for_school_students'
 CSRF_ENABLED = True
 
 # log file path
-INFO_LOG = 'logs/info.log'
-ERROR_LOG = 'logs/info.log'
+INFO_LOG = '../logs/info.log'
+ERROR_LOG = '../logs/error.log'
 
 # mongodb config
 HOST = 'localhost'

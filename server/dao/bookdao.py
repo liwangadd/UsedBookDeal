@@ -7,7 +7,7 @@ from basedao import BaseDao
 from fields import *
 from pymongo import MongoClient
 from time import localtime, strftime
-from utils.xapiansearch import xapian_tool
+from ..utils.xapiansearch import xapian_tool
 import uuid, re
 
 class BookDao(BaseDao):
@@ -78,7 +78,7 @@ class BookDao(BaseDao):
 		for unit in cursor:
 			imgs = self.get_imgs_by_bookname(bookname=unit.get('_id'), limit=1)
 			try:
-				unit['img'] = imgs[0][Image.IMG_ID]
+				unit['img'] = imgs[0]
 			except IndexError:
 				unit['img'] = None
 		return cursor
@@ -91,11 +91,15 @@ class BookDao(BaseDao):
 			{Image.BOOKNAME: {'$regex': r'.*?'+bookname+'.*?'}},
 			limit=limit).distinct(Book.BOOKNAME)
 
-	def get_books_by_ids(self, book_ids):
-		return self.book.find({Book.BOOK_ID: {'$in': book_ids}})
+	def get_books_by_ids(self, book_ids, booktype):
+		if booktype is None:
+			return self.book.find({Book.BOOK_ID: {'$in': book_ids}})
+		else:
+			return self.book.find({Book.BOOK_ID: {'$in': book_ids},
+				Book.TYPE: booktype})
 
-	def search_book(self, keywords, page, pagesize):
+	def search_book(self, keywords, page, pagesize, booktype=None):
 		book_ids = xapian_tool.search(keywords, page, pagesize)
-		return self.get_books_by_ids(book_ids)
+		return self.get_books_by_ids(book_ids, booktype)
 
 bookdao = BookDao()

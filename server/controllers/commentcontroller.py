@@ -5,9 +5,9 @@
 
 from flask import *
 from flask.blueprints import Blueprint
-from dao.commentdao import commentdao
-from dao.fields import *
-from utils.jsonutil import *
+from ..dao.commentdao import commentdao
+from ..dao.fields import *
+from ..utils.jsonutil import *
 import uuid
 
 comment_blueprint = Blueprint('comment', __name__)

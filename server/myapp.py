@@ -10,6 +10,7 @@ import base64, os, logging, sys
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
+sys.path.insert(0, '.')
 
 def register_blueprint(app):
 	blueprints = [
@@ -30,12 +31,14 @@ def config_logging(app):
 	'''%(asctime)s %(levelname)s [in %(pathname)s:%(lineno)d]:
 	%(message)s ''')
 
-	info_handler = RotatingFileHandler(info_log, maxBytes=102400, backupCount=10)
-	info_handler.setLevel(logging.INFO)
-	info_handler.setFormatter(formatter)
-	app.logger.addHandler(info_handler)
+	if app.debug == True:
+		info_handler = RotatingFileHandler(info_log, maxBytes=102400, backupCount=10)
+		info_handler.setLevel(logging.INFO)
+		info_handler.setFormatter(formatter)
+		app.logger.addHandler(info_handler)
 
-	error_handler = RotatingFileHandler(error_log, maxBytes=102400, backupCount=10)
+	error_handler = RotatingFileHandler(error_log, maxBytes=102400,
+		backupCount=10)
 	error_handler.setLevel(logging.ERROR)
 	error_handler.setFormatter(formatter)
 	app.logger.addHandler(error_handler)

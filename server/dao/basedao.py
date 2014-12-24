@@ -11,7 +11,7 @@ from ConfigParser import ConfigParser
 from time import localtime, strftime
 from fields import *
 from gridfs.errors import *
-import setting
+from .. import setting
 
 class BaseDao(object):
 	''':param configfile: file name of config file '''
@@ -117,10 +117,10 @@ class BaseDao(object):
 			return self.fs.get(f_id)
 
 	def get_imgs_by_bookname(self, bookname, limit):
+		''' return: a string list of img_id '''
 		return self.image.find(
-			{Image.BOOKNAME: {'$regex': r'.*?'+bookname+'.*?'}},
+			{Image.BOOKNAME: {'$regex': '.*?'+bookname+'.*?'}},
 			limit=limit).distinct(Book.BOOKNAME)
-			# .limit(limit)
 
 	def insert_comment_message(self, message_id, user_id, username, object_id):
 		message = {}
