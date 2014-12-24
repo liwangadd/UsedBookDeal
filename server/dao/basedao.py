@@ -117,8 +117,10 @@ class BaseDao(object):
 			return self.fs.get(f_id)
 
 	def get_imgs_by_bookname(self, bookname, limit):
-		return self.image.find({Image.BOOKNAME: '/'+bookname+'/'}). \
-			distinct(Book.BOOKNAME).limit(limit)
+		return self.image.find(
+			{Image.BOOKNAME: {'$regex': r'.*?'+bookname+'.*?'}},
+			limit=limit).distinct(Book.BOOKNAME)
+			# .limit(limit)
 
 	def insert_comment_message(self, message_id, user_id, username, object_id):
 		message = {}

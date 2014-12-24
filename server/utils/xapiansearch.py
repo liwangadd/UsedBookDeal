@@ -17,18 +17,22 @@ class XapianTool(object):
 	"""define index and search methods"""
 	def __init__(self, db_path, dao):
 		super(XapianTool, self).__init__()
-		self.db = xapian.WritableDatabase(db_path, xapian.DB_CREATE_OR_OPEN)
-		self.enquire = xapian.Enquire(self.db)
+		self.db_path = db_path
+		self.read_only_db = xapian.Database(db_path)
+		self.enquire = xapian.Enquire(self.read_only_db)
 		self.dao = dao
-		self.index()
+		# self.index()
 
 	def index(self):
+		self.wirtable_db = xapian.WritableDatabase(self.db_path,
+					xapian.DB_CREATE_OR_OVERWRITE)
 		cursor = self.dao.book.find({Book.STATUS: 0})
 		for book in cursor:
 			self.set_document(book[Book.BOOK_ID], book[Book.BOOKNAME],
 				book[Book.NEWNESS], book[Book.AUDIENCE],
 				book[Book.DESCRIPTION])
-		self.db.flush()
+		self.wirtable_db.flush()
+		self.wirtable_db.close()
 
 	def set_document(self, book_id, *fields):
 		doc = xapian.Document()
@@ -39,13 +43,10 @@ class XapianTool(object):
 			# print key, value
 			doc.add_term(key, value)
 
-		self.db.replace_document(book_id, doc)
+		self.wirtable_db.replace_document(book_id, doc)
 
-	def flush(self):
-		self.db.flush()
-
-	def delete_document(self, book_id):
-		self.db.delete_document(book_id)
+	# def delete_document(self, book_id):
+	# 	self.db.delete_document(book_id)
 
 	def search(self, keywords, page, limit):
 		query_list = []

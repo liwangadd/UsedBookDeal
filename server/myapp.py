@@ -5,6 +5,7 @@
 from flask import Flask
 from logging.handlers import RotatingFileHandler
 from controllers import user_blueprint, book_blueprint, wish_blueprint, comment_blueprint, image_blueprint
+from werkzeug.contrib.fixers import ProxyFix
 import base64, os, logging, sys
 
 reload(sys)
@@ -44,6 +45,7 @@ def create_app():
 	app.config.from_pyfile('setting.py')
 	register_blueprint(app)
 	config_logging(app)
+	app.wsgi_app = ProxyFix(app.wsgi_app)
 	return app
 
 app = create_app()
@@ -54,12 +56,3 @@ def function():
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', debug=False)
-
-	# app.config['TESTING'] = True
-	# test_app = app.test_client()
-	# content = open('img.jpg').read()
-	# content = base64.encodestring(content)
-	# content = content.decode('utf-8')
-	# data = {'user_id': '18742513130', 'img': content}
-	# response = test_app.post('/user/setImg', data=data)
-	# print response.data

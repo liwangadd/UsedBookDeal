@@ -4,6 +4,7 @@
 from dao.wishdao import wishdao
 from dao.bookdao import bookdao
 from apscheduler.schedulers.background import BackgroundScheduler
+from .xapiansearch import xapian_tool
 from datetime import datetime, timedelta
 import setting
 
@@ -39,5 +40,9 @@ class MyScheduler(object):
 		self.scheduler.add_job(_set_book_removed, 'date', args=[book_id],
 			run_date=run_date)
 
+	def add_xapian_reindex_job(self, xapian_tool):
+		self.scheduler.add_job(xapian_tool.index(), 'interval', minute=30)
+
 scheduler = MyScheduler()
+scheduler.add_xapian_reindex_job(xapian_tool)
 scheduler.start()

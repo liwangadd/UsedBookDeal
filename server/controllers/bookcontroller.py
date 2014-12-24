@@ -218,10 +218,7 @@ def get_similar_name():
 	except:
 		return 'failed'
 	names = bookdao.get_similar_name(bookname, limit)
-	booknames = []
-	for name in names:
-		booknames.append(name[Book.BOOKNAME])
-	return jsonify(booknames=booknames)
+	return jsonify(booknames=names)
 
 @book_blueprint.route('searchBook', methods=['GET', 'POST'])
 def search_book():

@@ -60,8 +60,8 @@ class BookDao(BaseDao):
 	def set_book_status(self, book_id, status):
 		result = self.book.update({Book.BOOK_ID: book_id}, \
 			{'$set':{Book.STATUS: status} })
-		if status == 1:
-			xapian_tool.delete_document(book_id)
+		# if status == 1:
+		# 	xapian_tool.delete_document(book_id)
 		return result['updatedExisting']
 
 	def get_book_by_user(self, user_id):
@@ -79,16 +79,17 @@ class BookDao(BaseDao):
 			imgs = self.get_imgs_by_bookname(bookname=unit.get('_id'), limit=1)
 			try:
 				unit['img'] = imgs[0][Image.IMG_ID]
-			except:
-				raise
+			except IndexError:
+				unit['img'] = None
 		return cursor
 
 	def get_book_by_name(self, bookname):
 		return self.book.find({Book.BOOKNAME: bookname})
 
 	def get_similar_name(self, bookname, limit):
-		return self.book.find({Book.BOOKNAME: '/'+bookname+'/'}). \
-			distinct(Book.BOOKNAME).limit(limit)
+		return self.book.find(
+			{Image.BOOKNAME: {'$regex': r'.*?'+bookname+'.*?'}},
+			limit=limit).distinct(Book.BOOKNAME)
 
 	def get_books_by_ids(self, book_ids):
 		return self.book.find({Book.BOOK_ID: {'$in': book_ids}})
