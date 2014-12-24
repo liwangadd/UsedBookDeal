@@ -41,7 +41,7 @@ class MyScheduler(object):
 			run_date=run_date)
 
 	def add_xapian_reindex_job(self, xapian_tool):
-		self.scheduler.add_job(xapian_tool.index(), 'interval', minute=30)
+		self.scheduler.add_job(xapian_tool.index, 'interval', minutes=30)
 
 scheduler = MyScheduler()
 scheduler.add_xapian_reindex_job(xapian_tool)

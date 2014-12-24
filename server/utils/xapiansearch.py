@@ -18,9 +18,10 @@ class XapianTool(object):
 	def __init__(self, db_path, dao):
 		super(XapianTool, self).__init__()
 		self.db_path = db_path
+		self.dao = dao
+		self.index()
 		self.read_only_db = xapian.Database(db_path)
 		self.enquire = xapian.Enquire(self.read_only_db)
-		self.dao = dao
 		# self.index()
 
 	def index(self):
