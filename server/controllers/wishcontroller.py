@@ -12,23 +12,22 @@ from ..utils.scheduler import scheduler
 import uuid, base64
 
 wish_blueprint = Blueprint('wish', __name__)
-# wishdao = WishDao('dao_setting.cfg')
 
 @wish_blueprint.route('listWishes', methods=['GET', 'POST'])
 def list_wishes():
 	try:
 		page = int(request.values['page'])
 		pagesize = int(request.values['pagesize'])
+		order_by = request.values['order_by']
 	except:
+		current_app.logger.error('invalid args')
 		return 'failed'
+
 	try:
 		status = int(request.values[Wish.STATUS])
 	except:
 		status = 0
-	try:
-		order_by = request.values['order_by']
-	except:
-		return 'failed'
+
 	if order_by != Wish.ADDED_TIME and order_by != Wish.CLICKS:
 		return 'failed'
 	wishes = wishdao.list_wishes(status, order_by, page, pagesize)
@@ -41,7 +40,8 @@ def list_wishes():
 def get_wish_info():
 	try:
 		wish_id = request.values.get(Wish.WISH_ID)
-	except:
+	except KeyError:
+		current_app.logger.error('invalid args')
 		return 'failed'
 	wish = wishdao.get_wish_info(wish_id)
 	wish = dbobject2dict(wish, Wish.WISH_ID, Wish.BOOKNAME, Wish.IMGS,
@@ -49,44 +49,12 @@ def get_wish_info():
 		Wish.MOBILE, Wish.QQ, Wish.WEIXIN, Wish.STATUS)
 	return jsonify(wish)
 
-# @wish_blueprint.route('makeWish', methods=['POST'])
-# def make_wish():
-# 	try:
-# 		user_id = request.form[Wish.USER_ID]
-# 		username = request.form[Wish.USERNAME]
-# 		bookname = request.form[Wish.BOOKNAME]
-# 		description = request.form[Wish.DESCRIPTION]
-# 	except:
-# 		return 'failed'
-# 	mobile = request.form.get(Wish.MOBILE)
-# 	qq = request.form.get(Wish.QQ)
-# 	weixin = request.form.get(Wish.WEIXIN)
-# 	imgs = []
-# 	for i in range(0, 5):
-# 		try:
-# 			img = request.form['img' + str(i)]
-# 			img = img.encode('utf-8')
-# 			img = base64.decodestring(img)
-# 			imgs.append(img)
-# 		except:
-# 			break
-# 	wish_id = str(uuid.uuid1())
-# 	wish_info = {}
-# 	wish_info[Wish.WISH_ID] = wish_id
-# 	wish_info[Wish.USER_ID] = user_id
-# 	wish_info[Wish.USERNAME] = username
-# 	wish_info[Wish.BOOKNAME] = bookname
-# 	wish_info[Wish.DESCRIPTION] = description
-# 	wish_info[Wish.MOBILE] = mobile
-# 	wish_info[Wish.QQ] = qq
-# 	wish_info[Wish.WEIXIN] = weixin
-# 	wishdao.insert_wish(imgs, **wish_info)
-# 	return 'success'
-
 @wish_blueprint.route('getWishesByUser', methods=['GET', 'POST'])
 def get_wishes_by_user():
-	user_id = request.values.get(Wish.USER_ID)
-	if user_id == None:
+	try:
+		user_id = request.values[Wish.USER_ID]
+	except KeyError:
+		current_app.logger.error('invalid args')
 		return 'failed'
 	wishes = wishdao.get_wishes_by_user(user_id)
 	wishes = cursor2list(wishes, Wish.WISH_ID, Wish.BOOKNAME, Wish.IMGS,
@@ -96,26 +64,32 @@ def get_wishes_by_user():
 
 @wish_blueprint.route('setWishInfo', methods=['GET', 'POST'])
 def set_wish_info():
+	''' add new wish or modify wish information '''
 	wish_id = request.values.get(Wish.WISH_ID)
 	try:
 		# wish_id = request.values[Wish.WISH_ID]
 		user_id = request.values[Wish.USER_ID]
-	except:
+	except KeyError:
+		current_app.logger.error('invalid args')
 		return 'failed'
+
 	wish_info = {}
+	wish_info[Wish.USER_ID] = user_id
 	for key in (Wish.USERNAME, Wish.BOOKNAME, Wish.DESCRIPTION, Wish.TYPE,\
 			Wish.MOBILE, Wish.QQ, Wish.WEIXIN, Wish.STATUS):
 		try:
 			value = request.values[key]
+		except KeyError:
+			pass
+		else:
 			if key == Wish.STATUS or key == Wish.TYPE:
 				try:
 					value = int(value)
 				except:
+					current_app.logger.error('invalid status or type: %s' % value)
 					return 'failed'
 			wish_info[key] = value
-		except:
-			pass
-	wish_info[Wish.USER_ID] = user_id
+
 	imgs = []
 	for i in range(1, 4):
 		try:
@@ -125,7 +99,9 @@ def set_wish_info():
 			img = img.encode('utf-8')
 			img = base64.decodestring(img)
 			imgs.append(img)
+
 	if wish_id == None or wish_id == '':
+		# add new wish
 		wish_id = str(uuid.uuid1())
 		wish_info[Wish.WISH_ID] = wish_id
 		if wishdao.insert_wish(imgs, **wish_info):
@@ -133,6 +109,7 @@ def set_wish_info():
 		else:
 			return 'failed'
 	else:
+		# modify wish information
 		if wishdao.set_wish_info(imgs, wish_id, **wish_info):
 			return 'success'
 		else:
@@ -144,14 +121,11 @@ def set_wish_status():
 		wish_id = request.values[Wish.WISH_ID]
 		user_id = request.values[Wish.USER_ID]
 		username = request.values[Wish.USERNAME]
-		status = request.values[Wish.STATUS]
+		status = int(request.values[Wish.STATUS])
 	except:
-		print 'args error'
+		current_app.logger.error('invalid args')
 		return 'failed'
-	try:
-		status = int(status)
-	except:
-		return 'failed'
+
 	if wishdao.set_wish_status(wish_id, status):
 		if status == 2:
 			wishdao.insert_wish_token_message(str(uuid.uuid1()), user_id,\

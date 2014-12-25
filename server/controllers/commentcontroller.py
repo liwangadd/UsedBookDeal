@@ -11,7 +11,6 @@ from ..utils.jsonutil import *
 import uuid
 
 comment_blueprint = Blueprint('comment', __name__)
-# commentdao = CommentDao('dao_setting.cfg')
 
 @comment_blueprint.route('makeComments', methods=['GET', 'POST'])
 def make_comment():
@@ -20,8 +19,8 @@ def make_comment():
 		user_id = request.values[Comment.USER_ID]
 		username = request.values[Comment.USERNAME]
 		content = request.values[Comment.CONTENT]
-		# floor = int(request.values[Comment.FLOOR])
-	except:
+	except KeyError:
+		current_app.logger.error('invalid args')
 		return 'failed'
 	# add comment
 	comment_id = str(uuid.uuid1())
@@ -45,10 +44,9 @@ def get_comments():
 		page = int(request.values['page'])
 		pagesize = int(request.values['pagesize'])
 	except:
-		return None
+		current_app.logger.error('invalid args')
+		return 'failed'
 	comments = commentdao.get_comments_by_object(object_id, page, pagesize)
-	if comments == None:
-		return None
 	comments = cursor2list(comments, Comment.COMMENT_ID, Comment.USER_ID, \
 		Comment.USERNAME, Comment.TIME, Comment.FLOOR, Comment.CONTENT)
 	return jsonify(comments=comments)

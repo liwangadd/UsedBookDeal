@@ -11,14 +11,14 @@ from ..utils.jsonutil import *
 import base64
 
 user_blueprint = Blueprint('user', __name__)
-# userdao = UserDao('dao_setting.cfg')
 
 @user_blueprint.route('login', methods=['GET', 'POST'])
 def login():
 	try:
 		user_id = request.values[User.USER_ID]
 		password = request.values[User.PASSWORD]
-	except:
+	except KeyError:
+		current_app.logger.error('invalid args')
 		return 'failed'
 	if userdao.check_login(user_id, password):
 		return 'success'
@@ -30,7 +30,8 @@ def register():
 	try:
 		user_id = request.values[User.USER_ID]
 		password = request.values[User.PASSWORD]
-	except:
+	except KeyError:
+		current_app.logger.error('invalid args')
 		return 'failed'
 	if userdao.insert_user(user_id, password):
 		return 'success'
@@ -41,11 +42,15 @@ def register():
 def get_user_info():
 	try:
 		user_id = request.values[User.USER_ID]
-	except:
-		return jsonify({})
+	except KeyError:
+		current_app.logger.error('invalid args')
+		return 'failed'
 	info = userdao.get_user_info(user_id)
-	if info == None:
-		return jsonify({})
+	try:
+		assert info is not None
+	except AssertionError:
+		current_app.logger.error('invalid user_id: %s' % user_id)
+		return 'failed'
 	result = dbobject2dict(info, User.USER_ID, User.USERNAME, User.PASSWORD,
 		User.GENDER, User.MOBILE, User.QQ, User.WEIXIN, User.BOOKS,User.WISHES)
 	return jsonify(result)
@@ -54,7 +59,8 @@ def get_user_info():
 def set_user_info():
 	try:
 		user_id = request.values[User.USER_ID]
-	except:
+	except KeyError:
+		current_app.logger.error('invalid args')
 		return 'failed'
 	user_info = {}
 	for keyword in (User.USERNAME, User.PASSWORD, User.GENDER, User.MOBILE,
@@ -64,10 +70,11 @@ def set_user_info():
 			if keyword == User.GENDER:
 				try:
 					value = int(value)
-				except:
+				except ValueError:
+					current_app.logger.error('invalid gender: %s' % value)
 					return 'failed'
 			user_info[keyword] = value
-		except:
+		except KeyError:
 			pass
 	if userdao.set_user_info(user_id, **user_info):
 		return 'success'
@@ -80,7 +87,8 @@ def set_user_img():
 		user_id = request.form[User.USER_ID]
 		# img = request.files['img']
 		img = request.form['img']
-	except:
+	except KeyError:
+		current_app.logger.error('invalid args')
 		return 'failed'
 	img = img.encode('utf-8')
 	img = base64.decodestring(img)
@@ -93,7 +101,8 @@ def set_user_img():
 def get_messages_by_user():
 	try:
 		user_id = request.values[User.USER_ID]
-	except:
+	except KeyError:
+		current_app.logger.error('invalid args')
 		return 'failed'
 	messages = userdao.get_messages_by_user(user_id)
 	messages = cursor2list(messages, Message.MESSAGE_ID, Message.USER_ID,

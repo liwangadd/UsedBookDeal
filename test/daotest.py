@@ -2,14 +2,15 @@
 # coding: utf-8
 
 import sys
-sys.path.insert(0, '/home/clint/py/projects/UsedBookDeal/server/')
+sys.path.insert(0, '/home/clint/py/projects/UsedBookDeal/')
+# from .. import server
 
-from dao.basedao import BaseDao
-from dao.userdao import UserDao
-from dao.bookdao import BookDao
-from dao.wishdao import WishDao
-from dao.commentdao import CommentDao
-from dao.fields import *
+from server.dao.basedao import basedao
+from server.dao.userdao import userdao
+from server.dao.bookdao import bookdao
+from server.dao.wishdao import wishdao
+from server.dao.commentdao import commentdao
+from server.dao.fields import *
 from uuid import uuid1
 
 def userdao_test():
@@ -51,9 +52,10 @@ def bookdao_test():
 	assert bookdao.set_book_info(book_id, \
 		description=book_info[Book.DESCRIPTION])
 	result = bookdao.get_book_info(book_id)
-	for key
+
 
 
 if __name__ == '__main__':
-	userdao_test()
+	# userdao_test()
+	pass
 
