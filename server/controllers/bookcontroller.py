@@ -131,7 +131,7 @@ def get_book_by_type():
 	except KeyError:
 		order_by = Book.ADDED_TIME
 	if order_by != Book.ADDED_TIME and order_by != Book.CLICKS:
-		current_app.logger.error('error in getBooksByType: invalid arg(order_by: %s)' % order_by)
+		current_app.logger.error('invalid arg(order_by: %s)' % order_by)
 		return 'failed'
 	books = []
 	cursor = bookdao.get_book_by_type(booktype, order_by, page, pagesize)

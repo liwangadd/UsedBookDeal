@@ -33,7 +33,7 @@ def list_wishes():
 	wishes = wishdao.list_wishes(status, order_by, page, pagesize)
 	wishes = cursor2list(wishes, Wish.WISH_ID, Wish.BOOKNAME, Wish.IMGS,
 		Wish.USER_ID, Wish.USERNAME, Wish.DESCRIPTION, Wish.ADDED_TIME,
-		Wish.MOBILE, Wish.QQ, Wish.WEIXIN, Wish.STATUS)
+		Wish.MOBILE, Wish.QQ, Wish.WEIXIN, Wish.STATUS, Wish.TYPE)
 	return jsonify(wishes=wishes)
 
 @wish_blueprint.route('getWishInfo', methods=['GET', 'POST'])
@@ -46,7 +46,7 @@ def get_wish_info():
 	wish = wishdao.get_wish_info(wish_id)
 	wish = dbobject2dict(wish, Wish.WISH_ID, Wish.BOOKNAME, Wish.IMGS,
 		Wish.USER_ID, Wish.USERNAME, Wish.DESCRIPTION, Wish.ADDED_TIME,
-		Wish.MOBILE, Wish.QQ, Wish.WEIXIN, Wish.STATUS)
+		Wish.MOBILE, Wish.QQ, Wish.WEIXIN, Wish.STATUS, Wish.TYPE)
 	return jsonify(wish)
 
 @wish_blueprint.route('getWishesByUser', methods=['GET', 'POST'])
@@ -59,7 +59,7 @@ def get_wishes_by_user():
 	wishes = wishdao.get_wishes_by_user(user_id)
 	wishes = cursor2list(wishes, Wish.WISH_ID, Wish.BOOKNAME, Wish.IMGS,
 		Wish.USER_ID, Wish.USERNAME, Wish.DESCRIPTION, Wish.ADDED_TIME,
-		Wish.MOBILE, Wish.QQ, Wish.WEIXIN, Wish.STATUS)
+		Wish.MOBILE, Wish.QQ, Wish.WEIXIN, Wish.STATUS, Wish.TYPE)
 	return jsonify(wishes=wishes)
 
 @wish_blueprint.route('setWishInfo', methods=['GET', 'POST'])
