@@ -26,8 +26,8 @@ class WishDao(BaseDao):
 		return self.wish.find_one({Wish.WISH_ID: wish_id})
 
 	def insert_wish(self, files, **wish_info):
+
 		imgs = []
-		time = strftime('%F %H:%m', localtime())
 		if files != None:
 			for f in files:
 				img_id = str(uuid.uuid1())
@@ -35,13 +35,20 @@ class WishDao(BaseDao):
 					wish_info.get(Wish.BOOKNAME))
 				imgs.append(img_id)
 		wish_info[Wish.IMGS] = imgs
+
+		time = strftime('%F %H:%m', localtime())
+		wish_info[Wish.ADDED_TIME] = time
+
 		wish_info[Wish.STATUS] = 0
 		wish_info[Wish.CLICKS] = 0
+
 		# insert wish
 		self.wish.insert(wish_info)
+
 		# insert wish_id into user's wishes
 		result = self.user.update({User.USER_ID: wish_info[Wish.USER_ID]},
 			{'$push': {User.WISHES: wish_info[Wish.WISH_ID]} })
+
 		return result['updatedExisting']
 
 	def set_wish_info(self, files, wish_id, **wish_info):
@@ -77,5 +84,11 @@ class WishDao(BaseDao):
 
 	def get_wishes_by_user(self, user_id):
 		return self.wish.find({Wish.USER_ID: user_id})
+
+	def wish_clicks_plus(self, wish_id):
+		# wish's clicks increased by one
+		result = self.wish.update({Wish.WISH_ID: wish_id}, \
+			{'$inc': {Wish.CLICKS: 1}})
+		return result['updatedExisting']
 
 wishdao = WishDao()

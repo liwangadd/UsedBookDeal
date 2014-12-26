@@ -185,3 +185,16 @@ def search_book():
 		Book.DESCRIPTION, Book.ADDED_TIME, Book.STATUS, Book.MOBILE, Book.QQ, \
 		Book.WEIXIN)
 	return jsonify(books=books)
+
+@book_blueprint.route('bookClicked', methods=['GET', 'POST'])
+def book_clicked():
+	''' book's clisk increased by one (book's clicks is a int variable used to
+		present the popularity of a book)  '''
+	try:
+		book_id = request.values[Book.BOOK_ID]
+	except:
+		current_app.logger.error('invalid args')
+	if bookdao.book_clicks_plus(book_id):
+		return 'success'
+	else:
+		return 'failed'

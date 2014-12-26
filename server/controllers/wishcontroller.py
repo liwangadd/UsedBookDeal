@@ -135,3 +135,14 @@ def set_wish_status():
 		return 'success'
 	else:
 		return 'failed'
+
+@wish_blueprint.route('wishClicked', methods=['GET', 'POST'])
+def wish_clicked():
+	try:
+		wish_id = request.values[Wish.WISH_ID]
+	except:
+		current_app.logger.errork('invalid args')
+	if wishdao.wish_clicks_plus(wish_id):
+		return 'success'
+	else:
+		return 'failed'
