@@ -69,11 +69,18 @@ class BookDao(BaseDao):
 		return self.book.find({Book.USER_ID: user_id})
 
 	def get_book_by_type(self, booktype, order_by, page, pagesize):
+		skip = (page - 1) * pagesize
 		pipeline = [
 				{'$match': {Book.TYPE: booktype}},
-				{'$group': {'_id': '$'+Book.BOOKNAME,'count':{'$sum':1},
-					order_by: {'$max': order_by}} },
-				{'$sort': {Book.ADDED_TIME: -1} }]
+				{'$group':
+					{'_id': '$'+Book.BOOKNAME,
+					'count':{'$sum':1},
+					order_by: {'$max': order_by}}
+				},
+				{'$sort': {Book.ADDED_TIME: -1} },
+				{'$skip': skip },
+				{'$limit': pagesize}
+		]
 		result = self.book.aggregate(pipeline)
 		cursor = result['result']
 		for unit in cursor:

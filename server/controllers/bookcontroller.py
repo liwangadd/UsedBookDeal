@@ -194,6 +194,7 @@ def book_clicked():
 		book_id = request.values[Book.BOOK_ID]
 	except:
 		current_app.logger.error('invalid args')
+		return 'failed'
 	if bookdao.book_clicks_plus(book_id):
 		return 'success'
 	else:

@@ -142,6 +142,7 @@ def wish_clicked():
 		wish_id = request.values[Wish.WISH_ID]
 	except:
 		current_app.logger.errork('invalid args')
+		return 'failed'
 	if wishdao.wish_clicks_plus(wish_id):
 		return 'success'
 	else:
