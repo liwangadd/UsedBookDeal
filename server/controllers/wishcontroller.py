@@ -18,6 +18,7 @@ def list_wishes():
 	try:
 		page = int(request.values['page'])
 		pagesize = int(request.values['pagesize'])
+		wishtype = int(request.values[Wish.TYPE])
 		order_by = request.values['order_by']
 	except:
 		current_app.logger.error('invalid args')
@@ -30,7 +31,7 @@ def list_wishes():
 
 	if order_by != Wish.ADDED_TIME and order_by != Wish.CLICKS:
 		return 'failed'
-	wishes = wishdao.list_wishes(status, order_by, page, pagesize)
+	wishes = wishdao.list_wishes(status, wishtype, order_by, page, pagesize)
 	wishes = cursor2list(wishes, Wish.WISH_ID, Wish.BOOKNAME, Wish.IMGS,
 		Wish.USER_ID, Wish.USERNAME, Wish.DESCRIPTION, Wish.ADDED_TIME,
 		Wish.MOBILE, Wish.QQ, Wish.WEIXIN, Wish.STATUS, Wish.TYPE)
@@ -59,7 +60,7 @@ def get_wishes_by_user():
 	wishes = wishdao.get_wishes_by_user(user_id)
 	wishes = cursor2list(wishes, Wish.WISH_ID, Wish.BOOKNAME, Wish.IMGS,
 		Wish.USER_ID, Wish.USERNAME, Wish.DESCRIPTION, Wish.ADDED_TIME,
-		Wish.MOBILE, Wish.QQ, Wish.WEIXIN, Wish.STATUS, Wish.TYPE)
+	Wish.MOBILE, Wish.QQ, Wish.WEIXIN, Wish.STATUS, Wish.TYPE)
 	return jsonify(wishes=wishes)
 
 @wish_blueprint.route('setWishInfo', methods=['GET', 'POST'])

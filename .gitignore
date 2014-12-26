@@ -1,6 +1,7 @@
 *.pyc
 *.jpg
 *.log
+logs/
 server/logs/
 server/.tags
 server/.tags_sorted_by_file
