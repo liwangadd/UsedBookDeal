@@ -47,6 +47,5 @@ def get_comments():
 		current_app.logger.error('invalid args')
 		return 'failed'
 	comments = commentdao.get_comments_by_object(object_id, page, pagesize)
-	comments = cursor2list(comments, Comment.COMMENT_ID, Comment.USER_ID, \
-		Comment.USERNAME, Comment.TIME, Comment.FLOOR, Comment.CONTENT)
+	comments = cursor2list(comments, *Comment.ALL)
 	return jsonify(comments=comments)

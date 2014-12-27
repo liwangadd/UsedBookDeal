@@ -36,6 +36,8 @@ class UserDao(BaseDao):
 		return result
 
 	def set_user_info(self, user_id, **kw):
+		if kw == {}:
+			return True
 		result = self.collection.update({User.USER_ID: user_id}, \
 			{'$set': kw})
 		return result['updatedExisting']

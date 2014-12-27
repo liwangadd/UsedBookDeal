@@ -24,9 +24,8 @@ def set_book_info():
 		return 'failed'
 
 	book_info = {}
-	for key in (Book.USERNAME, Book.BOOKNAME, Book.TYPE, Book.PRICE,
-			Book.NEWNESS, Book.AUDIENCE, Book.DESCRIPTION, Book.MOBILE,
-			Book.QQ, Book.WEIXIN, Book.STATUS):
+	book_info[Book.USER_ID] = user_id
+	for key in Book.ALL:
 		try:
 			value = request.values[key]
 		except KeyError:
@@ -53,8 +52,6 @@ def set_book_info():
 
 			book_info[key] = value
 
-
-	book_info[Book.USER_ID] = user_id
 	imgs = []
 	for i in range(1, 4):
 		try:
@@ -95,10 +92,7 @@ def get_book_info():
 	except AssertionError:
 		current_app.logger.error('error in getBookInfo: invalid book_id: %s' % book_id)
 		return 'failed'
-	book = dbobject2dict(book,Book.BOOK_ID,Book.BOOKNAME,Book.TYPE,Book.PRICE,\
-		Book.USER_ID, Book.USERNAME, Book.IMGS, Book.NEWNESS, Book.AUDIENCE, \
-		Book.DESCRIPTION, Book.ADDED_TIME, Book.STATUS, Book.MOBILE, Book.QQ, \
-		Book.WEIXIN, Book.CLICKS)
+	book = dbobject2dict(book, *Book.ALL)
 	return jsonify(book)
 
 @book_blueprint.route('setBookStatus', methods=['GET', 'POST'])
@@ -123,10 +117,7 @@ def get_book_by_user():
 		current_app.logger.error('invalid args')
 		return 'failed'
 	books = bookdao.get_book_by_user(user_id)
-	books = cursor2list(books,Book.BOOK_ID,Book.BOOKNAME,Book.TYPE,Book.PRICE,\
-		Book.USER_ID, Book.USERNAME, Book.IMGS, Book.NEWNESS, Book.AUDIENCE, \
-		Book.DESCRIPTION, Book.ADDED_TIME, Book.STATUS, Book.MOBILE, Book.QQ, \
-		Book.WEIXIN, Book.CLICKS)
+	books = cursor2list(books, *Book.ALL)
 	return jsonify(books=books)
 
 @book_blueprint.route('getBooksByType', methods=['GET', 'POST'])
@@ -165,10 +156,7 @@ def get_book_by_name():
 		current_app.logger.error('invalid args')
 		return 'failed'
 	books = bookdao.get_book_by_name(bookname)
-	books = cursor2list(books,Book.BOOK_ID,Book.BOOKNAME,Book.TYPE,Book.PRICE,\
-		Book.USER_ID, Book.USERNAME, Book.IMGS, Book.NEWNESS, Book.AUDIENCE, \
-		Book.DESCRIPTION, Book.ADDED_TIME, Book.STATUS, Book.MOBILE, Book.QQ, \
-		Book.WEIXIN, Book.CLICKS)
+	books = cursor2list(books, *Book.ALL)
 	return jsonify(books=books)
 
 @book_blueprint.route('getSimilarBookname', methods=['GET', 'POST'])
@@ -195,10 +183,7 @@ def search_book():
 
 	keywords = keyword.split(' ')
 	books = bookdao.search_book(keywords, page, pagesize, booktype)
-	books = cursor2list(books,Book.BOOK_ID,Book.BOOKNAME,Book.TYPE,Book.PRICE,\
-		Book.USER_ID, Book.USERNAME, Book.IMGS, Book.NEWNESS, Book.AUDIENCE, \
-		Book.DESCRIPTION, Book.ADDED_TIME, Book.STATUS, Book.MOBILE, Book.QQ, \
-		Book.WEIXIN, Book.CLICKS)
+	books = cursor2list(books, *Book.ALL)
 	return jsonify(books=books)
 
 @book_blueprint.route('bookClicked', methods=['GET', 'POST'])

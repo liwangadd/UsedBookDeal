@@ -32,9 +32,7 @@ def list_wishes():
 	if order_by != Wish.ADDED_TIME and order_by != Wish.CLICKS:
 		return 'failed'
 	wishes = wishdao.list_wishes(status, wishtype, order_by, page, pagesize)
-	wishes = cursor2list(wishes, Wish.WISH_ID, Wish.BOOKNAME, Wish.IMGS,
-		Wish.USER_ID, Wish.USERNAME, Wish.DESCRIPTION, Wish.ADDED_TIME,
-		Wish.MOBILE, Wish.QQ, Wish.WEIXIN, Wish.STATUS, Wish.TYPE, Wish.CLICKS)
+	wishes = cursor2list(wishes, *Wish.ALL)
 	return jsonify(wishes=wishes)
 
 @wish_blueprint.route('getWishInfo', methods=['GET', 'POST'])
@@ -45,9 +43,7 @@ def get_wish_info():
 		current_app.logger.error('invalid args')
 		return 'failed'
 	wish = wishdao.get_wish_info(wish_id)
-	wish = dbobject2dict(wish, Wish.WISH_ID, Wish.BOOKNAME, Wish.IMGS,
-		Wish.USER_ID, Wish.USERNAME, Wish.DESCRIPTION, Wish.ADDED_TIME,
-		Wish.MOBILE, Wish.QQ, Wish.WEIXIN, Wish.STATUS, Wish.TYPE, Wish.CLICKS)
+	wish = dbobject2dict(wish, *Wish.ALL)
 	return jsonify(wish)
 
 @wish_blueprint.route('getWishesByUser', methods=['GET', 'POST'])
@@ -58,9 +54,7 @@ def get_wishes_by_user():
 		current_app.logger.error('invalid args')
 		return 'failed'
 	wishes = wishdao.get_wishes_by_user(user_id)
-	wishes = cursor2list(wishes, Wish.WISH_ID, Wish.BOOKNAME, Wish.IMGS,
-		Wish.USER_ID, Wish.USERNAME, Wish.DESCRIPTION, Wish.ADDED_TIME,
-	Wish.MOBILE, Wish.QQ, Wish.WEIXIN, Wish.STATUS, Wish.TYPE, Wish.CLICKS)
+	wishes = cursor2list(wishes, *Wish.ALL)
 	return jsonify(wishes=wishes)
 
 @wish_blueprint.route('setWishInfo', methods=['GET', 'POST'])
@@ -76,8 +70,7 @@ def set_wish_info():
 
 	wish_info = {}
 	wish_info[Wish.USER_ID] = user_id
-	for key in (Wish.USERNAME, Wish.BOOKNAME, Wish.DESCRIPTION, Wish.TYPE,\
-			Wish.MOBILE, Wish.QQ, Wish.WEIXIN, Wish.STATUS):
+	for key in Wish.ALL:
 		try:
 			value = request.values[key]
 		except KeyError:

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>user list</title>
+</head>
+<body>
+<a href="">{{session.admin_id}}</a>
+	<center>
+
+		<br/>
+		<h3>
+			user list |
+			<a href="">book list</a> |
+			<a href="">wish list</a>
+		</h3>
+		<br/>
+
+		<table border="1">
+			<tr>
+				<td>user_id</td>
+				<td>username</td>
+				<td></td>
+			</tr>
+			{% for user in users %}
+			<tr>
+				<td>{{user['user_id']}}</td>
+				<td>{{user['username']}}</td>
+				<td>
+					<a href="">set user's information</a>
+				</td>
+			</tr>
+			{% endfor %}
+		</table>
+
+		<br/>
+		{% if total_page != 0 %}
+			{% if page != 1 %}&nbsp;
+				<a href="{{url_for('admin.list_users', page=1)}}">FIRST</a>&nbsp;
+				<a href="{{url_for('admin.list_users', page=page-1)}}">Pre.</a>
+			{% endif %}
+				&nbsp;{{page }} / {{total_page }}&nbsp;
+			{% if page != total_page %}
+				<a href="{{url_for('admin.list_users', page=page+1)}}">Next</a>&nbsp;
+				<a href="{{url_for('admin.list_users', page=total_page)}}">TAIL</a>
+			{% endif %}
+		{% else %}
+			<p>There is no users now!</p>
+		{% endif %}
+
+	</center>
+
+</body>
+</html>

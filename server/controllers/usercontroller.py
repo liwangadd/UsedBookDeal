@@ -51,8 +51,7 @@ def get_user_info():
 	except AssertionError:
 		current_app.logger.error('invalid user_id: %s' % user_id)
 		return 'failed'
-	result = dbobject2dict(info, User.USER_ID, User.USERNAME, User.PASSWORD,
-		User.GENDER, User.MOBILE, User.QQ, User.WEIXIN, User.BOOKS,User.WISHES)
+	result = dbobject2dict(info, *User.ALL)
 	return jsonify(result)
 
 @user_blueprint.route('setUserInfo', methods=['GET', 'POST'])
@@ -63,19 +62,22 @@ def set_user_info():
 		current_app.logger.error('invalid args')
 		return 'failed'
 	user_info = {}
-	for keyword in (User.USERNAME, User.PASSWORD, User.GENDER, User.MOBILE,
-			User.QQ, User.WEIXIN):
+	for keyword in User.ALL:
 		try:
 			value = request.values[keyword]
+		except KeyError:
+			pass
+		else:
 			if keyword == User.GENDER:
 				try:
 					value = int(value)
 				except ValueError:
 					current_app.logger.error('invalid gender: %s' % value)
 					return 'failed'
+			elif keyword == User.PASSWORD and value == '':
+				continue
 			user_info[keyword] = value
-		except KeyError:
-			pass
+
 	if userdao.set_user_info(user_id, **user_info):
 		return 'success'
 	else:
@@ -105,7 +107,5 @@ def get_messages_by_user():
 		current_app.logger.error('invalid args')
 		return 'failed'
 	messages = userdao.get_messages_by_user(user_id)
-	messages = cursor2list(messages, Message.MESSAGE_ID, Message.USER_ID,
-		Message.TYPE, Message.CONTENT, Message.ANOTHER_USER_ID,
-		Message.OBJECT_ID, Message.TIME, Message.IMG, Message.STATUS)
+	messages = cursor2list(messages, *Message.ALL)
 	return jsonify(messages=messages)

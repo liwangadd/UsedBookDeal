@@ -8,7 +8,7 @@ from fields import *
 from pymongo import MongoClient
 from time import localtime, strftime
 from ..utils.xapiansearch import xapian_tool
-import uuid, re
+import uuid, re, pymongo
 
 class BookDao(BaseDao):
 	''' @args configfile: filename of config file'''
@@ -84,9 +84,10 @@ class BookDao(BaseDao):
 		result = self.book.aggregate(pipeline)
 		cursor = result['result']
 		for unit in cursor:
-			imgs = self.get_imgs_by_bookname(bookname=unit.get('_id'), limit=1)
+			imgs = self.image.find({Image.BOOKNAME: unit['_id']},
+					sort=[(Image.CATEGORY, pymongo.ASCENDING)], limit=1)
 			try:
-				unit['img'] = imgs[0]
+				unit['img'] = imgs.next()[Image.IMG_ID]
 			except IndexError:
 				unit['img'] = None
 		return cursor

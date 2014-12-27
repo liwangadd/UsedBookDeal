@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>admin login</title>
+</head>
+<body>
+	<center>
+		<br/><br/>
+		<br/><br/>
+		<form method="post" action="/admin/loginAction">
+			admin_id: <input type="input" name="admin_id">
+			<br/><br/>
+			password: <input type="password" name="password">
+			<br/><br/>
+			<input type="submit" value="submit">
+		</form>
+		<br/><br/>
+		{% if err_info == 'wrong id or password' %}
+			<p>wrong id or password!</p>
+		{% endif %}
+	</center>
+</body>
+</html>

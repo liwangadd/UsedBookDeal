@@ -12,22 +12,12 @@ from time import localtime, strftime
 from fields import *
 from gridfs.errors import *
 from .. import setting
+import pymongo
 
 class BaseDao(object):
 	''':param configfile: file name of config file '''
 	def __init__(self):
 		super(BaseDao, self).__init__()
-		# config_parser = ConfigParser()
-		# f = open(configfile)
-		# try:
-		# 	config_parser.readfp(f)
-		# 	host = config_parser.get('mongo', 'host')
-		# 	port = config_parser.getint('mongo', 'port')
-		# 	database = config_parser.get('mongo', 'database')
-		# except:
-		# 	raise
-		# finally:
-		# 	f.close()
 		self.mongo = MongoClient(setting.HOST, setting.PORT)
 		self.db = self.mongo[setting.DATABASE]
 		self.user = self.db.user
@@ -117,10 +107,9 @@ class BaseDao(object):
 			return self.fs.get(f_id)
 
 	def get_imgs_by_bookname(self, bookname, limit):
-		''' return: a string list of img_id '''
 		return self.image.find(
 			{Image.BOOKNAME: {'$regex': '.*?'+bookname+'.*?'}},
-			limit=limit).distinct(Book.BOOKNAME)
+			sort=[(Image.CATEGORY, pymongo.ASCENDING)], limit=limit)
 
 	def insert_comment_message(self, message_id, user_id, username, object_id):
 		message = {}

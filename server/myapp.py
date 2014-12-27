@@ -5,6 +5,7 @@
 from flask import Flask
 from logging.handlers import RotatingFileHandler
 from controllers import user_blueprint, book_blueprint, wish_blueprint, comment_blueprint, image_blueprint
+from adminview.admincontroller import admin_blueprint
 from werkzeug.contrib.fixers import ProxyFix
 import base64, os, logging, sys
 
@@ -19,6 +20,7 @@ def register_blueprint(app):
 		(image_blueprint, '/img/'),
 		(user_blueprint, '/user/'),
 		(wish_blueprint, '/wish/'),
+		(admin_blueprint, '/admin/')
 	]
 	for module, prefix in blueprints:
 		app.register_blueprint(module, url_prefix=prefix)
