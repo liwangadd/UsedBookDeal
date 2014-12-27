@@ -34,7 +34,7 @@ def list_wishes():
 	wishes = wishdao.list_wishes(status, wishtype, order_by, page, pagesize)
 	wishes = cursor2list(wishes, Wish.WISH_ID, Wish.BOOKNAME, Wish.IMGS,
 		Wish.USER_ID, Wish.USERNAME, Wish.DESCRIPTION, Wish.ADDED_TIME,
-		Wish.MOBILE, Wish.QQ, Wish.WEIXIN, Wish.STATUS, Wish.TYPE)
+		Wish.MOBILE, Wish.QQ, Wish.WEIXIN, Wish.STATUS, Wish.TYPE, Wish.CLICKS)
 	return jsonify(wishes=wishes)
 
 @wish_blueprint.route('getWishInfo', methods=['GET', 'POST'])
@@ -47,7 +47,7 @@ def get_wish_info():
 	wish = wishdao.get_wish_info(wish_id)
 	wish = dbobject2dict(wish, Wish.WISH_ID, Wish.BOOKNAME, Wish.IMGS,
 		Wish.USER_ID, Wish.USERNAME, Wish.DESCRIPTION, Wish.ADDED_TIME,
-		Wish.MOBILE, Wish.QQ, Wish.WEIXIN, Wish.STATUS, Wish.TYPE)
+		Wish.MOBILE, Wish.QQ, Wish.WEIXIN, Wish.STATUS, Wish.TYPE, Wish.CLICKS)
 	return jsonify(wish)
 
 @wish_blueprint.route('getWishesByUser', methods=['GET', 'POST'])
@@ -60,7 +60,7 @@ def get_wishes_by_user():
 	wishes = wishdao.get_wishes_by_user(user_id)
 	wishes = cursor2list(wishes, Wish.WISH_ID, Wish.BOOKNAME, Wish.IMGS,
 		Wish.USER_ID, Wish.USERNAME, Wish.DESCRIPTION, Wish.ADDED_TIME,
-	Wish.MOBILE, Wish.QQ, Wish.WEIXIN, Wish.STATUS, Wish.TYPE)
+	Wish.MOBILE, Wish.QQ, Wish.WEIXIN, Wish.STATUS, Wish.TYPE, Wish.CLICKS)
 	return jsonify(wishes=wishes)
 
 @wish_blueprint.route('setWishInfo', methods=['GET', 'POST'])
@@ -83,11 +83,19 @@ def set_wish_info():
 		except KeyError:
 			pass
 		else:
-			if key == Wish.STATUS or key == Wish.TYPE:
+			if key == Wish.STATUS:
 				try:
 					value = int(value)
+					assert value == 0 or value == 1 or value == 2
 				except:
-					current_app.logger.error('invalid status or type: %s' % value)
+					current_app.logger.error('invalid status: %s' % value)
+					return 'failed'
+			elif key == Wish.TYPE:
+				try:
+					value = int(value)
+					assert value >= 0 and value <= 6
+				except:
+					current_app.logger.error('invalid type: %s' % value)
 					return 'failed'
 			wish_info[key] = value
 
@@ -123,6 +131,7 @@ def set_wish_status():
 		user_id = request.values[Wish.USER_ID]
 		username = request.values[Wish.USERNAME]
 		status = int(request.values[Wish.STATUS])
+		assert status == 0 or status == 1 or status == 2
 	except:
 		current_app.logger.error('invalid args')
 		return 'failed'

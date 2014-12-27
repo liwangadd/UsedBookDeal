@@ -26,20 +26,33 @@ def set_book_info():
 	book_info = {}
 	for key in (Book.USERNAME, Book.BOOKNAME, Book.TYPE, Book.PRICE,
 			Book.NEWNESS, Book.AUDIENCE, Book.DESCRIPTION, Book.MOBILE,
-			Book.QQ, Book.WEIXIN):
+			Book.QQ, Book.WEIXIN, Book.STATUS):
 		try:
 			value = request.values[key]
-			try:
-				if key == Book.TYPE:
-					value = int(value)
-				elif key == Book.PRICE:
-					value = float(value)
-			except:
-				current_app.logger.error('error in setBookInfo: invalid args:(type or price:%s)'%value)
-				return 'failed'
-			book_info[key] = value
 		except KeyError:
 			pass
+		else:
+			if key == Book.TYPE:
+				try:
+					value == int(value)
+					assert value >= 0 and value <= 6
+				except:
+					current_app.logger.error('invalid type: %s' % value)
+			elif key == Book.STATUS:
+				try:
+					value == int(value)
+					assert value == 0 or value == 1
+				except:
+					current_app.logger.error('invalid status: %s' % value)
+			elif key == Book.PRICE:
+				try:
+					value = float(value)
+				except:
+					current_app.logger.error('invalid price: %s' % price)
+					return 'failed'
+
+			book_info[key] = value
+
 
 	book_info[Book.USER_ID] = user_id
 	imgs = []
@@ -85,7 +98,7 @@ def get_book_info():
 	book = dbobject2dict(book,Book.BOOK_ID,Book.BOOKNAME,Book.TYPE,Book.PRICE,\
 		Book.USER_ID, Book.USERNAME, Book.IMGS, Book.NEWNESS, Book.AUDIENCE, \
 		Book.DESCRIPTION, Book.ADDED_TIME, Book.STATUS, Book.MOBILE, Book.QQ, \
-		Book.WEIXIN)
+		Book.WEIXIN, Book.CLICKS)
 	return jsonify(book)
 
 @book_blueprint.route('setBookStatus', methods=['GET', 'POST'])
@@ -93,6 +106,7 @@ def set_book_status():
 	try:
 		book_id = request.values[Book.BOOK_ID]
 		status = int(request.values[Book.STATUS])
+		assert status == 0 or status == 1
 	except:
 		current_app.logger.error('invalid args')
 		return 'failed'
@@ -112,7 +126,7 @@ def get_book_by_user():
 	books = cursor2list(books,Book.BOOK_ID,Book.BOOKNAME,Book.TYPE,Book.PRICE,\
 		Book.USER_ID, Book.USERNAME, Book.IMGS, Book.NEWNESS, Book.AUDIENCE, \
 		Book.DESCRIPTION, Book.ADDED_TIME, Book.STATUS, Book.MOBILE, Book.QQ, \
-		Book.WEIXIN)
+		Book.WEIXIN, Book.CLICKS)
 	return jsonify(books=books)
 
 @book_blueprint.route('getBooksByType', methods=['GET', 'POST'])
@@ -154,7 +168,7 @@ def get_book_by_name():
 	books = cursor2list(books,Book.BOOK_ID,Book.BOOKNAME,Book.TYPE,Book.PRICE,\
 		Book.USER_ID, Book.USERNAME, Book.IMGS, Book.NEWNESS, Book.AUDIENCE, \
 		Book.DESCRIPTION, Book.ADDED_TIME, Book.STATUS, Book.MOBILE, Book.QQ, \
-		Book.WEIXIN)
+		Book.WEIXIN, Book.CLICKS)
 	return jsonify(books=books)
 
 @book_blueprint.route('getSimilarBookname', methods=['GET', 'POST'])
@@ -178,12 +192,13 @@ def search_book():
 		current_app.logger.error('invalid args')
 		return 'failed'
 	booktype = request.values.get(Book.TYPE)
+
 	keywords = keyword.split(' ')
-	books = bookdao.search_book(keywords, page, pagesize)
+	books = bookdao.search_book(keywords, page, pagesize, booktype)
 	books = cursor2list(books,Book.BOOK_ID,Book.BOOKNAME,Book.TYPE,Book.PRICE,\
 		Book.USER_ID, Book.USERNAME, Book.IMGS, Book.NEWNESS, Book.AUDIENCE, \
 		Book.DESCRIPTION, Book.ADDED_TIME, Book.STATUS, Book.MOBILE, Book.QQ, \
-		Book.WEIXIN)
+		Book.WEIXIN, Book.CLICKS)
 	return jsonify(books=books)
 
 @book_blueprint.route('bookClicked', methods=['GET', 'POST'])
