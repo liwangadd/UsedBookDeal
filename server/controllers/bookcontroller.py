@@ -33,23 +33,24 @@ def set_book_info():
 		else:
 			if key == Book.TYPE:
 				try:
-					value == int(value)
+					value = int(value)
 					assert value >= 0 and value <= 6
 				except:
 					current_app.logger.error('invalid type: %s' % value)
+					return 'failed'
 			elif key == Book.STATUS:
 				try:
-					value == int(value)
+					value  = int(value)
 					assert value == 0 or value == 1
 				except:
 					current_app.logger.error('invalid status: %s' % value)
+					return 'failed'
 			elif key == Book.PRICE:
 				try:
 					value = float(value)
 				except:
 					current_app.logger.error('invalid price: %s' % price)
 					return 'failed'
-
 			book_info[key] = value
 
 	imgs = []
@@ -77,7 +78,6 @@ def set_book_info():
 			return 'success'
 		else:
 			return 'failed'
-
 
 @book_blueprint.route('getBookInfo', methods=['GET', 'POST'])
 def get_book_info():

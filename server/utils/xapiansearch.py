@@ -29,9 +29,14 @@ class XapianTool(object):
 					xapian.DB_CREATE_OR_OVERWRITE)
 		cursor = self.dao.book.find({Book.STATUS: 0})
 		for book in cursor:
-			self.set_document(book[Book.BOOK_ID], book[Book.BOOKNAME],
-				book[Book.NEWNESS], book[Book.AUDIENCE],
-				book[Book.DESCRIPTION])
+			fields = []
+			fields.append(book[Book.BOOKNAME])
+			for key in (Book.NEWNESS, Book.DESCRIPTION, Book.AUDIENCE):
+				try:
+					fields.append(book[key])
+				except KeyError:
+					pass
+			self.set_document(book[Book.BOOK_ID], *fields)
 		self.wirtable_db.flush()
 		self.wirtable_db.close()
 

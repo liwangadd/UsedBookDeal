@@ -12,6 +12,7 @@ ERROR_LOG = '../logs/error.log'
 
 # mongodb config
 HOST = 'localhost'
+# HOST = '120.27.51.45'
 PORT = 27017
 DATABASE = 'used_book_deal'
 

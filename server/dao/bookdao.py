@@ -77,7 +77,7 @@ class BookDao(BaseDao):
 					'count':{'$sum':1},
 					order_by: {'$max': order_by}}
 				},
-				{'$sort': {Book.ADDED_TIME: -1} },
+				{'$sort': {order_by: -1} },
 				{'$skip': skip },
 				{'$limit': pagesize}
 		]
@@ -87,8 +87,11 @@ class BookDao(BaseDao):
 			imgs = self.image.find({Image.BOOKNAME: unit['_id']},
 					sort=[(Image.CATEGORY, pymongo.ASCENDING)], limit=1)
 			try:
-				unit['img'] = imgs.next()[Image.IMG_ID]
-			except IndexError:
+				img = imgs.next()
+				unit['img'] = img[Image.IMG_ID]
+			except StopIteration:
+				unit['img'] = None
+			except KeyError:
 				unit['img'] = None
 		return cursor
 
