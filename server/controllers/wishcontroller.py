@@ -76,7 +76,9 @@ def set_wish_info():
 		except KeyError:
 			pass
 		else:
-			if key == Wish.STATUS:
+			if key == Wish.WISH_ID:
+				continue
+			elif key == Wish.STATUS:
 				try:
 					value = int(value)
 					assert value == 0 or value == 1 or value == 2

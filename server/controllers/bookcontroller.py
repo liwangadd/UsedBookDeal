@@ -31,7 +31,9 @@ def set_book_info():
 		except KeyError:
 			pass
 		else:
-			if key == Book.TYPE:
+			if key == Book.BOOK_ID:
+				continue
+			elif key == Book.TYPE:
 				try:
 					value = int(value)
 					assert value >= 0 and value <= 6
@@ -40,7 +42,7 @@ def set_book_info():
 					return 'failed'
 			elif key == Book.STATUS:
 				try:
-					value  = int(value)
+					value = int(value)
 					assert value == 0 or value == 1
 				except:
 					current_app.logger.error('invalid status: %s' % value)
