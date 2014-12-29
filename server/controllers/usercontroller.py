@@ -68,10 +68,13 @@ def set_user_info():
 		except KeyError:
 			pass
 		else:
-			if keyword == User.GENDER:
+			if keyword == User.USER_ID:
+				continue
+			elif keyword == User.GENDER:
 				try:
 					value = int(value)
-				except ValueError:
+					assert value >= 0 and value <= 2
+				except:
 					current_app.logger.error('invalid gender: %s' % value)
 					return 'failed'
 			elif keyword == User.PASSWORD and value == '':

@@ -21,6 +21,8 @@ class CommentDao(BaseDao):
 			.skip(skip).limit(pagesize)
 
 	def insert_comment(self, **comment_info):
+		time = strftime('%F %H:%m', localtime())
+		comment_info[Comment.TIME] = time
 		self.collection.insert(comment_info)
 		return True
 

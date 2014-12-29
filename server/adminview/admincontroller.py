@@ -4,7 +4,10 @@
 
 from flask import *
 from flask.blueprints import Blueprint
+from ..dao.userdao import userdao
 from ..dao.bookdao import bookdao
+from ..dao.wishdao import wishdao
+from ..dao.commentdao import commentdao
 from ..dao.admindao import admindao
 from ..dao.fields import *
 from ..utils.jsonutil import *
@@ -62,3 +65,93 @@ def show_user_info():
 		user_id = request.values[User.USER_ID]
 	except:
 		return 'invalid args'
+	user = userdao.get_user_info(user_id)
+	messages = userdao.get_messages_by_user(user_id)
+	return render_template('userinfo.html', user = user, messages = messages)
+
+@admin_blueprint.route('wishList')
+def list_wishes():
+	try:
+		page = int(request.values['page'])
+	except:
+		page = 1
+	try:
+		pagesize = int(request.values['pagesize'])
+	except:
+		pagesize = 20
+
+	wishes = admindao.list_wishes(page, pagesize)
+	total_num = wishes.count()
+	total_page = (total_num + pagesize - 1) / pagesize
+	return render_template('wishlist.html', wishes = wishes,
+		total_page = total_page, page = page)
+
+@admin_blueprint.route('wishInfo')
+def show_wish_info():
+	try:
+		wish_id = request.values[Wish.WISH_ID]
+	except:
+		return 'invalid args'
+	# comments' page and pagesize
+	try:
+		page = int(request.values['page'])
+	except:
+		page = 1
+	try:
+		pagesize = int(request.values['pagesize'])
+	except:
+		pagesize = 20
+	wish = wishdao.get_wish_info(wish_id)
+	comments = commentdao.get_comments_by_object(wish_id, page, pagesize)
+	total_num = comments.count()
+	total_page = (total_num + pagesize - 1) / pagesize
+	return render_template('wishinfo.html', wish = wish, comments = comments,
+		total_page = total_page, page = page)
+
+@admin_blueprint.route('bookList')
+def list_books():
+	try:
+		page = int(request.values['page'])
+	except:
+		page = 1
+	try:
+		pagesize = int(request.values['pagesize'])
+	except:
+		pagesize = 20
+	try:
+		type = int(request.values[Book.TYPE])
+	except:
+		type = 1
+	try:
+		sort = request.values['sort']
+		assert sort == Book.BOOKNAME or sort == Book.ADDED_TIME or \
+			sort == Book.CLICKS
+	except:
+		sort = Book.BOOKNAME
+
+	books = admindao.list_books(type, sort, page, pagesize)
+	total_num = books.count()
+	total_page = (total_num + pagesize - 1) / pagesize
+	return render_template('booklist.html', books = books, type = type,
+		sort = sort, page = page, total_page = total_page)
+
+@admin_blueprint.route('bookInfo')
+def show_book_info():
+	try:
+		book_id = request.values[Book.BOOK_ID]
+	except:
+		return 'invalid args'
+	# comments' page and pagesize
+	try:
+		page = int(request.values['page'])
+	except:
+		page = 1
+	try:
+		pagesize = int(request.values['pagesize'])
+	except:
+		pagesize = 20
+	book = bookdao.get_book_info(book_id)
+	comments = commentdao.get_comments_by_object(book_id, page, pagesize)
+	total_num = comments.count()
+	total_page = (total_num + pagesize - 1) / pagesize
+	return render_template('bookinfo.html', book = book, comments = comments, total_page = total_page, page = page)

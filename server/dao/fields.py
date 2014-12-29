@@ -11,7 +11,7 @@ class User(object):
 	GENDER = 'gender'  # 1: male, 0: female
 	UNIVERSITY = 'university'
 	SCHOOL = 'school'
-	IMG = 'IMG'
+	IMG = 'img'
 	MOBILE = 'mobile'
 	QQ = 'qq'
 	WEIXIN = 'weixin'
@@ -70,7 +70,7 @@ class Image(object):
 
 class Comment(object):
 	"""field names of comment collection"""
-	COMMENT_ID = 'commend_id'
+	COMMENT_ID = 'comment_id'
 	OBJECT_ID = 'object_id'
 	USER_ID = 'user_id'
 	USERNAME = 'username'

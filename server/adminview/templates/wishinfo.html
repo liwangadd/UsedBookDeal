@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>wish information</title>
+</head>
+<body>
+	<a href="">{{session.admin_id}}</a>
+	<center>
+
+		<br/>
+		<h3>
+			<a href="{{url_for('admin.list_users') }}">user list</a> |
+			<a href="{{url_for('admin.list_books') }}">book list</a> |
+			<a href="{{url_for('admin.list_wishes') }}">wish list</a>
+		</h3>
+		<br/>
+
+		<form action="{{url_for('wish.set_wish_info')}}">
+			<h4>basic information: </h4>
+			<table>
+
+			{% for img in wish.imgs %}
+				<tr>
+					<td>image: </td>
+					<td>
+						<img src="{{url_for('image.get_img', img_id=img)}}">
+					</td>
+				</tr>
+			{% endfor %}
+
+				<tr>
+					<td>wish_id: </td>
+					<td>
+						<input name="wish_id" value="{{wish.wish_id}}" readonly="true">
+					</td>
+				</tr>
+				<tr>
+					<td>bookname: </td>
+					<td>
+						<input name="bookname" value="{{wish.bookname}}">
+					</td>
+				</tr>
+				<tr>
+					<td>user_id: </td>
+					<td>
+						<input name="user_id" value="{{wish.user_id}}" readonly="true">
+					</td>
+				</tr>
+				<tr>
+					<td>username: </td>
+					<td>
+						<input name="username" value="{{wish.username}}" readonly="true">
+					</td>
+				</tr>
+				<tr>
+					<td>type: </td>
+					<td>
+						<input name="type" value="{{wish.type}}">
+					</td>
+				</tr>
+				<tr>
+					<td>description: </td>
+					<td>
+						<input name="description" value="{{wish.description}}">
+					</td>
+				</tr>
+				<tr>
+					<td>mobile: </td>
+					<td>
+						<input name="mobile" value="{{wish.mobile}}">
+					</td>
+				</tr>
+				<tr>
+					<td>qq: </td>
+					<td>
+						<input name="qq" value="{{wish.qq}}">
+					</td>
+				</tr>
+				<tr>
+					<td>weixin: </td>
+					<td>
+						<input name="weixin" value="{{wish.weixin}}">
+					</td>
+				</tr>
+				<tr>
+					<td>added time: </td>
+					<td>
+						<input name="added_time" value="{{wish.added_time}}" readonly="true">
+					</td>
+				</tr>
+				<tr>
+					<td>clicks: </td>
+					<td>
+						<input name="clicks" value="{{wish.clicks}}" readonly="true">
+					</td>
+				</tr>
+				<tr>
+					<td>status: </td>
+					<td>
+						<input name="status" value="{{wish.status}}">
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<input type="submit" value="submit">
+					</td>
+				</tr>
+			</table>
+		</form>
+
+		<h4>comments:</h4>
+
+		{% if total_page != 0 %}
+			<table border="1">
+				<tr>
+					<td>comment_id: </td>
+					<td>user_id: </td>
+					<td>username: </td>
+					<td>time: </td>
+					<td>content: </td>
+				</tr>
+				{% for comment in comments %}
+					<tr>
+						<td>{{comment.comment_id}}</td>
+						<td>{{comment.user_id}}</td>
+						<td>{{comment.username}}</td>
+						<td>{{comment.time}}</td>
+						<td>{{comment.content}}</td>
+					</tr>
+				{% endfor %}
+			</table>
+
+			<br/>
+
+			{% if page != 1 %}&nbsp;
+				<a href="{{url_for('admin.show_wish_info', wish_id=wish.wish_id, page=1)}}">FIRST</a>&nbsp;
+				<a href="{{url_for('admin.show_wish_info', wish_id=wish.wish_id, page=page-1)}}">Pre.</a>
+			{% endif %}
+				&nbsp;{{page }} / {{total_page }}&nbsp;
+			{% if page != total_page %}
+				<a href="{{url_for('admin.show_wish_info', wish_id=wish.wish_id, page=page+1)}}">Next</a>&nbsp;
+				<a href="{{url_for('admin.show_wish_info', wish_id=wish.wish_id, page=total_page)}}">TAIL</a>
+			{% endif %}
+		{% else %}
+			<p>There is no comments now!</p>
+		{% endif %}
+
+	</center>
+</body>
+</html>

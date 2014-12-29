@@ -10,8 +10,8 @@
 		<br/>
 		<h3>
 			user list |
-			<a href="">book list</a> |
-			<a href="">wish list</a>
+			<a href="{{url_for('admin.list_books') }}">book list</a> |
+			<a href="{{url_for('admin.list_wishes') }}">wish list</a>
 		</h3>
 		<br/>
 
@@ -26,7 +26,7 @@
 				<td>{{user['user_id']}}</td>
 				<td>{{user['username']}}</td>
 				<td>
-					<a href="">set user's information</a>
+					<a href="{{url_for('admin.show_user_info', user_id=user['user_id']) }}">set user's information</a>
 				</td>
 			</tr>
 			{% endfor %}

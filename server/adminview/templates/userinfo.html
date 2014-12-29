@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>user information</title>
+</head>
+<body>
+	<a href="">{{session.admin_id}}</a>
+	<center>
+
+		<br/>
+		<h3>
+			<a href="{{url_for('admin.list_users') }}">user list</a> |
+			<a href="{{url_for('admin.list_books') }}">book list</a> |
+			<a href="{{url_for('admin.list_wishes') }}">wish list</a>
+		</h3>
+		<br/>
+
+		<h4>basic information</h4>
+		<form action="{{url_for('user.set_user_info') }}" method="POST">
+			<table>
+				<tr>
+					<td>image: </td>
+					<td>
+						<img src="/img/getImg?img_id={{user['img']}}">
+					</td>
+				</tr>
+				<tr>
+					<td>user_id: </td>
+					<td>
+						<input name="user_id" value="{{user['user_id']}}" readonly="true">
+					</td>
+				</tr>
+				<tr>
+					<td>username: </td>
+					<td>
+						<input name="username" value="{{user['username']}}">
+					</td>
+				</tr>
+				<tr>
+					<td>password: </td>
+					<td>
+						<input name="password" value="{{user['password'] }}">
+					</td>
+				</tr>
+				<tr>
+					<td>gender: </td>
+					<td>
+						<input name="gender" value="{{user['gender'] }}">
+					</td>
+				</tr>
+				<tr>
+					<td>university: </td>
+					<td>
+						<input name="university" value="{{user['university']}}">
+					</td>
+				</tr>
+				<tr>
+					<td>school: </td>
+					<td>
+						<input name="school" value="{{user['school'] }}">
+					</td>
+				</tr>
+				<tr>
+					<td>mobile: </td>
+					<td>
+						<input name="mobile" value="{{user['mobile'] }}">
+					</td>
+				</tr>
+				<tr>
+					<td>qq: </td>
+					<td>
+						<input name="qq" value="{{user['qq'] }}">
+					</td>
+				</tr>
+				<tr>
+					<td>weixin: </td>
+					<td>
+						<input name="weixin" value="{{user['weixin'] }}">
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<input type="submit" value="submit">
+					</td>
+				</tr>
+			</table>
+		</form>
+
+		<h4>messages:</h4>
+
+		<table>
+			{% for message in messages %}
+				<tr>
+					<td>
+						<img src="{{url_for('image.get_img',img_id=message.img)}}">
+					</td>
+				{% if message.type == 0 %}
+					<td>
+						system message({{message.time}}) : {{message.content}}
+					</td>
+				{% elif message.type == 1 %}
+					<td>
+						user {{message.username}}({{message.another_user_id}}) commented your book {{message.bookname}}({{message.object_id}}) at {{message.time}}: {{message.content}}
+					</td>
+				{% elif message.type == 2 %}
+					<td>
+						user {{message.username}}({{message.another_user_id}}) commented your wish {{message.bookname}}({{message.object_id}}) at {{message.time}}: {{message.content}}
+					</td>
+				{% elif message.type == 3 %}
+					<td>
+						user {{message.username}}({{message.another_user_id}}) took you wish {{message.bookname}}({{message.object_id}}) at {{message.time}}
+					</td>
+				{% endif %}
+				</tr>
+
+			{% endfor %}
+			{% if messages.count() == 0 %}
+				There is no messages now!
+			{% endif %}
+		</table>
+
+	</center>
+</body>
+</html>

@@ -117,6 +117,8 @@ class BaseDao(object):
 		message[Message.OBJECT_ID] = object_id
 		message[Message.ANOTHER_USER_ID] = user_id
 		message[Message.USERNAME] = username
+		time = strftime('%F %H:%m', localtime())
+		message[Message.TIME] = time
 		book = self.book.find_one({Book.BOOK_ID: object_id})
 		if book != None:
 			message[Message.TYPE] = Message.BOOK_COMMENTED
@@ -152,6 +154,8 @@ class BaseDao(object):
 		message[Message.ANOTHER_USER_ID] = user_id
 		message[Message.USERNAME] = username
 		message[Message.TYPE] = Message.WISH_TOKEN
+		time = strftime('%F %H:%m', localtime())
+		message[Message.TIME] = time
 		wish = self.wish.find_one({Wish.WISH_ID: object_id})
 		if wish != None:
 			message[Message.USER_ID] = wish[Wish.USER_ID]
@@ -171,11 +175,12 @@ class BaseDao(object):
 		return False
 
 	def insert_system_message(self, message_id, user_id, content):
-		time = strftime('%F %H:%m', localtime())
 		user = self.user.find_one({User.USER_ID: user_id})
 		if user == None:
 			return False
 		message = {}
+		time = strftime('%F %H:%m', localtime())
+		message[Message.TIME] = time
 		message[Message.MESSAGE_ID] = message_id
 		message[Message.USER_ID] = user_id
 		message[Message.TYPE] = Message.SYSTEM_MESSAGE
