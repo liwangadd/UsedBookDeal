@@ -33,17 +33,27 @@ def config_logging(app):
 	'''%(asctime)s %(levelname)s [in %(pathname)s:%(lineno)d]:
 	%(message)s ''')
 
-	if app.debug == True:
-		info_handler = RotatingFileHandler(info_log, maxBytes=102400, backupCount=10)
-		info_handler.setLevel(logging.INFO)
-		info_handler.setFormatter(formatter)
-		app.logger.addHandler(info_handler)
+	if app.config['TESTING'] == False:
 
-	error_handler = RotatingFileHandler(error_log, maxBytes=102400,
-		backupCount=10)
-	error_handler.setLevel(logging.ERROR)
-	error_handler.setFormatter(formatter)
-	app.logger.addHandler(error_handler)
+		error_handler = RotatingFileHandler(error_log, maxBytes=102400,
+			backupCount=10)
+		error_handler.setLevel(logging.ERROR)
+		error_handler.setFormatter(formatter)
+		app.logger.addHandler(error_handler)
+
+		if app.debug == True:
+			info_handler = RotatingFileHandler(info_log, maxBytes=102400, backupCount=10)
+			info_handler.setLevel(logging.INFO)
+			info_handler.setFormatter(formatter)
+			app.logger.addHandler(info_handler)
+		else:
+			from logging.handlers import SMTPHandler
+			mail_handler = SMTPHandler(mailhost=app.config['MAILHOST'],
+				fromaddr=app.config['FROMADDR'], toaddrs=app.config['TOADDR'],
+				subject='Logged Event', credentials=(app.config['FROMADDR'],
+					app.config['PASSWORD']))
+			mail_handler.setLevel(logging.ERROR)
+			app.logger.addHandler(mail_handler)
 
 def create_app():
 	app = Flask(__name__)

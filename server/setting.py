@@ -10,6 +10,16 @@ CSRF_ENABLED = True
 INFO_LOG = '../logs/info.log'
 ERROR_LOG = '../logs/error.log'
 
+# error log mail config
+# mail server host
+MAILHOST = 'smtp.yeah.net'
+# the address from which the app send email
+FROMADDR = 'zhanghe_dlut@yeah.net'
+# login password
+PASSWORD = '18840822454zxc'
+# the address to which the app send email
+TOADDR = '291606023@qq.com'
+
 # mongodb config
 HOST = 'localhost'
 # HOST = '120.27.51.45'

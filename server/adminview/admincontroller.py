@@ -16,8 +16,14 @@ import uuid, base64
 
 admin_blueprint = Blueprint('admin', __name__, template_folder='templates')
 
+@admin_blueprint.before_request
+def interceptor():
+	if str(request.url_rule) != '/admin//':
+		if session.get('admin_id') is None:
+			return redirect(url_for('login'))
+
 @admin_blueprint.route('/')
-def index():
+def login():
 	return render_template('index.html')
 
 @admin_blueprint.route('loginAction', methods=['POST', 'GET'])

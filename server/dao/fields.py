@@ -89,7 +89,7 @@ class Message(object):
 	USERNAME = 'username' # another user's name
 	OBJECT_ID = 'object_id'
 	BOOKNAME = 'bookname'
-	TIME = 'time '
+	TIME = 'time'
 	IMG = 'img'
 	STATUS = 'status' # 0: unread, 1: read
 	ALL = (MESSAGE_ID, USER_ID, TYPE, CONTENT, ANOTHER_USER_ID, USERNAME,

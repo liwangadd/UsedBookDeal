@@ -36,7 +36,7 @@ def get_img():
 		return 'failed'
 	img = imagedao.get_img(img_id)
 	if not hasattr(img, 'read'):
-		current_app.logger.error('invalid image file')
+		current_app.logger.error('invalid image file. img_id: %s' % img_id)
 		return 'failed'
 	return send_file(img, add_etags=False, mimetype='image/jpeg')
 

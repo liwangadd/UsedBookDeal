@@ -21,7 +21,7 @@ class AdminDao(BaseDao):
 		else:
 			return False
 
-	def set_info(self, admin_id, **info):
+	def set_password(self, admin_id, password):
 		result = self.admin.update({Admin.ADMIN_ID: admin_id},
 			{'$set': info})
 		return result['updatedExisting']

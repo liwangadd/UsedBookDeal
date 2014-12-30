@@ -111,15 +111,19 @@ class BaseDao(object):
 			{Image.BOOKNAME: {'$regex': '.*?'+bookname+'.*?'}},
 			sort=[(Image.CATEGORY, pymongo.ASCENDING)], limit=limit)
 
-	def insert_comment_message(self, message_id, user_id, username, object_id):
+	def insert_comment_message(self, message_id, user_id, username, content,
+			object_id):
 		message = {}
 		message[Message.MESSAGE_ID] = message_id
 		message[Message.OBJECT_ID] = object_id
 		message[Message.ANOTHER_USER_ID] = user_id
 		message[Message.USERNAME] = username
+		message[Message.CONTENT] = content
 		time = strftime('%F %H:%m', localtime())
 		message[Message.TIME] = time
+
 		book = self.book.find_one({Book.BOOK_ID: object_id})
+		# if the object_id is a id of a book
 		if book != None:
 			message[Message.TYPE] = Message.BOOK_COMMENTED
 			message[Message.USER_ID] = book[Book.USER_ID]
@@ -127,7 +131,9 @@ class BaseDao(object):
 			message[Message.IMG] = book[Book.IMGS][0]
 			self.message.insert(message)
 			return True
+
 		wish = self.wish.find_one({Wish.WISH_ID: object_id})
+		# if the object_id is a id of a wish
 		if wish != None:
 			message[Message.TYPE] = Message.WISH_COMMENTED
 			message[Message.USER_ID] = wish[Wish.USER_ID]
@@ -135,13 +141,13 @@ class BaseDao(object):
 			# if there if no image for this wish, the user' head image
 			# will be set as message's image
 			wish_imgs = wish.get(Wish.IMGS)
-			if wish_imgs != None and wish_imgs != []:
+			if wish_imgs != None and len(wish_imgs) != 0:
 				message[Message.IMG] = wish_imgs[0]
 			else:
 				user = self.user.find_one({User.USER_ID: wish[Wish.USER_ID]})
 				if user == None:
 					return False
-				message[Message.IMG] = user.get(User.IMG)
+				message[Message.IMG] = user[User.IMG]
 			self.message.insert(message)
 			return True
 		return False
@@ -163,13 +169,13 @@ class BaseDao(object):
 			# if there if no image for this wish, the user' head image
 			# will be set as message's image
 			wish_imgs = wish.get(Wish.IMGS)
-			if wish_imgs != None and wish_imgs != []:
+			if wish_imgs != None and len(wish_imgs) != 0:
 				message[Message.IMG] = wish_imgs[0]
 			else:
 				user = self.user.find_one({User.USER_ID: wish[Wish.USER_ID]})
 				if user == None:
 					return False
-				message[Message.IMG] = user.get(User.IMG)
+				message[Message.IMG] = user[User.IMG]
 			self.message.insert(message)
 			return True
 		return False
