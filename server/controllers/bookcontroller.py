@@ -6,7 +6,7 @@
 from flask import *
 from flask.blueprints import Blueprint
 from ..dao.bookdao import bookdao
-from ..dao.fields import Book
+from ..dao.fields import Book, User
 from ..utils.jsonutil import *
 from ..utils.scheduler import scheduler
 import uuid, base64
@@ -135,7 +135,7 @@ def get_book_by_type():
 		current_app.logger.error('invalid args')
 		return 'failed'
 
-	# order_by is defaulted as added time
+	# order_by is set added_time by default
 	try:
 		order_by = request.values['order_by']
 	except KeyError:
@@ -143,6 +143,7 @@ def get_book_by_type():
 	if order_by != Book.ADDED_TIME and order_by != Book.CLICKS:
 		current_app.logger.error('invalid arg(order_by: %s)' % order_by)
 		return 'failed'
+
 	books = []
 	cursor = bookdao.get_book_by_type(booktype, order_by, page, pagesize)
 	for dbobject in cursor:
@@ -151,7 +152,14 @@ def get_book_by_type():
 		book['img'] = dbobject.get('img')
 		book['count'] = dbobject.get('count')
 		books.append(book)
-	return jsonify(books=books)
+
+	# return whether there is new messages if user has logged in
+	user_id = request.values.get(User.USER_ID)
+	has_messages = False
+	if user_id != None and user_id != '':
+		has_messages = bookdao.has_new_messages(user_id)
+
+	return jsonify(books=books, has_messages=has_messages)
 
 @book_blueprint.route('getBooksByName', methods=['GET', 'POST'])
 def get_book_by_name():

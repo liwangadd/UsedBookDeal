@@ -34,7 +34,7 @@ def make_comment():
 	commentdao.insert_comment(**comment_info)
 	# add message
 	message_id = str(uuid.uuid1())
-	commentdao.insert_comment_message(message_id, user_id, username, object_id)
+	commentdao.insert_comment_message(message_id, user_id, username,  content, object_id)
 	return 'success'
 
 @comment_blueprint.route('getComments', methods=['GET', 'POST'])

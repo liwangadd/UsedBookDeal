@@ -111,4 +111,5 @@ def get_messages_by_user():
 		return 'failed'
 	messages = userdao.get_messages_by_user(user_id)
 	messages = cursor2list(messages, *Message.ALL)
+	userdao.set_messages_read(user_id)
 	return jsonify(messages=messages)

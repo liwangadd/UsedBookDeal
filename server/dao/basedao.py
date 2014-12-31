@@ -119,6 +119,7 @@ class BaseDao(object):
 		message[Message.ANOTHER_USER_ID] = user_id
 		message[Message.USERNAME] = username
 		message[Message.CONTENT] = content
+		message[Message.STATUS] = 0
 		time = strftime('%F %H:%m', localtime())
 		message[Message.TIME] = time
 
@@ -160,6 +161,7 @@ class BaseDao(object):
 		message[Message.ANOTHER_USER_ID] = user_id
 		message[Message.USERNAME] = username
 		message[Message.TYPE] = Message.WISH_TOKEN
+		message[Message.STATUS] = 0
 		time = strftime('%F %H:%m', localtime())
 		message[Message.TIME] = time
 		wish = self.wish.find_one({Wish.WISH_ID: object_id})
@@ -192,13 +194,27 @@ class BaseDao(object):
 		message[Message.TYPE] = Message.SYSTEM_MESSAGE
 		message[Message.CONTENT] = content
 		message[Message.IMG] = user[User.IMG]
+		message[Message.STATUS] = 0
 		self.message.insert(message)
 		return True
 
 	def get_message(self, message_id):
 		return self.message.find_one({Message.MESSAGE_ID: message_id})
 
+	def has_new_messages(self, user_id):
+		''' whether there is new messages for the user '''
+		messages = self.message.find({Message.USER_ID: user_id,
+			Message.STATUS: 0})
+		return (messages.count() != 0)
+
 	def get_messages_by_user(self, user_id):
-		return self.message.find({Message.USER_ID: user_id})
+		''' get unread messages of a user '''
+		messages = self.message.find({Message.USER_ID: user_id,
+			Message.STATUS: 0})
+		return messages
+
+	def set_messages_read(self, user_id):
+		self.message.update({Message.USER_ID: user_id, Message.STATUS: 0},
+			{'$set': {Message.STATUS: 1}}, multi = True)
 
 basedao = BaseDao()
