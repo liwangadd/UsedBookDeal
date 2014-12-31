@@ -192,7 +192,18 @@ def search_book():
 	except:
 		current_app.logger.error('invalid args')
 		return 'failed'
-	booktype = request.values.get(Book.TYPE)
+
+	# booktype can be None or an int value
+	try:
+		booktype = request.values[Book.TYPE]
+	except KeyError:
+		booktype = None
+	else:
+		try:
+			booktype = int(booktype)
+		except:
+			current_app.logger.error('invalid booktype: %s' % booktype)
+			return 'failed'
 
 	keywords = keyword.split(' ')
 	books = bookdao.search_book(keywords, page, pagesize, booktype)

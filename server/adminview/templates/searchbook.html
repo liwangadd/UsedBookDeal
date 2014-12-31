@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>book list</title>
+	<title>search book</title>
 </head>
 <body>
 	<a href="">{{session.admin_id}}</a>
@@ -10,39 +10,23 @@
 		<br/>
 		<h3>
 			<a href="{{url_for('admin.list_users')}}">user list</a> |
-			book list |
+			<a href="{{url_for('admin.list_books')}}">book list</a> |
 			<a href="{{url_for('admin.list_wishes')}}">wish list</a>
 		</h3>
 		<br/>
 
-		<h4>
-			<a href="{{url_for('admin.list_books', type=1, sort=sort)}}">教材资料</a> |
-			<a href="{{url_for('admin.list_books', type=2, sort=sort)}}">英语强化</a> |
-			<a href="{{url_for('admin.list_books', type=3, sort=sort)}}">日语强化</a> |
-			<a href="{{url_for('admin.list_books', type=4, sort=sort)}}">技术养成</a> |
-			<a href="{{url_for('admin.list_books', type=5, sort=sort)}}">考研相关</a> |
-			<a href="{{url_for('admin.list_books', type=6, sort=sort)}}">休闲阅读</a>
-		</h4>
-
-		<!-- sort -->
-		<h5>
-			sort:
-			<a href="{{url_for('admin.list_books', type=type, sort='bookname')}}">bookname</a> |
-			<a href="{{url_for('admin.list_books', type=type, sort='added_time')}}">added time</a> |
-			<a href="{{url_for('admin.list_books', type=type, sort='clicks')}}">clicks</a>
-		</h5>
-
-		<!-- search book -->
+	<!-- search book -->
 		<form method="post" action="{{url_for('admin.search_book')}}">
 			search books:
-			keyword: <input name="keyword">&nbsp;
-			type: <input name="type">&nbsp;
+			keyword: <input name="keyword" value="{{keyword}}">&nbsp;
+			type: <input name="type" value="{{type}}">&nbsp;
 			<input name="page" value="1" type="hidden">
 			<input name="pagesize" value="20" type="hidden">
 			<input type="submit" value="ok">
 		</form>
-
 		<br/>
+
+		<h4>search results</h4>
 
 		{% if total_page != 0 %}
 		<table border="1">
@@ -78,8 +62,9 @@
 				<a href="{{url_for('admin.list_books', page=total_page)}}">TAIL</a>
 			{% endif %}
 		{% else %}
-			<p>There is no books now!</p>
+			<p>no search result!</p>
 		{% endif %}
+
 	</center>
 </body>
 </html>

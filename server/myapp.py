@@ -50,7 +50,7 @@ def config_logging(app):
 			from logging.handlers import SMTPHandler
 			mail_handler = SMTPHandler(mailhost=app.config['MAILHOST'],
 				fromaddr=app.config['FROMADDR'], toaddrs=app.config['TOADDR'],
-				subject='Logged Event', credentials=(app.config['FROMADDR'],
+				subject='Server Error', credentials=(app.config['FROMADDR'],
 					app.config['PASSWORD']))
 			mail_handler.setLevel(logging.ERROR)
 			app.logger.addHandler(mail_handler)

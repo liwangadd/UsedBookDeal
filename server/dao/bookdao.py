@@ -105,9 +105,10 @@ class BookDao(BaseDao):
 			limit=limit).distinct(Book.BOOKNAME)
 
 	def get_books_by_ids(self, book_ids, booktype):
-		if booktype is None or booktype == 0:
+		if booktype is None or booktype == 0 or booktype == '':
 			return self.book.find({Book.BOOK_ID: {'$in': book_ids}})
 		else:
+			booktype = int(booktype)
 			return self.book.find({Book.BOOK_ID: {'$in': book_ids},
 				Book.TYPE: booktype})
 

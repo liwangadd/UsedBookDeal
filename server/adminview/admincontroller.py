@@ -16,11 +16,13 @@ import uuid, base64
 
 admin_blueprint = Blueprint('admin', __name__, template_folder='templates')
 
-@admin_blueprint.before_request
-def interceptor():
-	if str(request.url_rule) != '/admin//':
-		if session.get('admin_id') is None:
-			return redirect(url_for('login'))
+# @admin_blueprint.before_request
+# def interceptor():
+# 	print str(request.url_rule)
+# 	print (str(request.url_rule == '/admin//'))
+# 	if str(request.url_rule) != '/admin//':
+# 		if session.get('admin_id') is None:
+# 			return redirect(url_for('admin.login'))
 
 @admin_blueprint.route('/')
 def login():
@@ -161,3 +163,19 @@ def show_book_info():
 	total_num = comments.count()
 	total_page = (total_num + pagesize - 1) / pagesize
 	return render_template('bookinfo.html', book = book, comments = comments, total_page = total_page, page = page)
+
+@admin_blueprint.route('searchBook', methods=['POST', 'GET'])
+def search_book():
+	try:
+		keyword = request.values['keyword']
+		page = int(request.values['page'])
+		pagesize = int(request.values['pagesize'])
+	except:
+		return 'invalid args'
+	booktype = request.values.get(Book.TYPE)
+	keywords = keyword.split(' ')
+	books = bookdao.search_book(keywords, page, pagesize, booktype)
+	total_num = books.count()
+	total_page = (total_num + pagesize - 1) / pagesize
+	return render_template('searchbook.html', books = books, page = page,
+		total_page = total_page, keyword = keyword, type = booktype)

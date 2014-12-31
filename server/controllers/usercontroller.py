@@ -86,6 +86,21 @@ def set_user_info():
 	else:
 		return 'failed'
 
+@user_blueprint.route('setPassword', methods=['POST', 'GET'])
+def set_user_password():
+	try:
+		user_id = request.values[User.USER_ID]
+		password = request.values[User.PASSWORD]
+	except:
+		current_app.logger.error('invalid args')
+		return 'failed'
+	user_info = {}
+	user_info[User.PASSWORD] = password
+	if userdao.set_user_info(user_id, **user_info):
+		return 'success'
+	else:
+		return 'failed'
+
 @user_blueprint.route('setImg', methods=['POST'])
 def set_user_img():
 	try:
