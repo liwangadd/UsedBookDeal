@@ -20,12 +20,16 @@
 				<td>wish id</td>
 				<td>book name</td>
 				<td>added time</td>
+				<td>type</td>
+				<td>clicks</td>
 			</tr>
 			{% for wish in wishes %}
 				<tr>
 					<td>{{wish.wish_id}}</td>
 					<td>{{wish.bookname}}</td>
 					<td>{{wish.added_time}}</td>
+					<td>{{wish.type}}</td>
+					<td>{{wish.clicks}}</td>
 					<td>
 						<a href="{{url_for('admin.show_wish_info', wish_id = wish.wish_id)}}">set wish's information</a>
 					</td>

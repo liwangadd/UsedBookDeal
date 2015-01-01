@@ -60,8 +60,9 @@ def set_book_info():
 	for i in range(1, 4):
 		try:
 			img = request.values['img' + str(i)]
-		except KeyError:
-			break
+			assert img != ''
+		except:
+			continue
 		img = img.encode('utf-8')
 		img = base64.decodestring(img)
 		imgs.append(img)

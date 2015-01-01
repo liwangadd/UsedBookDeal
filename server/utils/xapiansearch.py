@@ -56,7 +56,9 @@ class XapianTool(object):
 
 	def search(self, keywords, page, limit):
 		query_list = []
-		for key, value in seg_txt_2_dict(keywords).iteritems():
+		# print '---------'
+		for key, value in _fields_txt_2_dict(*keywords).iteritems():
+			# print key, value
 			query = xapian.Query(key, value)
 			query_list.append(query)
 
