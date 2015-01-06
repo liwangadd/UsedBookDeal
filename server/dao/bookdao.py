@@ -76,7 +76,7 @@ class BookDao(BaseDao):
 				{'$group':
 					{'_id': '$'+Book.BOOKNAME,
 					'count':{'$sum':1},
-					order_by: {'$max': order_by}}
+					order_by: {'$max': '$'+order_by}}
 				},
 				{'$sort': {order_by: -1} },
 				{'$skip': skip },

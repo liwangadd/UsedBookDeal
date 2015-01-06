@@ -32,7 +32,6 @@ def set_book_info():
 			pass
 		else:
 			if key == Book.BOOK_ID:
-				#
 				continue
 			elif key == Book.TYPE:
 				try:
@@ -75,14 +74,14 @@ def set_book_info():
 			scheduler.add_set_book_removed_job(book_id)
 			return 'success'
 		else:
-			current_app.logger.error('error in insert_book')
+			current_app.logger.error('error in insert_book, book_info: %s' % book_info)
 			return 'failed'
 	else:
 		# modify book information
 		if bookdao.set_book_info(book_id, imgs, **book_info):
 			return 'success'
 		else:
-			current_app.logger.error('error in set_book_info')
+			current_app.logger.error('error in set_book_info, book_info: %s' % book_info)
 			return 'failed'
 
 @book_blueprint.route('getBookInfo', methods=['GET', 'POST'])
