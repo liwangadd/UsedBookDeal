@@ -39,13 +39,30 @@ def make_comment():
 
 @comment_blueprint.route('getComments', methods=['GET', 'POST'])
 def get_comments():
+	''' return comments for a book/wish. if receive page and pagesize, return
+	the specific page of comments, else return all the comments '''
 	try:
 		object_id = request.values[Comment.OBJECT_ID]
-		page = int(request.values['page'])
-		pagesize = int(request.values['pagesize'])
-	except:
+	except KeyError:
 		current_app.logger.error('invalid args')
 		return 'failed'
+
+	# page and pagesize can be None or int value
+	try:
+		page = request.values['page']
+		pagesize = request.values['pagesize']
+	except KeyError:
+		page = None
+		pagesize = None
+	else:
+		try:
+			page = int(page)
+			pagesize = int(pagesize)
+		except:
+			current_app.logger.error('invalid page or pagesize: %s, %s' % \
+				(page, pagesize))
+			return 'failed'
+
 	comments = commentdao.get_comments_by_object(object_id, page, pagesize)
 	comments = cursor2list(comments, *Comment.ALL)
 	return jsonify(comments=comments)

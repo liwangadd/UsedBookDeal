@@ -37,7 +37,7 @@ def set_book_info():
 			elif key == Book.TYPE:
 				try:
 					value = int(value)
-					assert value >= 0 and value <= 6
+					assert value > 0 and value <= 6
 				except:
 					current_app.logger.error('invalid type: %s' % value)
 					return 'failed'

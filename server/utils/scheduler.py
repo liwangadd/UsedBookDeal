@@ -29,7 +29,7 @@ class MyScheduler(object):
 		self.scheduler.shutdown()
 
 	def add_check_wish_status_job(self, wish_id):
-		print datetime.now()
+		# print datetime.now()
 		run_date = datetime.now() + timedelta(seconds=self.wish_time)
 		self.scheduler.add_job(_reset_wish_status, 'date', args=[wish_id],
 			run_date=run_date)
@@ -40,7 +40,7 @@ class MyScheduler(object):
 			run_date=run_date)
 
 	def add_xapian_reindex_job(self, xapian_tool):
-		self.scheduler.add_job(xapian_tool.index, 'interval', minutes=5)
+		self.scheduler.add_job(xapian_tool.index, 'interval', minutes=15)
 
 scheduler = MyScheduler()
 scheduler.add_xapian_reindex_job(xapian_tool)

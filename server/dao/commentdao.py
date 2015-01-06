@@ -15,10 +15,13 @@ class CommentDao(BaseDao):
 		super(CommentDao, self).__init__()
 		self.collection = self.db.comment
 
-	def get_comments_by_object(self, object_id, page, pagesize):
-		skip = (page - 1) * pagesize
-		return self.collection.find({Comment.OBJECT_ID: object_id}) \
-			.skip(skip).limit(pagesize)
+	def get_comments_by_object(self, object_id, page = None, pagesize = None):
+		if page is not None and pagesize is not None:
+			skip = (page - 1) * pagesize
+			return self.collection.find({Comment.OBJECT_ID: object_id}) \
+				.skip(skip).limit(pagesize)
+		else:
+			return self.collection.find({Comment.OBJECT_ID: object_id});
 
 	def insert_comment(self, **comment_info):
 		time = strftime('%F %H:%m', localtime())

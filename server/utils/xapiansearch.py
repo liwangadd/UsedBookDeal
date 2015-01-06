@@ -7,11 +7,16 @@ from ..dao.basedao import basedao
 from ..setting import XAPIAN_DB_PATH
 
 def _fields_txt_2_dict(*txts):
-	txt = u' '.join(txts)
-	txt = txt.encode('utf-8')
+	# txt = u' '.join(txts)
+	# txt = txt.encode('utf-8')
 	# print txt
-	return seg_txt_2_dict(txt)
-
+	# return seg_txt_2_dict(txt)
+	term_dict = {}
+	for txt in txts:
+		txt = txt.encode('utf-8')
+		d = seg_txt_2_dict(txt)
+		term_dict.update(d)
+	return term_dict
 
 class XapianTool(object):
 	"""define index and search methods"""
@@ -19,10 +24,10 @@ class XapianTool(object):
 		super(XapianTool, self).__init__()
 		self.db_path = db_path
 		self.dao = dao
-		self.index()
+		# self.index()
 		self.read_only_db = xapian.Database(db_path)
 		self.enquire = xapian.Enquire(self.read_only_db)
-		# self.index()
+		self.index()
 
 	def index(self):
 		self.wirtable_db = xapian.WritableDatabase(self.db_path,
@@ -40,6 +45,9 @@ class XapianTool(object):
 		self.wirtable_db.flush()
 		self.wirtable_db.close()
 
+		self.read_only_db.reopen()
+		self.enquire = xapian.Enquire(self.read_only_db)
+
 	def set_document(self, book_id, *fields):
 		doc = xapian.Document()
 		doc.set_data(book_id)
@@ -49,6 +57,7 @@ class XapianTool(object):
 			# print key, value
 			doc.add_term(key, value)
 
+		doc.add_boolean_term(book_id)
 		self.wirtable_db.replace_document(book_id, doc)
 
 	# def delete_document(self, book_id):
