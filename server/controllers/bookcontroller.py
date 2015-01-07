@@ -19,7 +19,8 @@ def set_book_info():
 	book_id = request.values.get(Book.BOOK_ID)
 	try:
 		user_id = request.values[Book.USER_ID]
-	except KeyError:
+		assert user_id != ''
+	except:
 		current_app.logger.error('invalid args')
 		return 'failed'
 

@@ -15,6 +15,7 @@
 		</h3>
 		<br/>
 
+		{% if total_page != 0 %}
 		<table border="1">
 			<tr>
 				<td>wish id</td>
@@ -22,6 +23,7 @@
 				<td>added time</td>
 				<td>type</td>
 				<td>clicks</td>
+				<td>status</td>
 			</tr>
 			{% for wish in wishes %}
 				<tr>
@@ -30,6 +32,7 @@
 					<td>{{wish.added_time}}</td>
 					<td>{{wish.type}}</td>
 					<td>{{wish.clicks}}</td>
+					<td>{{wish.status}}</td>
 					<td>
 						<a href="{{url_for('admin.show_wish_info', wish_id = wish.wish_id)}}">set wish's information</a>
 					</td>
@@ -38,7 +41,7 @@
 		</table>
 
 		<br/>
-		{% if total_page != 0 %}
+
 			{% if page != 1 %}&nbsp;
 				<a href="{{url_for('admin.list_wishes', page=1)}}">FIRST</a>&nbsp;
 				<a href="{{url_for('admin.list_wishes', page=page-1)}}">Pre.</a>

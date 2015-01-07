@@ -210,11 +210,20 @@ class BaseDao(object):
 	def get_messages_by_user(self, user_id):
 		''' get unread messages of a user '''
 		messages = self.message.find({Message.USER_ID: user_id,
-			Message.STATUS: 0})
+			Message.STATUS: {'$in': [0, 1]} })
 		return messages
 
 	def set_messages_read(self, user_id):
-		self.message.update({Message.USER_ID: user_id, Message.STATUS: 0},
+		result = self.message.update(
+			{Message.USER_ID: user_id, Message.STATUS: 0},
 			{'$set': {Message.STATUS: 1}}, multi = True)
+		return result['updatedExisting']
+
+	def delete_messages(self, user_id):
+		""" the type of messages will be set 2, instead of really deleting all
+		messages"""
+		result = self.message.update({Message.USER_ID: user_id},
+			{'$set': {Message.TYPE: 2}}, multi = True)
+		return result['updatedExisting']
 
 basedao = BaseDao()

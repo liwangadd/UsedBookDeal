@@ -16,7 +16,8 @@ image_blueprint = Blueprint('image', __name__)
 def get_user_img():
 	try:
 		user_id = request.values[User.USER_ID]
-	except KeyError:
+		assert user_id != ''
+	except:
 		current_app.logger.error('invalid args')
 		return 'failed'
 	img = imagedao.get_user_img(user_id)
@@ -31,7 +32,8 @@ def get_user_img():
 def get_img():
 	try:
 		img_id = request.values[Image.IMG_ID]
-	except KeyError:
+		assert img_id != ''
+	except:
 		current_app.logger.error('invalid args')
 		return 'failed'
 	img = imagedao.get_img(img_id)

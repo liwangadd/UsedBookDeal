@@ -15,6 +15,7 @@
 		</h3>
 		<br/>
 
+		{% if total_page != 0 %}
 		<table border="1">
 			<tr>
 				<td>user_id</td>
@@ -33,7 +34,7 @@
 		</table>
 
 		<br/>
-		{% if total_page != 0 %}
+
 			{% if page != 1 %}&nbsp;
 				<a href="{{url_for('admin.list_users', page=1)}}">FIRST</a>&nbsp;
 				<a href="{{url_for('admin.list_users', page=page-1)}}">Pre.</a>

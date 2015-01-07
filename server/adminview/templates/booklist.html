@@ -47,19 +47,21 @@
 		{% if total_page != 0 %}
 		<table border="1">
 			<tr>
-				<td>book id</td>
 				<td>book name</td>
+				<td>user name</td>
 				<td>added time</td>
 				<td>type</td>
 				<td>clicks</td>
+				<td>status</td>
 			</tr>
 			{% for book in books %}
 				<tr>
-					<td>{{book.book_id}}</td>
 					<td>{{book.bookname}}</td>
+					<td>{{book.username}}</td>
 					<td>{{book.added_time}}</td>
 					<td>{{book.type}}</td>
 					<td>{{book.clicks}}</td>
+					<td>{{book.status}}</td>
 					<td>
 						<a href="{{url_for('admin.show_book_info', book_id = book.book_id)}}">set book's information</a>
 					</td>

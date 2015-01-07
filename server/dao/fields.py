@@ -91,7 +91,7 @@ class Message(object):
 	BOOKNAME = 'bookname'
 	TIME = 'time'
 	IMG = 'img'
-	STATUS = 'status' # 0: unread, 1: read
+	STATUS = 'status' # 0: unread, 1: read, 2: "deleted" by user
 	ALL = (MESSAGE_ID, USER_ID, TYPE, CONTENT, ANOTHER_USER_ID, USERNAME,
 		OBJECT_ID, BOOKNAME, TIME, IMG, STATUS)
 

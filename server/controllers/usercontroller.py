@@ -128,3 +128,20 @@ def get_messages_by_user():
 	messages = cursor2list(messages, *Message.ALL)
 	userdao.set_messages_read(user_id)
 	return jsonify(messages=messages)
+
+@user_blueprint.route('clearMessages', methods = ['POST', 'GET'])
+def clear_messages_by_user():
+	""" the type of messages will be set 2, instead of really deleting all
+	messages"""
+	try:
+		user_id = request.values[User.USER_ID]
+		assert user_id != ''
+	except:
+		current_app.logger.error('invalid args')
+		return 'failed'
+
+	if userdao.delete_messages(user_id):
+		return True
+	else:
+		current_app.logger.error('no messages found for user: %s' % user_id)
+		return 'failed'
