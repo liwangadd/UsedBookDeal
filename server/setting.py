@@ -2,7 +2,7 @@
 
 ''' basic settings '''
 
-DEBUG = False
+DEBUG = True
 SECRET_KEY = 'usedbook_deal_app_for_school_students'
 CSRF_ENABLED = True
 
