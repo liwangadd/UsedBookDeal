@@ -19,7 +19,8 @@ def make_comment():
 		user_id = request.values[Comment.USER_ID]
 		username = request.values[Comment.USERNAME]
 		content = request.values[Comment.CONTENT]
-	except KeyError:
+		assert object_id != '' and user_id != ''
+	except:
 		current_app.logger.error('invalid args')
 		return 'failed'
 	# add comment

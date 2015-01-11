@@ -129,7 +129,14 @@ class BaseDao(object):
 			message[Message.TYPE] = Message.BOOK_COMMENTED
 			message[Message.USER_ID] = book[Book.USER_ID]
 			message[Message.BOOKNAME] = book[Book.BOOKNAME]
-			message[Message.IMG] = book[Book.IMGS][0]
+			book_imgs = book.get(Book.IMGS)
+			if book_imgs != None and len(book_imgs) != 0:
+				message[Message.IMG] = wish_imgs[0]
+			else:
+				user = self.user.find_one({User.USER_ID: book[Book.USER_ID]})
+				if user == None:
+					return False
+				message[Message.IMG] = book[Book.IMGS][0]
 			self.message.insert(message)
 			return True
 
@@ -148,7 +155,7 @@ class BaseDao(object):
 				user = self.user.find_one({User.USER_ID: wish[Wish.USER_ID]})
 				if user == None:
 					return False
-				message[Message.IMG] = user[User.IMG]
+				message[Message.IMG] = user.get(User.IMG)
 			self.message.insert(message)
 			return True
 		return False
