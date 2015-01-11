@@ -131,7 +131,7 @@ class BaseDao(object):
 			message[Message.BOOKNAME] = book[Book.BOOKNAME]
 			book_imgs = book.get(Book.IMGS)
 			if book_imgs != None and len(book_imgs) != 0:
-				message[Message.IMG] = wish_imgs[0]
+				message[Message.IMG] = book_imgs[0]
 			else:
 				user = self.user.find_one({User.USER_ID: book[Book.USER_ID]})
 				if user == None:

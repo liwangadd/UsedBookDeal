@@ -150,6 +150,7 @@ def get_book_by_type():
 	for dbobject in cursor:
 		book = {}
 		book[Book.BOOKNAME] = dbobject.get('_id')
+		book[Book.PRICE] = dbobject.get(Book.PRICE)
 		book['img'] = dbobject.get('img')
 		book['count'] = dbobject.get('count')
 		books.append(book)

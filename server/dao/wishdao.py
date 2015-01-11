@@ -7,7 +7,7 @@ from basedao import BaseDao
 from fields import *
 from pymongo import MongoClient
 from time import localtime, strftime
-import uuid
+import uuid, pymongo
 
 class WishDao(BaseDao):
 	''' @args configfile: filename of config file'''
@@ -88,7 +88,7 @@ class WishDao(BaseDao):
 		return True
 
 	def get_wishes_by_user(self, user_id):
-		return self.wish.find({Wish.USER_ID: user_id})
+		return self.wish.find({Wish.USER_ID: user_id}, sort=[(Wish.ADDED_TIME, pymongo.DESCENDING)])
 
 	def wish_clicks_plus(self, wish_id):
 		# wish's clicks increased by one

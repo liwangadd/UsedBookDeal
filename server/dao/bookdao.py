@@ -67,16 +67,19 @@ class BookDao(BaseDao):
 		return result['updatedExisting']
 
 	def get_book_by_user(self, user_id):
-		return self.book.find({Book.USER_ID: user_id})
+		return self.book.find({Book.USER_ID: user_id}, sort=[(Book.ADDED_TIME, pymongo.DESCENDING)])
 
 	def get_book_by_type(self, booktype, order_by, page, pagesize):
 		skip = (page - 1) * pagesize
 		pipeline = [
 				{'$match': {Book.TYPE: booktype, Book.STATUS: 0}},
 				{'$group':
-					{'_id': '$'+Book.BOOKNAME,
-					'count':{'$sum':1},
-					order_by: {'$max': '$'+order_by}}
+					{
+					'_id': '$'+Book.BOOKNAME,
+					'count':{'$sum': 1},
+					order_by: {'$max': '$'+order_by},
+					Book.PRICE: {'$min': '$'+Book.PRICE}
+					}
 				},
 				{'$sort': {order_by: -1} },
 				{'$skip': skip },
@@ -85,19 +88,16 @@ class BookDao(BaseDao):
 		result = self.book.aggregate(pipeline)
 		cursor = result['result']
 		for unit in cursor:
-			imgs = self.image.find({Image.BOOKNAME: unit['_id']},
-					sort=[(Image.CATEGORY, pymongo.ASCENDING)], limit=1)
+			book = self.book.find_one({Book.BOOKNAME: unit['_id']},
+					sort = [(Book.PRICE, pymongo.ASCENDING)])
 			try:
-				img = imgs.next()
-				unit['img'] = img[Image.IMG_ID]
-			except StopIteration:
-				unit['img'] = None
-			except KeyError:
+				unit['img'] = book[Book.IMGS][0]
+			except:
 				unit['img'] = None
 		return cursor
 
 	def get_book_by_name(self, bookname):
-		return self.book.find({Book.BOOKNAME: bookname})
+		return self.book.find({Book.BOOKNAME: bookname}, sort=[(Book.PRICE, pymongo.ASCENDING)])
 
 	def get_similar_name(self, bookname, limit):
 		return self.book.find(
