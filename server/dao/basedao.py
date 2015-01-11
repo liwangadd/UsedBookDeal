@@ -136,7 +136,7 @@ class BaseDao(object):
 				user = self.user.find_one({User.USER_ID: book[Book.USER_ID]})
 				if user == None:
 					return False
-				message[Message.IMG] = book[Book.IMGS][0]
+				message[Message.IMG] = user.get(User.IMG)
 			self.message.insert(message)
 			return True
 
