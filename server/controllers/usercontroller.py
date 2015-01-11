@@ -141,7 +141,7 @@ def clear_messages_by_user():
 		return 'failed'
 
 	if userdao.delete_messages(user_id):
-		return True
+		return 'success'
 	else:
 		current_app.logger.error('no messages found for user: %s' % user_id)
 		return 'failed'
