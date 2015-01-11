@@ -172,7 +172,18 @@ def search_book():
 		pagesize = int(request.values['pagesize'])
 	except:
 		return 'invalid args'
-	booktype = request.values.get(Book.TYPE)
+
+	try:
+		booktype = request.values[Book.TYPE]
+		assert booktype != ''
+	except:
+		booktype = 0
+	else:
+		try:
+			booktype = int(booktype)
+		except:
+			return 'invalid booktype: %s' % booktype
+
 	keywords = keyword.split(' ')
 	books = bookdao.search_book(keywords, page, pagesize, booktype)
 	total_num = books.count()

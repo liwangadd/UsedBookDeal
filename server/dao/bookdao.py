@@ -72,7 +72,7 @@ class BookDao(BaseDao):
 	def get_book_by_type(self, booktype, order_by, page, pagesize):
 		skip = (page - 1) * pagesize
 		pipeline = [
-				{'$match': {Book.TYPE: booktype}},
+				{'$match': {Book.TYPE: booktype, Book.STATUS: 0}},
 				{'$group':
 					{'_id': '$'+Book.BOOKNAME,
 					'count':{'$sum':1},

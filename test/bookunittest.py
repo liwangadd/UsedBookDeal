@@ -22,15 +22,15 @@ class UserTestCase(unittest.TestCase):
 		data = dict(book_id = book_id)
 		return self.app.post('/book/getBookInfo', data = data)
 
-	def test_get_book_info(self):
-		response = self.get_book_info(self.book_id)
-		data = json.loads(response.data)
-		assert data['book_id'] == self.book_id and data['bookname']==u'数据库'\
-				and data['username']==u'呵呵'and data['mobile']=='18742513130'\
-				and data['qq'] == '123' and data['price'] == 250
+	# def test_get_book_info(self):
+	# 	response = self.get_book_info(self.book_id)
+	# 	data = json.loads(response.data)
+	# 	assert data['book_id'] == self.book_id and data['bookname']==u'数据库'\
+	# 			and data['username']==u'呵呵'and data['mobile']=='18742513130'\
+	# 			and data['qq'] == '123' and data['price'] == 250
 
-		response = self.get_book_info(self.wrong_book_id)
-		assert response.data == 'failed'
+	# 	response = self.get_book_info(self.wrong_book_id)
+	# 	assert response.data == 'failed'
 
 	def set_book_info(self, book_info):
 		return self.app.post('/book/setBookInfo', data = book_info)
@@ -39,8 +39,9 @@ class UserTestCase(unittest.TestCase):
 		new_book_id = str(uuid1())
 		book_info = {}
 		# book_info['book_id'] = new_book_id
-		book_info['bookname'] = u'计算机网络'
+		book_info['bookname'] = u'erp'
 		book_info['user_id'] = self.user_id
+		book_info['audience'] = u'学霸'
 		book_info['type'] = 1
 		book_info['status'] = 0
 		book_info['price'] = 20.73
