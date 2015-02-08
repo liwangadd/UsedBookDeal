@@ -15,12 +15,14 @@ class UserDao(BaseDao):
 		self.collection = self.db.user
 
 	def check_login(self, user_id, password):
-		result = self.collection.find_one({User.USER_ID: user_id,
-			User.PASSWORD: password})
-		if result:
-			return True
+		result = self.collection.find_one({User.USER_ID: user_id})
+		if result is not None:
+			if result[User.PASSWORD] == password:
+				return True
+			else:
+				return 'wrong_password'
 		else:
-			return False
+			return 'wrong_user_id'
 
 	def insert_user(self, user_id, password):
 		result = self.collection.find_one({User.USER_ID: user_id})

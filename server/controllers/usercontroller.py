@@ -20,10 +20,11 @@ def login():
 	except KeyError:
 		current_app.logger.error('invalid args')
 		return 'failed'
-	if userdao.check_login(user_id, password):
-		return 'success'
+	result = userdao.check_login(user_id, password)
+	if result == 'wrong_password' or result == 'wrong_user_id':
+		return result
 	else:
-		return 'failed'
+		return 'success'
 
 @user_blueprint.route('register', methods=['GET', 'POST'])
 def register():
@@ -36,7 +37,7 @@ def register():
 	if userdao.insert_user(user_id, password):
 		return 'success'
 	else:
-		return 'failed'
+		return 'conflict_user_id'
 
 @user_blueprint.route('getUserInfo', methods=['GET', 'POST'])
 def get_user_info():
