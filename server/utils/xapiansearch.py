@@ -2,20 +2,35 @@
 
 import xapian
 from mmseg.search import seg_txt_2_dict, seg_txt_search
+from jieba import cut_for_search
 from ..dao.fields import Book
 from ..dao.basedao import basedao
 from ..setting import XAPIAN_DB_PATH
 
 def _fields_txt_2_dict(*txts):
-	# txt = u' '.join(txts)
-	# txt = txt.encode('utf-8')
-	# print txt
-	# return seg_txt_2_dict(txt)
+
+	# txt1 = txts[0].encode('utf-8')
+	# term_dict = seg_txt_2_dict(txt1)
+	# for key in term_dict.iterkeys():
+	# 	term_dict[key] = 3
+
+	# for txt in txts[1:]:
+	# 	txt = txt.encode('utf-8')
+	# 	d = seg_txt_2_dict(txt)
+	# 	term_dict.update(d)
+	# return term_dict
+
 	term_dict = {}
 	for txt in txts:
 		txt = txt.encode('utf-8')
-		d = seg_txt_2_dict(txt)
-		term_dict.update(d)
+		seg_list = cut_for_search(txt)
+		for seg in seg_list:
+			value = term_dict.get(seg)
+			if value is None:
+				term_dict[seg] = 1
+			else:
+				term_dict[seg] = value + 1
+
 	return term_dict
 
 class XapianTool(object):
@@ -56,6 +71,7 @@ class XapianTool(object):
 		for key, value in term_dict.iteritems():
 			# print key, value
 			doc.add_term(key, value)
+		# print
 
 		doc.add_boolean_term(book_id)
 		self.wirtable_db.replace_document(book_id, doc)
@@ -65,9 +81,9 @@ class XapianTool(object):
 
 	def search(self, keywords, page, limit):
 		query_list = []
-		# print '---------'
+		print '---------'
 		for key, value in _fields_txt_2_dict(*keywords).iteritems():
-			# print key, value
+			print key, value
 			query = xapian.Query(key, value)
 			query_list.append(query)
 
