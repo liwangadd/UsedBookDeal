@@ -27,13 +27,16 @@ class WishDao(BaseDao):
 		wishes = self.wish.find({Wish.STATUS: status}, sort=sort, skip=skip,
 				limit=pagesize)
 
+		result = []
+
 		for wish in wishes:
 			user_id = wish[Wish.USER_ID]
 			user = self.user.find_one({User.USER_ID: user_id})
 			wish[User.USERNAME] = user.get(User.USERNAME)
 			wish[User.GENDER] = user.get(User.GENDER)
+			result.append(wish)
 
-		return wishes
+		return result
 
 	def get_wish_info(self, wish_id):
 		wish = self.wish.find_one({Wish.WISH_ID: wish_id})
