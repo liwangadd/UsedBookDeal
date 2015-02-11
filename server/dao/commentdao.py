@@ -25,8 +25,8 @@ class CommentDao(BaseDao):
 		for comment in comments:
 			user_id = comment[Comment.USER_ID]
 			user = self.user.find_one({User.USER_ID: user_id})
-			comment[User.USERNAME] = user[User.USERNAME]
-			comment[User.GENDER] = user[User.GENDER]
+			comment[User.USERNAME] = user.get(User.USERNAME)
+			comment[User.GENDER] = user.get(User.GENDER)
 
 		return comments
 

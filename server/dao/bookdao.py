@@ -48,8 +48,8 @@ class BookDao(BaseDao):
 		user_id = book[Book.USER_ID]
 		# find the user and get its username and gender
 		user = self.user.find_one({User.USER_ID: user_id})
-		book[User.USERNAME] = user[User.USERNAME]
-		book[User.GENDER] = user[User.GENDER]
+		book[User.USERNAME] = user.get(User.USERNAME)
+		book[User.GENDER] = user.get(User.GENDER)
 		return book
 
 	def set_book_info(self, book_id, files, **book_info):

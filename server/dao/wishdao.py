@@ -30,8 +30,8 @@ class WishDao(BaseDao):
 		for wish in wishes:
 			user_id = wish[Wish.USER_ID]
 			user = self.user.find_one({User.USER_ID: user_id})
-			wish[User.USERNAME] = user[User.USERNAME]
-			wish[User.GENDER] = user[User.GENDER]
+			wish[User.USERNAME] = user.get(User.USERNAME)
+			wish[User.GENDER] = user.get(User.GENDER)
 
 		return wishes
 
@@ -40,8 +40,8 @@ class WishDao(BaseDao):
 		user_id = wish[Wish.USER_ID]
 		# find the referenced user and get its username and gender
 		user = self.user.find_one({User.USER_ID: user_id})
-		wish[User.USERNAME] = user[User.USERNAME]
-		wish[User.GENDER] = user[User.GENDER]
+		wish[User.USERNAME] = user.get(User.USERNAME)
+		wish[User.GENDER] = user.get(User.GENDER)
 		return wish
 
 	def insert_wish(self, files, **wish_info):
