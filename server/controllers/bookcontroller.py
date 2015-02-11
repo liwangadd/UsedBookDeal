@@ -92,13 +92,19 @@ def get_book_info():
 	except KeyError:
 		current_app.logger.error('invalid args')
 		return 'failed'
+
 	book = bookdao.get_book_info(book_id)
+
 	try:
 		assert book is not None
 	except AssertionError:
 		current_app.logger.error('error in getBookInfo: invalid book_id: %s' % book_id)
 		return 'failed'
-	book = dbobject2dict(book, *Book.ALL)
+
+	fields = Book.ALL
+	fields.append(User.USERNAME)
+	fields.append(User.GENDER)
+	book = dbobject2dict(book, *fields)
 	return jsonify(book)
 
 @book_blueprint.route('setBookStatus', methods=['GET', 'POST'])

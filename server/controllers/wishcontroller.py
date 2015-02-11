@@ -6,7 +6,7 @@
 from flask import *
 from flask.blueprints import Blueprint
 from ..dao.wishdao import wishdao
-from ..dao.fields import Wish
+from ..dao.fields import Wish, User
 from ..utils.jsonutil import *
 from ..utils.scheduler import scheduler
 import uuid, base64
@@ -35,7 +35,10 @@ def list_wishes():
 		order_by = Wish.ADDED_TIME
 
 	wishes = wishdao.list_wishes(status, wishtype, order_by, page, pagesize)
-	wishes = cursor2list(wishes, *Wish.ALL)
+	fields = Wish.ALL
+	fields.append(User.USERNAME)
+	fields.append(User.GENDER)
+	wishes = cursor2list(wishes, *fields)
 	return jsonify(wishes=wishes)
 
 @wish_blueprint.route('getWishInfo', methods=['GET', 'POST'])
@@ -45,8 +48,20 @@ def get_wish_info():
 	except KeyError:
 		current_app.logger.error('invalid args')
 		return 'failed'
+
 	wish = wishdao.get_wish_info(wish_id)
-	wish = dbobject2dict(wish, *Wish.ALL)
+
+	try:
+		assert wish is not None
+	except AssertionError:
+		current_app.logger.error('error in getWishInfo: invalid wish_id: %s' % wish_id)
+		return 'failed'
+
+	fields = Wish.ALL
+	fields.append(User.USERNAME)
+	fields.append(User.GENDER)
+
+	wish = dbobject2dict(wish, *fields)
 	return jsonify(wish)
 
 @wish_blueprint.route('getWishesByUser', methods=['GET', 'POST'])

@@ -13,20 +13,27 @@ class CommentDao(BaseDao):
 	''' @args configfile: filename of config file'''
 	def __init__(self):
 		super(CommentDao, self).__init__()
-		self.collection = self.db.comment
+		self.comment = self.db.comment
 
 	def get_comments_by_object(self, object_id, page = None, pagesize = None):
+		comments = self.comment.find({Comment.OBJECT_ID: object_id})
+
 		if page is not None and pagesize is not None:
 			skip = (page - 1) * pagesize
-			return self.collection.find({Comment.OBJECT_ID: object_id}) \
-				.skip(skip).limit(pagesize)
-		else:
-			return self.collection.find({Comment.OBJECT_ID: object_id});
+			comments = comments.skip(skip).limit(pagesize)
+
+		for comment in comments:
+			user_id = comment[Comment.USER_ID]
+			user = self.user.find_one({User.USER_ID: user_id})
+			comment[User.USERNAME] = user[User.USERNAME]
+			comment[User.GENDER] = user[User.GENDER]
+
+		return comments
 
 	def insert_comment(self, **comment_info):
 		time = strftime('%F %H:%m', localtime())
 		comment_info[Comment.TIME] = time
-		self.collection.insert(comment_info)
+		self.comment.insert(comment_info)
 		return True
 
 commentdao = CommentDao()

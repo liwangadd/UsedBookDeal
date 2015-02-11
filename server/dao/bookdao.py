@@ -44,7 +44,13 @@ class BookDao(BaseDao):
 		return result['updatedExisting']
 
 	def get_book_info(self, book_id):
-		return self.book.find_one({Book.BOOK_ID: book_id})
+		book = self.book.find_one({Book.BOOK_ID: book_id})
+		user_id = book[Book.USER_ID]
+		# find the user and get its username and gender
+		user = self.user.find_one({User.USER_ID: user_id})
+		book[User.USERNAME] = user[User.USERNAME]
+		book[User.GENDER] = user[User.GENDER]
+		return book
 
 	def set_book_info(self, book_id, files, **book_info):
 		if files != None and files != []:

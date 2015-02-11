@@ -65,5 +65,8 @@ def get_comments():
 			return 'failed'
 
 	comments = commentdao.get_comments_by_object(object_id, page, pagesize)
-	comments = cursor2list(comments, *Comment.ALL)
+	fields = Comment.ALL
+	fields.append(User.USERNAME)
+	fields.append(User.GENDER)
+	comments = cursor2list(comments, *fields)
 	return jsonify(comments=comments)

@@ -26,6 +26,7 @@ def login():
 	else:
 		return 'success'
 
+
 @user_blueprint.route('register', methods=['GET', 'POST'])
 def register():
 	try:

@@ -20,15 +20,29 @@ class WishDao(BaseDao):
 		sort = [(order_by, -1)]
 		skip = (page - 1) * pagesize
 		# type == 0 means get all types of wish
-		if type == 0:
-			return self.wish.find({Wish.STATUS: status}, sort=sort, skip=skip,
+		selection = {Wish.STATUS: status}
+		if type is not None and type != 0:
+			selection[Wish.TYPE: type]
+
+		wishes = self.wish.find({Wish.STATUS: status}, sort=sort, skip=skip,
 				limit=pagesize)
-		else:
-			return self.wish.find({Wish.STATUS: status, Wish.TYPE: type},
-				sort=sort, skip=skip, limit=pagesize)
+
+		for wish in wishes:
+			user_id = wish[Wish.USER_ID]
+			user = self.user.find_one({User.USER_ID: user_id})
+			wish[User.USERNAME] = user[User.USERNAME]
+			wish[User.GENDER] = user[User.GENDER]
+
+		return wishes
 
 	def get_wish_info(self, wish_id):
-		return self.wish.find_one({Wish.WISH_ID: wish_id})
+		wish = self.wish.find_one({Wish.WISH_ID: wish_id})
+		user_id = wish[Wish.USER_ID]
+		# find the referenced user and get its username and gender
+		user = self.user.find_one({User.USER_ID: user_id})
+		wish[User.USERNAME] = user[User.USERNAME]
+		wish[User.GENDER] = user[User.GENDER]
+		return wish
 
 	def insert_wish(self, files, **wish_info):
 
