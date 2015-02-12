@@ -80,9 +80,9 @@ def set_wish_info():
 	''' add new wish or modify wish information '''
 	wish_id = request.values.get(Wish.WISH_ID)
 	try:
-		# wish_id = request.values[Wish.WISH_ID]
 		user_id = request.values[Wish.USER_ID]
-	except KeyError:
+		assert user_id != ''
+	except:
 		current_app.logger.error('invalid args')
 		return 'failed'
 
@@ -96,6 +96,13 @@ def set_wish_info():
 		else:
 			if key == Wish.WISH_ID:
 				continue
+			elif key == Wish.TYPE:
+				try:
+					value = int(value)
+					assert value > 0 and value <= 6
+				except:
+					current_app.logger.error('invalid type: %s' % value)
+					return 'failed'
 			elif key == Wish.STATUS:
 				try:
 					value = int(value)
@@ -103,24 +110,18 @@ def set_wish_info():
 				except:
 					current_app.logger.error('invalid status: %s' % value)
 					return 'failed'
-			elif key == Wish.TYPE:
-				try:
-					value = int(value)
-					assert value >= 0 and value <= 6
-				except:
-					current_app.logger.error('invalid type: %s' % value)
-					return 'failed'
 			wish_info[key] = value
 
 	imgs = []
 	for i in range(1, 4):
 		try:
-			f = request.values['img'+str(i)]
+			img = request.values['img'+str(i)]
+			assert img != ''
 		except:
-			break
-			img = img.encode('utf-8')
-			img = base64.decodestring(img)
-			imgs.append(img)
+			continue
+		img = img.encode('utf-8')
+		img = base64.decodestring(img)
+		imgs.append(img)
 
 	if wish_id == None or wish_id == '':
 		# add new wish
