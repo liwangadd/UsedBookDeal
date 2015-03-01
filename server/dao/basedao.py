@@ -216,8 +216,9 @@ class BaseDao(object):
 
 	def get_messages_by_user(self, user_id):
 		''' get unread messages of a user '''
-		messages = self.message.find({Message.USER_ID: user_id,
-			Message.STATUS: {'$in': [0, 1]} })
+		messages = self.message.find(
+			{Message.USER_ID: user_id, Message.STATUS: {'$in': [0, 1]} },
+			sort = [(Message.TIME, pymongo.DESCENDING)])
 		return messages
 
 	def set_messages_read(self, user_id):
