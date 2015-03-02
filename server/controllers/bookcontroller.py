@@ -101,10 +101,6 @@ def get_book_info():
 		current_app.logger.error('error in getBookInfo: invalid book_id: %s' % book_id)
 		return 'failed'
 
-	fields = Book.ALL
-	fields.append(User.USERNAME)
-	fields.append(User.GENDER)
-	book = dbobject2dict(book, *fields)
 	return jsonify(book)
 
 @book_blueprint.route('setBookStatus', methods=['GET', 'POST'])
@@ -129,7 +125,6 @@ def get_book_by_user():
 		current_app.logger.error('invalid args')
 		return 'failed'
 	books = bookdao.get_book_by_user(user_id)
-	books = cursor2list(books, *Book.ALL)
 	return jsonify(books=books)
 
 @book_blueprint.route('getBooksByType', methods=['GET', 'POST'])
@@ -151,15 +146,10 @@ def get_book_by_type():
 		current_app.logger.error('invalid arg(order_by: %s)' % order_by)
 		return 'failed'
 
-	books = []
-	cursor = bookdao.get_book_by_type(booktype, order_by, page, pagesize)
-	for dbobject in cursor:
-		book = {}
-		book[Book.BOOKNAME] = dbobject.get('_id')
-		book[Book.PRICE] = dbobject.get(Book.PRICE)
-		book['img'] = dbobject.get('img')
-		book['count'] = dbobject.get('count')
-		books.append(book)
+	books = bookdao.get_book_by_type(booktype, order_by, page, pagesize)
+	for book in books:
+		book[Book.BOOKNAME] = book['_id']
+		book.pop('_id')
 
 	# return whether there is new messages if user has logged in
 	user_id = request.values.get(User.USER_ID)
@@ -177,7 +167,6 @@ def get_book_by_name():
 		current_app.logger.error('invalid args')
 		return 'failed'
 	books = bookdao.get_book_by_name(bookname)
-	books = cursor2list(books, *Book.ALL)
 	return jsonify(books=books)
 
 @book_blueprint.route('getSimilarBookname', methods=['GET', 'POST'])
@@ -215,7 +204,6 @@ def search_book():
 
 	keywords = keyword.split(' ')
 	books = bookdao.search_book(keywords, page, pagesize, booktype)
-	books = cursor2list(books, *Book.ALL)
 	return jsonify(books=books)
 
 @book_blueprint.route('bookClicked', methods=['GET', 'POST'])

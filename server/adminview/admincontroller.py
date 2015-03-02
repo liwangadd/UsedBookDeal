@@ -62,7 +62,8 @@ def list_users():
 		pagesize = 20
 
 	users = admindao.list_users(page, pagesize)
-	total_num = users.count()
+	# total_num = users.count()
+	total_num = len(users)
 	total_page = (total_num + pagesize - 1) / pagesize
 	return render_template('userlist.html', users = users,
 		total_page = total_page, page = page)
@@ -89,7 +90,8 @@ def list_wishes():
 		pagesize = 20
 
 	wishes = admindao.list_wishes(page, pagesize)
-	total_num = wishes.count()
+	# total_num = wishes.count()
+	total_num = len(wishes)
 	total_page = (total_num + pagesize - 1) / pagesize
 	return render_template('wishlist.html', wishes = wishes,
 		total_page = total_page, page = page)
@@ -111,7 +113,8 @@ def show_wish_info():
 		pagesize = 20
 	wish = wishdao.get_wish_info(wish_id)
 	comments = commentdao.get_comments_by_object(wish_id, page, pagesize)
-	total_num = comments.count()
+	# total_num = comments.count()
+	total_num = len(comments)
 	total_page = (total_num + pagesize - 1) / pagesize
 	return render_template('wishinfo.html', wish = wish, comments = comments,
 		total_page = total_page, page = page)
@@ -138,7 +141,8 @@ def list_books():
 		sort = Book.BOOKNAME
 
 	books = admindao.list_books(type, sort, page, pagesize)
-	total_num = books.count()
+	# total_num = books.count()
+	total_num = len(books)
 	total_page = (total_num + pagesize - 1) / pagesize
 	return render_template('booklist.html', books = books, type = type,
 		sort = sort, page = page, total_page = total_page)
@@ -160,7 +164,8 @@ def show_book_info():
 		pagesize = 20
 	book = bookdao.get_book_info(book_id)
 	comments = commentdao.get_comments_by_object(book_id, page, pagesize)
-	total_num = comments.count()
+	# total_num = comments.count()
+	total_num = len(comments)
 	total_page = (total_num + pagesize - 1) / pagesize
 	return render_template('bookinfo.html', book = book, comments = comments, total_page = total_page, page = page)
 
@@ -186,7 +191,16 @@ def search_book():
 
 	keywords = keyword.split(' ')
 	books = bookdao.search_book(keywords, page, pagesize, booktype)
-	total_num = books.count()
+	# total_num = books.count()
+	total_num = len(books)
 	total_page = (total_num + pagesize - 1) / pagesize
 	return render_template('searchbook.html', books = books, page = page,
 		total_page = total_page, keyword = keyword, type = booktype)
+
+@admin_blueprint.route('insertDefaultImg', methods=['POST', 'GET'])
+def insert_default_img():
+	pass
+
+@admin_blueprint.route('insertDefaultImgAction', methods=['POST', 'GET'])
+def insert_default_img_action():
+	pass

@@ -5,6 +5,7 @@
 
 from basedao import BaseDao
 from fields import *
+import pymongo
 
 class AdminDao(BaseDao):
 	def __init__(self):
@@ -28,18 +29,22 @@ class AdminDao(BaseDao):
 
 	def list_users(self, page, pagesize):
 		skip = (page - 1) * pagesize
-		return self.user.find({}).skip(skip).limit(pagesize)
+		users = self.user.find({}).skip(skip).limit(pagesize)
+		return self.cursor_to_list(users)
 
 	def list_wishes(self, page, pagesize, sort = Wish.ADDED_TIME):
 		skip = (page - 1) * pagesize
-		return self.wish.find().sort([(sort, -1)]).skip(skip).\
+		wishes = self.wish.find().sort([(sort, -1)]).skip(skip).\
 				limit(pagesize)
+		return self.cursor_to_list(wishes)
 
 	def list_books(self, type, sort, page, pagesize):
 		skip = (page - 1) * pagesize
 		if sort == Book.BOOKNAME:
-			return self.book.find({Book.TYPE: type}).sort([(sort, 1)]).skip(skip).limit(pagesize)
+			books = self.book.find({Book.TYPE: type}).sort([(sort, pymongo.ASCENDING)]).skip(skip).limit(pagesize)
 		else:
-			return self.book.find({Book.TYPE: type}).sort([(sort, -1)]).skip(skip).limit(pagesize)
+			books = self.book.find({Book.TYPE: type}).sort([(sort, pymongo.DESCENDING)]).skip(skip).limit(pagesize)
+
+		return self.cursor_to_list(books)
 
 admindao = AdminDao()

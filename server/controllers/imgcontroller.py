@@ -61,5 +61,5 @@ def get_imgs_by_bookname():
 		current_app.logger.error('invalid args')
 		return 'failed'
 	imgs = imagedao.get_imgs_by_bookname(bookname, limit)
-	imgs = cursor2list(imgs, Image.IMG_ID)
+	# imgs = cursor2list(imgs, Image.IMG_ID)
 	return jsonify(imgs=imgs)

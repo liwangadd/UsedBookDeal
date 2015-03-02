@@ -22,21 +22,22 @@ class WishDao(BaseDao):
 		# type == 0 means get all types of wish
 		selection = {Wish.STATUS: status}
 		if type is not None and type != 0:
-			selection[Wish.TYPE: type]
+			selection[Wish.TYPE] = type
 
-		wishes = self.wish.find({Wish.STATUS: status}, sort=sort, skip=skip,
+		wishes = self.wish.find(selection, sort=sort, skip=skip,
 				limit=pagesize)
 
-		result = []
+		return self.join_user_info(wishes)
+		# result = []
 
-		for wish in wishes:
-			user_id = wish[Wish.USER_ID]
-			user = self.user.find_one({User.USER_ID: user_id})
-			wish[User.USERNAME] = user.get(User.USERNAME)
-			wish[User.GENDER] = user.get(User.GENDER)
-			result.append(wish)
+		# for wish in wishes:
+		# 	user_id = wish[Wish.USER_ID]
+		# 	user = self.user.find_one({User.USER_ID: user_id})
+		# 	wish[User.USERNAME] = user.get(User.USERNAME)
+		# 	wish[User.GENDER] = user.get(User.GENDER)
+		# 	result.append(wish)
 
-		return result
+		# return result
 
 	def get_wish_info(self, wish_id):
 		wish = self.wish.find_one({Wish.WISH_ID: wish_id})
@@ -105,7 +106,8 @@ class WishDao(BaseDao):
 		return True
 
 	def get_wishes_by_user(self, user_id):
-		return self.wish.find({Wish.USER_ID: user_id}, sort=[(Wish.ADDED_TIME, pymongo.DESCENDING)])
+		wishes =  self.wish.find({Wish.USER_ID: user_id}, sort=[(Wish.ADDED_TIME, pymongo.DESCENDING)])
+		return self.cursor_to_list(wishes)
 
 	def wish_clicks_plus(self, wish_id):
 		# wish's clicks increased by one

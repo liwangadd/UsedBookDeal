@@ -35,10 +35,10 @@ def list_wishes():
 		order_by = Wish.ADDED_TIME
 
 	wishes = wishdao.list_wishes(status, wishtype, order_by, page, pagesize)
-	fields = Wish.ALL
-	fields.append(User.USERNAME)
-	fields.append(User.GENDER)
-	wishes = cursor2list(wishes, *fields)
+	# fields = Wish.ALL
+	# fields.append(User.USERNAME)
+	# fields.append(User.GENDER)
+	# wishes = cursor2list(wishes, *fields)
 	return jsonify(wishes=wishes)
 
 @wish_blueprint.route('getWishInfo', methods=['GET', 'POST'])
@@ -57,11 +57,11 @@ def get_wish_info():
 		current_app.logger.error('error in getWishInfo: invalid wish_id: %s' % wish_id)
 		return 'failed'
 
-	fields = Wish.ALL
-	fields.append(User.USERNAME)
-	fields.append(User.GENDER)
+	# fields = Wish.ALL
+	# fields.append(User.USERNAME)
+	# fields.append(User.GENDER)
 
-	wish = dbobject2dict(wish, *fields)
+	# wish = dbobject2dict(wish, *fields)
 	return jsonify(wish)
 
 @wish_blueprint.route('getWishesByUser', methods=['GET', 'POST'])
@@ -72,7 +72,7 @@ def get_wishes_by_user():
 		current_app.logger.error('invalid args')
 		return 'failed'
 	wishes = wishdao.get_wishes_by_user(user_id)
-	wishes = cursor2list(wishes, *Wish.ALL)
+	# wishes = cursor2list(wishes, *Wish.ALL)
 	return jsonify(wishes=wishes)
 
 @wish_blueprint.route('setWishInfo', methods=['GET', 'POST'])

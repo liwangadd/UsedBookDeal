@@ -22,16 +22,17 @@ class CommentDao(BaseDao):
 			skip = (page - 1) * pagesize
 			comments = comments.skip(skip).limit(pagesize)
 
-		result = []
+		return self.join_user_info(comments)
 
-		for comment in comments:
-			user_id = comment[Comment.USER_ID]
-			user = self.user.find_one({User.USER_ID: user_id})
-			comment[User.USERNAME] = user.get(User.USERNAME)
-			comment[User.GENDER] = user.get(User.GENDER)
-			result.append(comment)
+		# result = []
+		# for comment in comments:
+		# 	user_id = comment[Comment.USER_ID]
+		# 	user = self.user.find_one({User.USER_ID: user_id})
+		# 	comment[User.USERNAME] = user.get(User.USERNAME)
+		# 	comment[User.GENDER] = user.get(User.GENDER)
+		# 	result.append(comment)
 
-		return result
+		# return result
 
 	def insert_comment(self, **comment_info):
 		time = strftime('%F %H:%m', localtime())

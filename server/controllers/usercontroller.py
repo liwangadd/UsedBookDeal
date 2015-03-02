@@ -53,7 +53,7 @@ def get_user_info():
 	except AssertionError:
 		current_app.logger.error('invalid user_id: %s' % user_id)
 		return 'failed'
-	result = dbobject2dict(info, *User.ALL)
+	# result = dbobject2dict(info, *User.ALL)
 	return jsonify(result)
 
 @user_blueprint.route('setUserInfo', methods=['GET', 'POST'])
@@ -127,7 +127,7 @@ def get_messages_by_user():
 		current_app.logger.error('invalid args')
 		return 'failed'
 	messages = userdao.get_messages_by_user(user_id)
-	messages = cursor2list(messages, *Message.ALL)
+	# messages = cursor2list(messages, *Message.ALL)
 	userdao.set_messages_read(user_id)
 	return jsonify(messages=messages)
 

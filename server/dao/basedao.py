@@ -107,9 +107,10 @@ class BaseDao(object):
 			return self.fs.get(f_id)
 
 	def get_imgs_by_bookname(self, bookname, limit):
-		return self.image.find(
+		imgs = self.image.find(
 			{Image.BOOKNAME: {'$regex': '.*?'+bookname+'.*?'}},
 			sort=[(Image.CATEGORY, pymongo.ASCENDING)], limit=limit)
+		return self.cursor_to_list(imgs)
 
 	def insert_comment_message(self, message_id, user_id, username, content,
 			object_id):
@@ -219,7 +220,7 @@ class BaseDao(object):
 		messages = self.message.find(
 			{Message.USER_ID: user_id, Message.STATUS: {'$in': [0, 1]} },
 			sort = [(Message.TIME, pymongo.DESCENDING)])
-		return messages
+		return self.cursor_to_list(messages)
 
 	def set_messages_read(self, user_id):
 		result = self.message.update(
@@ -233,5 +234,26 @@ class BaseDao(object):
 		result = self.message.update({Message.USER_ID: user_id},
 			{'$set': {Message.TYPE: 2}}, multi = True)
 		return result['updatedExisting']
+
+
+	def cursor_to_list(self, cursor):
+		# transfer cursor to list
+		result = []
+		for db_object in cursor:
+			result.append(db_object)
+		return result
+
+	def join_user_info(self, cursor):
+		# transfer cursor to list and join user information
+		result = []
+
+		for db_object in cursor:
+			user_id = db_object[User.USER_ID]
+			user = self.user.find_one({User.USER_ID: user_id})
+			db_object[User.USERNAME] = user[User.USERNAME]
+			db_object[User.GENDER] = user[User.GENDER]
+			result.append(db_object)
+
+		return result
 
 basedao = BaseDao()

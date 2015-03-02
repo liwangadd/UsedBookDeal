@@ -73,7 +73,8 @@ class BookDao(BaseDao):
 		return result['updatedExisting']
 
 	def get_book_by_user(self, user_id):
-		return self.book.find({Book.USER_ID: user_id}, sort=[(Book.ADDED_TIME, pymongo.DESCENDING)])
+		books = self.book.find({Book.USER_ID: user_id}, sort=[(Book.ADDED_TIME, pymongo.DESCENDING)])
+		return self.cursor_to_list(books)
 
 	def get_book_by_type(self, booktype, order_by, page, pagesize):
 		skip = (page - 1) * pagesize
@@ -103,20 +104,30 @@ class BookDao(BaseDao):
 		return cursor
 
 	def get_book_by_name(self, bookname):
-		return self.book.find({Book.BOOKNAME: bookname}, sort=[(Book.PRICE, pymongo.ASCENDING)])
+		books = self.book.find({Book.BOOKNAME: bookname}, sort=[(Book.PRICE, pymongo.ASCENDING)])
+		return self.join_user_info(books)
 
 	def get_similar_name(self, bookname, limit):
-		return self.book.find(
+		books = self.book.find(
 			{Image.BOOKNAME: {'$regex': r'.*?'+bookname+'.*?'}},
 			limit=limit).distinct(Book.BOOKNAME)
+		return self.join_user_info(books)
 
 	def get_books_by_ids(self, book_ids, booktype):
-		if booktype is None or booktype == 0 or booktype == '':
-			return self.book.find({Book.BOOK_ID: {'$in': book_ids}})
-		else:
-			booktype = int(booktype)
-			return self.book.find({Book.BOOK_ID: {'$in': book_ids},
-				Book.TYPE: booktype})
+
+		selection = {Book.BOOK_ID: {'$in': book_ids}}
+		if booktype is not None and booktype != 0 and booktype != '':
+			selection[Book.TYPE] = booktype
+
+		books = self.book.find(selection)
+		return self.join_user_info(books)
+
+		# if booktype is None or booktype == 0 or booktype == '':
+		# 	return self.book.find({Book.BOOK_ID: {'$in': book_ids}})
+		# else:
+		# 	booktype = int(booktype)
+		# 	return self.book.find({Book.BOOK_ID: {'$in': book_ids},
+		# 		Book.TYPE: booktype})
 
 	def search_book(self, keywords, page, pagesize, booktype=None):
 		book_ids = xapian_tool.search(keywords, page, pagesize)
