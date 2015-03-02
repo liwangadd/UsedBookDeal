@@ -98,6 +98,7 @@ class BookDao(BaseDao):
 		for unit in cursor:
 			book = self.book.find_one({Book.BOOKNAME: unit['_id']},
 					sort = [(Book.PRICE, pymongo.ASCENDING)])
+
 			try:
 				unit['img'] = book[Book.IMGS][0]
 			except:
@@ -112,7 +113,7 @@ class BookDao(BaseDao):
 		books = self.book.find(
 			{Image.BOOKNAME: {'$regex': r'.*?'+bookname+'.*?'}},
 			limit=limit).distinct(Book.BOOKNAME)
-		return self.join_user_info(books)
+		return books
 
 	def get_books_by_ids(self, book_ids, booktype):
 
