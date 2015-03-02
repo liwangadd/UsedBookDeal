@@ -235,11 +235,15 @@ class BaseDao(object):
 			{'$set': {Message.TYPE: 2}}, multi = True)
 		return result['updatedExisting']
 
+	def delete__id(self, db_object):
+		db_object.pop('_id')
+		return db_object
 
 	def cursor_to_list(self, cursor):
 		# transfer cursor to list
 		result = []
 		for db_object in cursor:
+			db_object.pop('_id')
 			result.append(db_object)
 		return result
 
@@ -248,6 +252,7 @@ class BaseDao(object):
 		result = []
 
 		for db_object in cursor:
+			db_object.pop('_id')
 			user_id = db_object[User.USER_ID]
 			user = self.user.find_one({User.USER_ID: user_id})
 			db_object[User.USERNAME] = user[User.USERNAME]
