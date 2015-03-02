@@ -54,7 +54,7 @@ def get_user_info():
 		current_app.logger.error('invalid user_id: %s' % user_id)
 		return 'failed'
 	# result = dbobject2dict(info, *User.ALL)
-	return jsonify(result)
+	return jsonify(info)
 
 @user_blueprint.route('setUserInfo', methods=['GET', 'POST'])
 def set_user_info():

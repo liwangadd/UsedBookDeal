@@ -50,6 +50,7 @@ class BookDao(BaseDao):
 		user = self.user.find_one({User.USER_ID: user_id})
 		book[User.USERNAME] = user.get(User.USERNAME)
 		book[User.GENDER] = user.get(User.GENDER)
+		book = self.delete__id(book)
 		return book
 
 	def set_book_info(self, book_id, files, **book_info):

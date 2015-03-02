@@ -35,7 +35,7 @@ class UserDao(BaseDao):
 
 	def get_user_info(self, user_id):
 		result = self.collection.find_one({User.USER_ID: user_id})
-		return result
+		return self.delete__id(result)
 
 	def set_user_info(self, user_id, **kw):
 		if kw == {}:

@@ -41,11 +41,14 @@ class WishDao(BaseDao):
 
 	def get_wish_info(self, wish_id):
 		wish = self.wish.find_one({Wish.WISH_ID: wish_id})
+		if wish is None:
+			return None
 		user_id = wish[Wish.USER_ID]
 		# find the referenced user and get its username and gender
 		user = self.user.find_one({User.USER_ID: user_id})
 		wish[User.USERNAME] = user.get(User.USERNAME)
 		wish[User.GENDER] = user.get(User.GENDER)
+		wish = self.delete__id(wish)
 		return wish
 
 	def insert_wish(self, files, **wish_info):

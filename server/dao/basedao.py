@@ -207,7 +207,8 @@ class BaseDao(object):
 		return True
 
 	def get_message(self, message_id):
-		return self.message.find_one({Message.MESSAGE_ID: message_id})
+		message = self.message.find_one({Message.MESSAGE_ID: message_id})
+		return self.delete__id(message)
 
 	def has_new_messages(self, user_id):
 		''' whether there is new messages for the user '''
@@ -236,8 +237,11 @@ class BaseDao(object):
 		return result['updatedExisting']
 
 	def delete__id(self, db_object):
-		db_object.pop('_id')
-		return db_object
+		try:
+			db_object.pop('_id')
+			return db_object
+		except:
+			return None
 
 	def cursor_to_list(self, cursor):
 		# transfer cursor to list
