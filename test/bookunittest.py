@@ -14,23 +14,24 @@ class UserTestCase(unittest.TestCase):
 	def setUp(self):
 		app.config['TESTING'] = True
 		self.app = app.test_client()
-		self.book_id = '2270d7ba-7f7f-11e4-8b3b-642737f58199'
+		self.book_id = 'afd74cd6-8427-11e4-bb13-642737f58199'
 		self.wrong_book_id = 'hehehehehehe'
-		self.user_id = '18840822454'
+		self.user_id = '18742513130'
 
 	def get_book_info(self, book_id):
 		data = dict(book_id = book_id)
 		return self.app.post('/book/getBookInfo', data = data)
 
-	# def test_get_book_info(self):
-	# 	response = self.get_book_info(self.book_id)
-	# 	data = json.loads(response.data)
-	# 	assert data['book_id'] == self.book_id and data['bookname']==u'数据库'\
-	# 			and data['username']==u'呵呵'and data['mobile']=='18742513130'\
-	# 			and data['qq'] == '123' and data['price'] == 250
+	def test_get_book_info(self):
+		response = self.get_book_info(self.book_id)
+		data = json.loads(response.data)
+		assert data['book_id'] == self.book_id and data['bookname'] == \
+				u'工程经济学' and data['username'] == u'呵呵' and \
+				data['mobile']=='18742513130' and data['qq'] == '86655569'\
+				and data['price'] == 236.0
 
-	# 	response = self.get_book_info(self.wrong_book_id)
-	# 	assert response.data == 'failed'
+		response = self.get_book_info(self.wrong_book_id)
+		assert response.data == 'failed'
 
 	def set_book_info(self, book_info):
 		return self.app.post('/book/setBookInfo', data = book_info)
@@ -47,6 +48,50 @@ class UserTestCase(unittest.TestCase):
 		book_info['price'] = 20.73
 		response = self.set_book_info(book_info)
 		assert response.data == 'success'
+
+	def set_book_status(self, book_id, status):
+		data = dict(book_id = book_id, status = status)
+		return self.app.post('/book/setBookStatus', data = data)
+
+	def test_set_book_status(self):
+		status = 2
+		response = self.set_book_status(self.book_id, status)
+		assert response.data = 'success'
+
+		response = self.get_book_info(self.book_id)
+		data = json.loads(response.data)
+		assert data['status'] = status
+
+	def get_book_by_user(self, user_id):
+		data = dict(user_id = user_id)
+		return self.app.post('/book/getBooksByUser', data = data)
+
+	def test_get_book_by_user(self):
+		response = self.get_book_by_user(self.user_id)
+		books = json.loads(response.data)
+		for book in books:
+			assert book['user_id'] = self.user_id
+
+	def get_book_by_type(self, type):
+		data = dict(type = type)
+		return self.app.post('/book/getBooksByType', data = data)
+
+	def test_get_book_by_type(self):
+		type = 1
+		response = self.get_book_by_type(type)
+		books = json.loads(response.data)
+		for book in books:
+			assert book['type'] = type
+
+	def get_book_by_name(self, bookname):
+		data = dict(bookname = bookname)
+		return self.app.post('/book/getBooksByName', data = data)
+
+	def test_get_book_by_name(self):
+		bookname = u'工程经济学'
+		books = json.loads(self.get_book_by_name(bookname))
+		for book in books:
+			assert book['bookname'] = bookname
 
 if __name__ == '__main__':
 	unittest.main()

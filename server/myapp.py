@@ -2,7 +2,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from flask import Flask
+from flask import Flask, send_file, send_from_directory
 from logging.handlers import RotatingFileHandler
 from controllers import user_blueprint, book_blueprint, wish_blueprint, comment_blueprint, image_blueprint
 from adminview.admincontroller import admin_blueprint
@@ -68,6 +68,11 @@ app = create_app()
 @app.route('/')
 def function():
 	return 'hello'
+
+@app.route('/download/<path:filename>')
+def apk_download(filename):
+	# return 'download'
+	return send_from_directory('/home/clint/', filename)
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', debug=True)
