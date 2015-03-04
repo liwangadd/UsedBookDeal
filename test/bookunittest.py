@@ -6,7 +6,6 @@ sys.path.insert(0, '/home/clint/py/projects/UsedBookDeal/')
 sys.setdefaultencoding('utf-8')
 
 from server.myapp import app
-from uuid import uuid1
 
 class BookTestCase(unittest.TestCase):
 	"""unit test case for web interfaces"""
@@ -37,7 +36,6 @@ class BookTestCase(unittest.TestCase):
 		return self.app.post('/book/setBookInfo', data = book_info)
 
 	def test_set_book_info(self):
-		new_book_id = str(uuid1())
 		book_info = {}
 		# book_info['book_id'] = new_book_id
 		book_info['bookname'] = u'erp'
@@ -48,6 +46,10 @@ class BookTestCase(unittest.TestCase):
 		book_info['price'] = 20.73
 		response = self.set_book_info(book_info)
 		assert response.data == 'success'
+
+		book_info['book_id'] = 'wrong_book_id'
+		response = self.set_book_info(book_info)
+		assert response.data == 'failed'
 
 	def set_book_status(self, book_id, status):
 		data = dict(book_id = book_id, status = status)
@@ -108,8 +110,8 @@ class BookTestCase(unittest.TestCase):
 		response = self.get_similar_name(bookname, 2)
 		data = json.loads(response.data)
 		booknames = data['booknames']
-		for name in booknames:
-			print name
+		# for name in booknames:
+		# 	print name
 
 	def search_book(self, keyword, page, pagesize):
 		data = dict(keyword = keyword, page = page, pagesize = pagesize)
@@ -123,6 +125,7 @@ class BookTestCase(unittest.TestCase):
 		data = json.loads(response.data)
 		books = data['books']
 		for book in books:
+			print book['bookname']
 			assert book['bookname'] == u'工程经济学'
 
 if __name__ == '__main__':
