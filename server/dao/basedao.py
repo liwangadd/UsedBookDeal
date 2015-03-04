@@ -233,7 +233,7 @@ class BaseDao(object):
 		""" the type of messages will be set 2, instead of really deleting all
 		messages"""
 		result = self.message.update({Message.USER_ID: user_id},
-			{'$set': {Message.TYPE: 2}}, multi = True)
+			{'$set': {Message.STATUS: 2}}, multi = True)
 		return result['updatedExisting']
 
 	def delete__id(self, db_object):
@@ -259,8 +259,10 @@ class BaseDao(object):
 			db_object.pop('_id')
 			user_id = db_object[User.USER_ID]
 			user = self.user.find_one({User.USER_ID: user_id})
-			db_object[User.USERNAME] = user[User.USERNAME]
-			db_object[User.GENDER] = user[User.GENDER]
+			if user is None:
+				raise Exception('error in join_user_info: can not find user. %s' % db_object)
+			db_object[User.USERNAME] = user.get(User.USERNAME)
+			db_object[User.GENDER] = user.get(User.GENDER)
 			result.append(db_object)
 
 		return result

@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 # coding: utf-8
 
@@ -45,6 +44,8 @@ class BookDao(BaseDao):
 
 	def get_book_info(self, book_id):
 		book = self.book.find_one({Book.BOOK_ID: book_id})
+		if book is None:
+			return None
 		user_id = book[Book.USER_ID]
 		# find the user and get its username and gender
 		user = self.user.find_one({User.USER_ID: user_id})

@@ -66,6 +66,7 @@ def set_book_info():
 		img = img.encode('utf-8')
 		img = base64.decodestring(img)
 		imgs.append(img)
+
 	if book_id == None or book_id == '':
 		# add new book
 		book_id = str(uuid.uuid1())

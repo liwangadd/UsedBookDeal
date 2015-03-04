@@ -8,7 +8,7 @@ sys.setdefaultencoding('utf-8')
 from server.myapp import app
 from uuid import uuid1
 
-class UserTestCase(unittest.TestCase):
+class BookTestCase(unittest.TestCase):
 	"""unit test case for web interfaces"""
 
 	def setUp(self):
@@ -27,7 +27,7 @@ class UserTestCase(unittest.TestCase):
 		data = json.loads(response.data)
 		assert data['book_id'] == self.book_id and data['bookname'] == \
 				u'工程经济学' and data['username'] == u'呵呵' and \
-				data['mobile']=='18742513130' and data['qq'] == '86655569'\
+				data['mobile'] == '15625253639' and data['qq'] == '86655569'\
 				and data['price'] == 236.0
 
 		response = self.get_book_info(self.wrong_book_id)
@@ -54,13 +54,13 @@ class UserTestCase(unittest.TestCase):
 		return self.app.post('/book/setBookStatus', data = data)
 
 	def test_set_book_status(self):
-		status = 2
+		status = 1
 		response = self.set_book_status(self.book_id, status)
-		assert response.data = 'success'
+		assert response.data == 'success'
 
 		response = self.get_book_info(self.book_id)
 		data = json.loads(response.data)
-		assert data['status'] = status
+		assert data['status'] == status
 
 	def get_book_by_user(self, user_id):
 		data = dict(user_id = user_id)
@@ -68,20 +68,24 @@ class UserTestCase(unittest.TestCase):
 
 	def test_get_book_by_user(self):
 		response = self.get_book_by_user(self.user_id)
-		books = json.loads(response.data)
+		data = json.loads(response.data)
+		books = data['books']
 		for book in books:
-			assert book['user_id'] = self.user_id
+			assert book['user_id'] == self.user_id
 
-	def get_book_by_type(self, type):
-		data = dict(type = type)
+	def get_book_by_type(self, type, page, pagesize):
+		data = dict(type = type, page = page, pagesize = pagesize)
 		return self.app.post('/book/getBooksByType', data = data)
 
 	def test_get_book_by_type(self):
 		type = 1
-		response = self.get_book_by_type(type)
-		books = json.loads(response.data)
+		page = 1
+		pagesize = 1
+		response = self.get_book_by_type(type, page, pagesize)
+		data = json.loads(response.data)
+		books = data['books']
 		for book in books:
-			assert book['type'] = type
+			assert book.get('price') != None
 
 	def get_book_by_name(self, bookname):
 		data = dict(bookname = bookname)
@@ -89,9 +93,37 @@ class UserTestCase(unittest.TestCase):
 
 	def test_get_book_by_name(self):
 		bookname = u'工程经济学'
-		books = json.loads(self.get_book_by_name(bookname))
+		response = self.get_book_by_name(bookname)
+		data = json.loads(response.data)
+		books = data['books']
 		for book in books:
-			assert book['bookname'] = bookname
+			assert book['bookname'] == bookname
+
+	def get_similar_name(self, bookname, limit):
+		data = dict(bookname = bookname, limit = limit)
+		return self.app.post('/book/getSimilarBookname', data = data)
+
+	def test_get_similar_name(self):
+		bookname = u'工程经济'
+		response = self.get_similar_name(bookname, 2)
+		data = json.loads(response.data)
+		booknames = data['booknames']
+		for name in booknames:
+			print name
+
+	def search_book(self, keyword, page, pagesize):
+		data = dict(keyword = keyword, page = page, pagesize = pagesize)
+		return self.app.post('/book/searchBook', data = data)
+
+	def test_search_book(self):
+		keyword = '工程经济'
+		page = 1
+		pagesize = 1
+		response = self.search_book(keyword, page, pagesize)
+		data = json.loads(response.data)
+		books = data['books']
+		for book in books:
+			assert book['bookname'] == u'工程经济学'
 
 if __name__ == '__main__':
 	unittest.main()
