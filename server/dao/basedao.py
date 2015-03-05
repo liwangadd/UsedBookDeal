@@ -7,6 +7,7 @@ used for inherited by other data access class '''
 from pymongo import MongoClient
 from gridfs import GridFS
 from bson import ObjectId
+from uuid import uuid1
 from ConfigParser import ConfigParser
 from time import localtime, strftime
 from fields import *
@@ -190,7 +191,13 @@ class BaseDao(object):
 			return True
 		return False
 
-	def insert_system_message(self, message_id, user_id, content):
+	def insert_system_message_to_all(self, content):
+		user_ids = self.user.distinct(User.USER_ID)
+		for user_id in user_ids:
+			message_id = str(uuid1())
+			self.insert_system_message_to_one(message_id, user_id, content)
+
+	def insert_system_message_to_one(self, message_id, user_id, content):
 		user = self.user.find_one({User.USER_ID: user_id})
 		if user == None:
 			return False
@@ -201,7 +208,7 @@ class BaseDao(object):
 		message[Message.USER_ID] = user_id
 		message[Message.TYPE] = Message.SYSTEM_MESSAGE
 		message[Message.CONTENT] = content
-		message[Message.IMG] = user[User.IMG]
+		message[Message.IMG] = user.get(User.IMG)
 		message[Message.STATUS] = 0
 		self.message.insert(message)
 		return True

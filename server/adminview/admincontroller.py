@@ -204,3 +204,31 @@ def insert_default_img():
 @admin_blueprint.route('insertDefaultImgAction', methods=['POST', 'GET'])
 def insert_default_img_action():
 	pass
+
+@admin_blueprint.route('sendMessage', methods=['POST', 'GET'])
+def send_messages():
+	return render_template('sendmessage.html')
+
+@admin_blueprint.route('sendMessagesToAll', methods=['POST', 'GET'])
+def send_messages_to_all():
+	try:
+		content = request.values['content']
+	except:
+		return 'invalid args'
+
+	userdao.insert_system_message_to_all(content)
+	return redirect(url_for('admin.list_users'))
+
+@admin_blueprint.route('sendMessagesToOne', methods=['POST', 'GET'])
+def send_messages_to_one():
+	try:
+		content = request.values['content']
+		user_id = request.values['user_id']
+	except:
+		return 'invalid args'
+
+	message_id = str(uuid.uuid1())
+	if userdao.insert_system_message_to_one(message_id, user_id, content):
+		return redirect(url_for('admin.list_users'))
+	else:
+		return 'invalid user_id'

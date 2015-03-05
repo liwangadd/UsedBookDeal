@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>insert default img</title>
+</head>
+<body>
+
+		<a href="">{{session.admin_id}}</a> |
+
+	<center>
+
+		<br/>
+		<h3>
+			<a href="{{url_for('admin.list_users') }}">user list</a> |
+			<a href="{{url_for('admin.list_books') }}">book list</a> |
+			<a href="{{url_for('admin.list_wishes') }}">wish list</a>
+		</h3>
+		<br/>
+
+		<h4>向所有用户发送系统消息</h4>
+		<form action="{{url_for('admin.send_messages_to_all')}}">
+			消息内容: <input name="content"><br><br>
+			<input type="submit" value="确定">
+		</form>
+
+		<h4>向指定用户发送系统消息</h4>
+		<form action="{{url_for('admin.send_messages_to_one')}}">
+			用户账号: <input name="user_id"><br><br>
+			消息内容: <input name="content"><br><br>
+			<input type="submit" value="确定">
+		</form>
+
+	</center>
+</body>
+</html>
