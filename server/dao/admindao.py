@@ -27,16 +27,25 @@ class AdminDao(BaseDao):
 			{'$set': info})
 		return result['updatedExisting']
 
+	def count_user(self):
+		return self.user.count()
+
 	def list_users(self, page, pagesize):
 		skip = (page - 1) * pagesize
 		users = self.user.find({}).skip(skip).limit(pagesize)
 		return self.cursor_to_list(users)
+
+	def count_wish(self):
+		return self.wish.count()
 
 	def list_wishes(self, page, pagesize, sort = Wish.ADDED_TIME):
 		skip = (page - 1) * pagesize
 		wishes = self.wish.find().sort([(sort, -1)]).skip(skip).\
 				limit(pagesize)
 		return self.cursor_to_list(wishes)
+
+	def count_book(self):
+		return self.book.count()
 
 	def list_books(self, type, sort, page, pagesize):
 		skip = (page - 1) * pagesize

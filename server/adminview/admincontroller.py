@@ -63,7 +63,7 @@ def list_users():
 
 	users = admindao.list_users(page, pagesize)
 	# total_num = users.count()
-	total_num = len(users)
+	total_num = admindao.count_user()
 	total_page = (total_num + pagesize - 1) / pagesize
 	return render_template('userlist.html', users = users,
 		total_page = total_page, page = page)
@@ -91,7 +91,7 @@ def list_wishes():
 
 	wishes = admindao.list_wishes(page, pagesize)
 	# total_num = wishes.count()
-	total_num = len(wishes)
+	total_num = admindao.count_wish()
 	total_page = (total_num + pagesize - 1) / pagesize
 	return render_template('wishlist.html', wishes = wishes,
 		total_page = total_page, page = page)
@@ -142,7 +142,7 @@ def list_books():
 
 	books = admindao.list_books(type, sort, page, pagesize)
 	# total_num = books.count()
-	total_num = len(books)
+	total_num = admindao.count_book()
 	total_page = (total_num + pagesize - 1) / pagesize
 	return render_template('booklist.html', books = books, type = type,
 		sort = sort, page = page, total_page = total_page)
