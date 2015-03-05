@@ -142,7 +142,7 @@ def list_books():
 
 	books = admindao.list_books(type, sort, page, pagesize)
 	# total_num = books.count()
-	total_num = admindao.count_book()
+	total_num = admindao.count_book(type)
 	total_page = (total_num + pagesize - 1) / pagesize
 	return render_template('booklist.html', books = books, type = type,
 		sort = sort, page = page, total_page = total_page)

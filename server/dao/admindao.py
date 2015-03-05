@@ -44,8 +44,8 @@ class AdminDao(BaseDao):
 				limit(pagesize)
 		return self.cursor_to_list(wishes)
 
-	def count_book(self):
-		return self.book.count()
+	def count_book(self, type):
+		return self.book.find({Book.TYPE: type}).count()
 
 	def list_books(self, type, sort, page, pagesize):
 		skip = (page - 1) * pagesize
