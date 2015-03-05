@@ -210,6 +210,7 @@ class BaseDao(object):
 		message[Message.CONTENT] = content
 		message[Message.IMG] = user.get(User.IMG)
 		message[Message.STATUS] = 0
+		message[Message.TIME] = strftime('%F %H:%m', localtime())
 		self.message.insert(message)
 		return True
 
