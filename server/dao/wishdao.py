@@ -62,7 +62,7 @@ class WishDao(BaseDao):
 				imgs.append(img_id)
 		wish_info[Wish.IMGS] = imgs
 
-		time = strftime('%F %H:%m', localtime())
+		time = strftime('%F %T', localtime())
 		wish_info[Wish.ADDED_TIME] = time
 
 		wish_info[Wish.STATUS] = 0

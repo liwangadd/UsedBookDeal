@@ -122,7 +122,7 @@ class BaseDao(object):
 		message[Message.USERNAME] = username
 		message[Message.CONTENT] = content
 		message[Message.STATUS] = 0
-		time = strftime('%F %H:%m', localtime())
+		time = strftime('%F %T', localtime())
 		message[Message.TIME] = time
 
 		book = self.book.find_one({Book.BOOK_ID: object_id})
@@ -171,7 +171,7 @@ class BaseDao(object):
 		message[Message.USERNAME] = username
 		message[Message.TYPE] = Message.WISH_TOKEN
 		message[Message.STATUS] = 0
-		time = strftime('%F %H:%m', localtime())
+		time = strftime('%F %T', localtime())
 		message[Message.TIME] = time
 		wish = self.wish.find_one({Wish.WISH_ID: object_id})
 		if wish != None:
@@ -202,7 +202,7 @@ class BaseDao(object):
 		if user == None:
 			return False
 		message = {}
-		time = strftime('%F %H:%m', localtime())
+		time = strftime('%F %T', localtime())
 		message[Message.TIME] = time
 		message[Message.MESSAGE_ID] = message_id
 		message[Message.USER_ID] = user_id
@@ -210,7 +210,7 @@ class BaseDao(object):
 		message[Message.CONTENT] = content
 		message[Message.IMG] = user.get(User.IMG)
 		message[Message.STATUS] = 0
-		message[Message.TIME] = strftime('%F %H:%m', localtime())
+		message[Message.TIME] = strftime('%F %T', localtime())
 		self.message.insert(message)
 		return True
 

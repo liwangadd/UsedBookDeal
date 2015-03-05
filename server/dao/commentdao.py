@@ -35,7 +35,7 @@ class CommentDao(BaseDao):
 		# return result
 
 	def insert_comment(self, **comment_info):
-		time = strftime('%F %H:%m', localtime())
+		time = strftime('%F %T', localtime())
 		comment_info[Comment.TIME] = time
 		self.comment.insert(comment_info)
 		return True

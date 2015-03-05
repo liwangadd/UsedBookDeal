@@ -27,7 +27,7 @@ class BookDao(BaseDao):
 			imgs.append(img_id)
 		book_info[Book.IMGS] = imgs
 
-		time = strftime('%F %H:%m', localtime())
+		time = strftime('%F %T', localtime())
 		book_info[Book.ADDED_TIME] = time
 
 		book_info[Book.CLICKS] = 0
