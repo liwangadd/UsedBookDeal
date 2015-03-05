@@ -28,8 +28,8 @@ class UserDao(BaseDao):
 		result = self.collection.find_one({User.USER_ID: user_id})
 		if result == None:
 			self.collection.insert({User.USER_ID: user_id, User.PASSWORD:
-				password, User.USERNAME: u'淘书者', User.BOOKS: [],
-				User.WISHES: [], User.GENDER: 2})
+				password, User.USERNAME: u'淘书者', User.MOBILE: user_id,
+				User.BOOKS: [],	User.WISHES: [], User.GENDER: 2})
 			return True
 		else:
 			return False

@@ -27,18 +27,18 @@ class UserTestCase(unittest.TestCase):
 		assert response.data == 'success'
 		response = self.login(self.user_id, '123')
 		assert response.data == 'wrong_password'
-		response = self.login('18840822453', '1234')
+		response = self.login('wrong_user_id', '1234')
 		assert response.data == 'wrong_user_id'
 
-	# def register(self, user_id, password):
-	# 	data = dict(user_id=user_id, password=password)
-	# 	return self.app.post('/user/register', data=data)
+	def register(self, user_id, password):
+		data = dict(user_id=user_id, password=password)
+		return self.app.post('/user/register', data=data)
 
-	# def test_register(self):
-	# 	response = self.register('18840822454', '123456')
-	# 	assert response.data == 'success'
-	# 	response = self.register(self.user_id, '123456')
-	# 	assert response.data == 'conflict_user_id'
+	def test_register(self):
+		response = self.register('18840822453', '123456')
+		assert response.data == 'success'
+		response = self.register(self.user_id, '123456')
+		assert response.data == 'conflict_user_id'
 
 	def get_user_info(self, user_id):
 		data = dict(user_id=user_id)
@@ -58,7 +58,7 @@ class UserTestCase(unittest.TestCase):
 
 	def test_set_user_info(self):
 
-		response = self.set_user_info(user_id='18840822453', username='hehe')
+		response = self.set_user_info(user_id='wrong_user_id', username='hehe')
 		assert response.data == 'failed'
 
 		response = self.set_user_info(user_id='13784397168', username='hehe',
