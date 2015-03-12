@@ -39,7 +39,7 @@ def login_action():
 		session['admin_id'] = admin_id
 		return redirect(url_for('admin.list_users'))
 	else:
-		return render_template('index.html', err_info='wrong id or password')
+		return render_template('index.html',err_info='id or password is wrong')
 
 @admin_blueprint.route('set_info', methods=['GET', 'POST'])
 def set_info():

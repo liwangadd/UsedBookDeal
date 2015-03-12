@@ -16,7 +16,7 @@ class AdminDao(BaseDao):
 		self.book = self.db.book
 
 	def check_login(self, admin_id, password):
-		if self.admin.find({Admin.ADMIN_ID: admin_id,
+		if self.admin.find_one({Admin.ADMIN_ID: admin_id,
 			Admin.PASSWORD: password}):
 			return True
 		else:
