@@ -107,7 +107,8 @@ class BookDao(BaseDao):
 		return cursor
 
 	def get_book_by_name(self, bookname):
-		books = self.book.find({Book.BOOKNAME: bookname}, sort=[(Book.PRICE, pymongo.ASCENDING)])
+		books = self.book.find({Book.BOOKNAME: bookname, Book.STATUS: 0},
+				sort=[(Book.PRICE, pymongo.ASCENDING)])
 		return self.join_user_info(books)
 
 	def get_similar_name(self, bookname, limit):

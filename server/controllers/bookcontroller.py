@@ -109,7 +109,7 @@ def set_book_status():
 	try:
 		book_id = request.values[Book.BOOK_ID]
 		status = int(request.values[Book.STATUS])
-		assert status == 0 or status == 1
+		assert status == 0 or status == 1 or status == 2
 	except:
 		current_app.logger.error('invalid args')
 		return 'failed'

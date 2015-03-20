@@ -2,6 +2,7 @@
 
 ''' define the interfaces of administer '''
 
+from functools import wraps
 from flask import *
 from flask.blueprints import Blueprint
 from ..dao.userdao import userdao
@@ -17,12 +18,13 @@ import uuid, base64
 admin_blueprint = Blueprint('admin', __name__, template_folder='templates')
 
 # @admin_blueprint.before_request
-# def interceptor():
-# 	print str(request.url_rule)
-# 	print (str(request.url_rule == '/admin//'))
-# 	if str(request.url_rule) != '/admin//':
-# 		if session.get('admin_id') is None:
-# 			return redirect(url_for('admin.login'))
+def interceptor(fun):
+	@wraps(fun)
+	def decorated_fun(*args, **kw):
+		if session.get('admin_id') is None:
+			return redirect(url_for('admin.login'))
+		return fun(*args, **kw)
+	return decorated_fun
 
 @admin_blueprint.route('/')
 def login():
@@ -42,6 +44,7 @@ def login_action():
 		return render_template('index.html',err_info='id or password is wrong')
 
 @admin_blueprint.route('set_info', methods=['GET', 'POST'])
+@interceptor
 def set_info():
 	try:
 		admin_id = request.values[Admin.ADMIN_ID]
@@ -51,6 +54,7 @@ def set_info():
 		return 'invalid args'
 
 @admin_blueprint.route('userList')
+@interceptor
 def list_users():
 	try:
 		page = int(request.values['page'])
@@ -69,6 +73,7 @@ def list_users():
 		total_page = total_page, page = page)
 
 @admin_blueprint.route('userInfo')
+@interceptor
 def show_user_info():
 	try:
 		user_id = request.values[User.USER_ID]
@@ -79,6 +84,7 @@ def show_user_info():
 	return render_template('userinfo.html', user = user, messages = messages)
 
 @admin_blueprint.route('wishList')
+@interceptor
 def list_wishes():
 	try:
 		page = int(request.values['page'])
@@ -97,6 +103,7 @@ def list_wishes():
 		total_page = total_page, page = page)
 
 @admin_blueprint.route('wishInfo')
+@interceptor
 def show_wish_info():
 	try:
 		wish_id = request.values[Wish.WISH_ID]
@@ -120,6 +127,7 @@ def show_wish_info():
 		total_page = total_page, page = page)
 
 @admin_blueprint.route('bookList')
+@interceptor
 def list_books():
 	try:
 		page = int(request.values['page'])
@@ -148,6 +156,7 @@ def list_books():
 		sort = sort, page = page, total_page = total_page)
 
 @admin_blueprint.route('bookInfo')
+@interceptor
 def show_book_info():
 	try:
 		book_id = request.values[Book.BOOK_ID]
@@ -170,6 +179,7 @@ def show_book_info():
 	return render_template('bookinfo.html', book = book, comments = comments, total_page = total_page, page = page)
 
 @admin_blueprint.route('searchBook', methods=['POST', 'GET'])
+@interceptor
 def search_book():
 	try:
 		keyword = request.values['keyword']
@@ -206,10 +216,12 @@ def insert_default_img_action():
 	pass
 
 @admin_blueprint.route('sendMessage', methods=['POST', 'GET'])
+@interceptor
 def send_messages():
 	return render_template('sendmessage.html')
 
 @admin_blueprint.route('sendMessagesToAll', methods=['POST', 'GET'])
+@interceptor
 def send_messages_to_all():
 	try:
 		content = request.values['content']
@@ -220,6 +232,7 @@ def send_messages_to_all():
 	return redirect(url_for('admin.list_users'))
 
 @admin_blueprint.route('sendMessagesToOne', methods=['POST', 'GET'])
+@interceptor
 def send_messages_to_one():
 	try:
 		content = request.values['content']

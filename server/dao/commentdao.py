@@ -40,4 +40,7 @@ class CommentDao(BaseDao):
 		self.comment.insert(comment_info)
 		return True
 
+	def delete_comment(self, comment_id):
+		self.comment.remove({Comment.COMMENT_ID: comment_id})
+
 commentdao = CommentDao()

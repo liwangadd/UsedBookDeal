@@ -139,7 +139,8 @@ class BaseDao(object):
 				if user == None:
 					return False
 				message[Message.IMG] = user.get(User.IMG)
-			self.message.insert(message)
+			if message[Message.ANOTHER_USER_ID] != message[Message.USER_ID]:
+				self.message.insert(message)
 			return True
 
 		wish = self.wish.find_one({Wish.WISH_ID: object_id})
@@ -158,7 +159,8 @@ class BaseDao(object):
 				if user == None:
 					return False
 				message[Message.IMG] = user.get(User.IMG)
-			self.message.insert(message)
+			if message[Message.ANOTHER_USER_ID] != message[Message.USER_ID]:
+				self.message.insert(message)
 			return True
 		return False
 

@@ -88,7 +88,9 @@
 		</form>
 
 		<h4>messages:</h4>
-
+		{% if messages|length == 0 %}
+			There is no messages now!
+		{% endif %}
 		<table>
 			{% for message in messages %}
 				<tr>
@@ -115,9 +117,6 @@
 				</tr>
 
 			{% endfor %}
-			{% if '''length(messages)''' == 0 %}
-				There is no messages now!
-			{% endif %}
 		</table>
 
 	</center>

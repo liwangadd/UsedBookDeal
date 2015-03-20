@@ -19,7 +19,9 @@ def make_comment():
 		user_id = request.values[Comment.USER_ID]
 		username = request.values[Comment.USERNAME]
 		content = request.values[Comment.CONTENT]
-		assert object_id != '' and user_id != ''
+		comment_type = int(request.values[Comment.TYPE])
+		assert object_id != '' and user_id != '' and \
+				(comment_type == 0 or comment_type == 1)
 	except:
 		current_app.logger.error('invalid args')
 		return 'failed'
@@ -31,12 +33,17 @@ def make_comment():
 	comment_info[Comment.USER_ID] = user_id
 	comment_info[Comment.USERNAME] = username
 	comment_info[Comment.CONTENT] = content
-	# comment_info[Comment.FLOOR] = floor
+	comment_info[Comment.TYPE] = comment_type
+	try:
+		comment_info[Comment.ORIGINAL_COMMENT_ID] = \
+				request.values[Comment.ORIGINAL_COMMENT_ID]
+	except KeyError:
+		pass
 	commentdao.insert_comment(**comment_info)
 	# add message
 	message_id = str(uuid.uuid1())
 	commentdao.insert_comment_message(message_id, user_id, username,  content, object_id)
-	return 'success'
+	return jsonify(comment_id = comment_id)
 
 @comment_blueprint.route('getComments', methods=['GET', 'POST'])
 def get_comments():
@@ -70,3 +77,14 @@ def get_comments():
 	# fields.append(User.GENDER)
 	# comments = cursor2list(comments, *fields)
 	return jsonify(comments=comments)
+
+@comment_blueprint.route('deleteComment', methods=['GET', 'POST'])
+def delete_comment():
+	try:
+		comment_id = request.values[Comment.COMMENT_ID]
+	except KeyError:
+		current_app.logger.error('invalid args')
+		return 'failed'
+
+	commentdao.delete_comment(comment_id)
+	return 'success'

@@ -15,8 +15,9 @@
 			<input type="submit" value="submit">
 		</form>
 		<br/><br/>
-		{% if err_info == 'wrong id or password' %}
-			<p>wrong id or password!</p>
+		{% if err_info != None %}
+			{{err_info}}
+			<!-- <p>wrong id or password!</p> -->
 		{% endif %}
 	</center>
 </body>

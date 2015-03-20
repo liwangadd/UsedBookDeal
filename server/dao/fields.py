@@ -77,7 +77,10 @@ class Comment(object):
 	TIME = 'time'
 	FLOOR = 'floor'
 	CONTENT = 'content'
-	ALL = [COMMENT_ID, OBJECT_ID, USER_ID, USERNAME, TIME, FLOOR, CONTENT]
+	TYPE = 'type' # 0: general comment, 1: reply
+	ORIGINAL_COMMENT_ID = 'original_comment_id' # the comment which this one is replying to
+	ALL = [COMMENT_ID, OBJECT_ID, USER_ID, USERNAME, TIME, FLOOR, CONTENT,
+			TYPE, ORIGINAL_COMMENT_ID]
 
 class Message(object):
 	"""field names of message collection"""
