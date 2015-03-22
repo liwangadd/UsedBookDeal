@@ -24,7 +24,7 @@ def get_user_img():
 	try:
 		assert img is not None
 	except AssertionError:
-		current_app.logger.error('did not found the image of user(%s)' % user_id)
+		# current_app.logger.error('did not found the image of user(%s)' % user_id)
 		return 'failed'
 	return send_file(img, add_etags=False, mimetype='image/jpeg')
 
@@ -38,7 +38,7 @@ def get_img():
 		return 'failed'
 	img = imagedao.get_img(img_id)
 	if not hasattr(img, 'read'):
-		current_app.logger.error('invalid image file. img_id: %s' % img_id)
+		# current_app.logger.error('invalid image file. img_id: %s' % img_id)
 		return 'failed'
 	return send_file(img, add_etags=False, mimetype='image/jpeg')
 
