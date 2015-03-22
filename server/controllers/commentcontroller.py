@@ -19,12 +19,19 @@ def make_comment():
 		user_id = request.values[Comment.USER_ID]
 		username = request.values[Comment.USERNAME]
 		content = request.values[Comment.CONTENT]
-		comment_type = int(request.values[Comment.TYPE])
-		assert object_id != '' and user_id != '' and \
-				(comment_type == 0 or comment_type == 1)
+		assert object_id != '' and user_id != ''
 	except:
 		current_app.logger.error('invalid args')
 		return 'failed'
+
+	try:
+		comment_type = int(request.values[Comment.TYPE])
+		assert comment_type == 0 or comment_type == 1
+	except:
+		comment_type = 0
+
+	original_comment_id = request.values.get(Comment.ORIGINAL_COMMENT_ID)
+
 	# add comment
 	comment_id = str(uuid.uuid1())
 	comment_info = {}
@@ -34,11 +41,8 @@ def make_comment():
 	comment_info[Comment.USERNAME] = username
 	comment_info[Comment.CONTENT] = content
 	comment_info[Comment.TYPE] = comment_type
-	try:
-		comment_info[Comment.ORIGINAL_COMMENT_ID] = \
-				request.values[Comment.ORIGINAL_COMMENT_ID]
-	except KeyError:
-		pass
+	if original_comment_id != None:
+		  comment_info[Comment.ORIGINAL_COMMENT_ID] = original_comment_id
 	commentdao.insert_comment(**comment_info)
 	# add message
 	message_id = str(uuid.uuid1())

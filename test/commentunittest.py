@@ -16,19 +16,27 @@ class CommentTestCase(unittest.TestCase):
 		self.object_id = 'b14ca33e-833e-11e4-afcb-642737f58199'
 		self.user_id = '18742513130'
 
-	def make_comment(self, object_id, user_id, username, content, type,
-				original_comment_id):
-		data = dict(object_id = object_id, user_id = user_id,
-				username = username, content = content, type = type,
-				original_comment_id =original_comment_id)
+	def make_comment(self, object_id, user_id, username, content, type = None,
+				original_comment_id = None):
+		if type != None:
+			data = dict(object_id = object_id, user_id = user_id,
+					username = username, content = content, type = type,
+					original_comment_id =original_comment_id)
+		else:
+			data = dict(object_id = object_id, user_id = user_id,
+					username = username, content = content)
+
 		return self.app.post('/comment/makeComments', data = data)
 
 	def test_make_and_delete_comment(self):
 		username = u'呵呵'
 		content = u'个人消息测试'
-		response = self.make_comment(self.object_id, self.user_id, username, content, 0, None)
-
+		response = self.make_comment(self.object_id, self.user_id, username, content)
 		comment_id = (json.loads(response.data))['comment_id']
+
+		resp = self.make_comment(self.object_id, self.user_id, username, content, 1, comment_id)
+		assert (json.loads(resp.data))['comment_id'] != None
+
 		response = self.delete_comment(comment_id)
 		assert 'success' == response.data
 
@@ -52,11 +60,6 @@ class CommentTestCase(unittest.TestCase):
 		comment_id = comment_id
 		data = dict(comment_id = comment_id)
 		return self.app.post('comment/deleteComment', data = data)
-
-	def test_delete_comment(self):
-		comment_id = 'c6b32a60-ced7-11e4-adee-642737f58199'
-		response = self.delete_comment(comment_id)
-		assert 'success' == response.data
 
 if __name__ == '__main__':
 	unittest.main()

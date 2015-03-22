@@ -42,5 +42,7 @@ class CommentDao(BaseDao):
 
 	def delete_comment(self, comment_id):
 		self.comment.remove({Comment.COMMENT_ID: comment_id})
+		self.comment.remove({Comment.TYPE: 1, Comment.ORIGINAL_COMMENT_ID: comment_id})
+
 
 commentdao = CommentDao()
