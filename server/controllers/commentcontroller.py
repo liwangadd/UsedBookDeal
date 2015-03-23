@@ -47,7 +47,8 @@ def make_comment():
 	# add message
 	message_id = str(uuid.uuid1())
 	commentdao.insert_comment_message(message_id, user_id, username,  content, object_id)
-	return jsonify(comment_id = comment_id)
+	# return jsonify(comment_id = comment_id)
+	return 'success'
 
 @comment_blueprint.route('getComments', methods=['GET', 'POST'])
 def get_comments():
