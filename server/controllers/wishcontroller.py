@@ -147,7 +147,7 @@ def set_wish_status():
 		user_id = request.values[Wish.USER_ID]
 		username = request.values[Wish.USERNAME]
 		status = int(request.values[Wish.STATUS])
-		assert status == 0 or status == 1 or status == 2 or status = 3
+		assert status == 0 or status == 1 or status == 2 or status == 3
 	except:
 		current_app.logger.error('invalid args')
 		return 'failed'
