@@ -245,3 +245,9 @@ def send_messages_to_one():
 		return redirect(url_for('admin.list_users'))
 	else:
 		return 'invalid user_id'
+
+@admin_blueprint.route('listFeedbacks', methods = ['POST', 'GET'])
+@interceptor
+def list_feedbacks():
+	feedbacks = admindao.list_feedback()
+	return render_template('feedbacklist.html', feedbacks = feedbacks)

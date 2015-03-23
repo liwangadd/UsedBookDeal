@@ -11,9 +11,6 @@ class AdminDao(BaseDao):
 	def __init__(self):
 		super(AdminDao, self).__init__()
 		self.admin = self.db.admin
-		self.user = self.db.user
-		self.wish = self.db.wish
-		self.book = self.db.book
 
 	def check_login(self, admin_id, password):
 		if self.admin.find_one({Admin.ADMIN_ID: admin_id,
@@ -55,5 +52,9 @@ class AdminDao(BaseDao):
 			books = self.book.find({Book.TYPE: type}).sort([(sort, pymongo.DESCENDING)]).skip(skip).limit(pagesize)
 
 		return self.cursor_to_list(books)
+
+	def list_feedback(self):
+		feedbacks = self.feedback.find({})
+		return self.cursor_to_list(feedbacks)
 
 admindao = AdminDao()

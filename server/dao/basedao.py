@@ -26,33 +26,8 @@ class BaseDao(object):
 		self.message = self.db.message
 		self.book = self.db.book
 		self.wish = self.db.wish
+		self.feedback = self.db.feedback
 		self.fs = GridFS(self.db, collection='img_files')
-
-	# def set_img(self, img_id, f):
-	# 	img = self.image.find_one({Image.IMG_ID: img_id})
-	# 	if img == None:
-	# 		return False
-	# 	else:
-	# 		old_f_id = img.get(Image.FILE_ID)
-	# 		new_f_id = self.fs.put(f)
-	# 		new_f_id = unicode(new_f_id)
-	# 		self.image.update({Image.IMG_ID: img_id}, {'$set': {Image.FILE_ID:
-	# 			new_f_id}} )
-	# 		self.fs.delete(ObjectId(old_f_id))
-	# 		return True
-
-	# def set_img_by_object(self, object_id, f):
-	# 	img = self.image.find_one({Image.OBJECT_ID: object_id})
-	# 	if img == None:
-	# 		return False
-	# 	else:
-	# 		old_f_id = img.get(Image.FILE_ID)
-	# 		new_f_id = self.fs.put(f)
-	# 		new_f_id = unicode(new_f_id)
-	# 		self.image.update({Image.OBJECT_ID:object_id},
-	# 			{'$set': {Image.FILE_ID:new_f_id}} )
-	# 		self.fs.delete(old_f_id)
-	# 		return True
 
 	def insert_img(self, img_id, f, object_id, bookname=None, category=1):
 		# file_id = self.fs.put(f, filename=f.name)

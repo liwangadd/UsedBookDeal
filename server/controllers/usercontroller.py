@@ -147,3 +147,15 @@ def clear_messages_by_user():
 	else:
 		current_app.logger.error('no messages found for user: %s' % user_id)
 		return 'failed'
+
+@user_blueprint.route('feedback', methods = ['POST', 'GET'])
+def feedback():
+	try:
+		user_id = request.values[User.USER_ID]
+		content = request.values['content']
+	except KeyError:
+		current_app.logger.error('invalid args')
+		return 'failed'
+	if userdao.insert_feedback(user_id, content):
+		return 'success'
+	return 'failed'

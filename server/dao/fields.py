@@ -108,3 +108,10 @@ class Admin(object):
 	"""field names of admin collection"""
 	ADMIN_ID = 'admin_id'
 	PASSWORD = 'password'
+
+class Feedback(object):
+	"""field names of feedback collection"""
+	USER_ID = 'user_id'
+	USERNAME = 'username'
+	TIME = 'time'
+	CONTENT = 'content'

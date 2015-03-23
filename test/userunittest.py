@@ -101,5 +101,14 @@ class UserTestCase(unittest.TestCase):
 		messages = data['messages']
 		assert len(messages) == 0
 
+	def feedback(self, user_id, content):
+		data = dict(user_id = user_id, content = content)
+		return self.app.post('/user/feedback', data = data)
+
+	def test_feedback(self):
+		content = u'用户反馈'
+		response = self.feedback(self.user_id, content)
+		assert 'success' == response.data
+
 if __name__ == '__main__':
 	unittest.main()

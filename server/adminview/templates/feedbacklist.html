@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>user list</title>
+</head>
+<body>
+<a href="">{{session.admin_id}}</a> |
+<a href="{{url_for('admin.send_messages')}}">发送系统消息</a> |
+用户反馈
+	<center>
+
+		<br/>
+		<h3>
+			<a href="{{url_for('admin.list_users')}}">user list</a> |
+			<a href="{{url_for('admin.list_books') }}">book list</a> |
+			<a href="{{url_for('admin.list_wishes') }}">wish list</a>
+		</h3>
+		<br/>
+
+		{% if feedbacks|length != 0 %}
+		<table border="1">
+			<tr>
+				<td>user_id</td>
+				<td>username</td>
+				<td>time</td>
+				<td>content</td>
+			</tr>
+			{% for feedback in feedbacks %}
+			<tr>
+				<td>{{feedback.user_id}}</td>
+				<td>{{feedback.username}}</td>
+				<td>{{feedback.time}}</td>
+				<td>{{feedback.content}}</td>
+			</tr>
+			{% endfor %}
+		</table>
+
+		<br/>
+
+		{% else %}
+			<p>There is no feedbacks now!</p>
+		{% endif %}
+
+	</center>
+
+</body>
+</html>
