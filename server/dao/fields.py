@@ -55,7 +55,7 @@ class Wish(object):
 	WEIXIN = 'weixin'
 	ADDED_TIME = 'added_time'
 	CLICKS = 'clicks'
-	STATUS = 'status'  # 0: default, not achieved, 1: achieved, 2: someone want to help achieve it but it's not done yet
+	STATUS = 'status'  # 0: default, not achieved, 1: achieved, 2: someone want to help achieve it but it's not done yet, 3: removed
 	ALL = [WISH_ID, BOOKNAME, USER_ID, USERNAME, TYPE, IMGS, DESCRIPTION, MOBILE, QQ, WEIXIN, ADDED_TIME, CLICKS, STATUS]
 
 class Image(object):
