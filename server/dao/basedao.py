@@ -163,7 +163,7 @@ class BaseDao(object):
 				user = self.user.find_one({User.USER_ID: wish[Wish.USER_ID]})
 				if user == None:
 					return False
-				message[Message.IMG] = user[User.IMG]
+				message[Message.IMG] = user.get(User.IMG)
 			self.message.insert(message)
 			return True
 		return False

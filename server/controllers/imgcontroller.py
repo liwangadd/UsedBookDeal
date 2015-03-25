@@ -32,7 +32,6 @@ def get_user_img():
 def get_img():
 	try:
 		img_id = request.values[Image.IMG_ID]
-		assert img_id != ''
 	except:
 		current_app.logger.error('invalid args')
 		return 'failed'
