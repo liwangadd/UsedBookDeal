@@ -94,7 +94,12 @@ class XapianTool(object):
 
 		self.enquire.set_query(query)
 		offset = (page - 1) * limit
-		matches = self.enquire.get_mset(offset, limit)
+		try:
+			matches = self.enquire.get_mset(offset, limit)
+		except DocNotFoundError:
+			# print 'DocNotFoundError'
+			# print keywords, page, limit
+			return []
 
 		book_ids = []
 		for m in matches:

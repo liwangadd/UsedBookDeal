@@ -11,6 +11,7 @@ class User(object):
 	GENDER = 'gender'  # 1: male, 0: female
 	UNIVERSITY = 'university'
 	SCHOOL = 'school'
+	YEAR = 'year'  # year of attendance
 	IMG = 'img'
 	MOBILE = 'mobile'
 	QQ = 'qq'
@@ -29,7 +30,8 @@ class Book(object):
 	BOOKNAME = 'bookname'
 	IMGS = 'imgs'
 	PRICE = 'price'
-	TYPE = 'type'
+	TYPE = 'type'  # 1: 教材资料, 2: 英语强化, 3: 日语强化, 4: 技术养成, 5: 考研相关, 6: 休闲阅读
+
 	NEWNESS = 'newness'
 	AUDIENCE = 'audience'
 	DESCRIPTION = 'description'
