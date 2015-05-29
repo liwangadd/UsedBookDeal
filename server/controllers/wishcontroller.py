@@ -35,11 +35,39 @@ def list_wishes():
 		order_by = Wish.ADDED_TIME
 
 	wishes = wishdao.list_wishes(status, wishtype, order_by, page, pagesize)
-	# fields = Wish.ALL
-	# fields.append(User.USERNAME)
-	# fields.append(User.GENDER)
-	# wishes = cursor2list(wishes, *fields)
 	return jsonify(wishes=wishes)
+
+@wish_blueprint.route('listWishesV1_5', methods = ['GET', 'POST'])
+def list_wishes_v1_5():
+	try:
+		page = int(request.values['page'])
+		pagesize = int(request.values['pagesize'])
+		university = request.values[User.UNIVERSITY]
+	except:
+		current_app.logger.error('invalid args')
+		return 'failed'
+
+	try:
+		order_by = request.values['order_by']
+	except KeyError:
+		order_by = Wish.PRICE
+	if order_by != User.SCHOOL and order_by != Wish.PRICE and order_by != \
+			User.GENDER:
+		current_app.logger.error('invalid args')
+		return 'failed'
+
+	if order_by == User.SCHOOL:
+		try:
+			school = request.values[User.SCHOOL]
+		except KeyError:
+			current_app.logger.error('invalid args')
+			return 'failed'
+	else:
+		school = None
+
+	wishes = wishdao.list_wishes_v1_5(university, order_by, school, page,
+			pagesize)
+	return jsonify(wishes = wishes)
 
 @wish_blueprint.route('getWishInfo', methods=['GET', 'POST'])
 def get_wish_info():
@@ -57,11 +85,6 @@ def get_wish_info():
 		current_app.logger.error('error in getWishInfo: invalid wish_id: %s' % wish_id)
 		return 'failed'
 
-	# fields = Wish.ALL
-	# fields.append(User.USERNAME)
-	# fields.append(User.GENDER)
-
-	# wish = dbobject2dict(wish, *fields)
 	return jsonify(wish)
 
 @wish_blueprint.route('getWishesByUser', methods=['GET', 'POST'])
@@ -144,8 +167,8 @@ def set_wish_info():
 def set_wish_status():
 	try:
 		wish_id = request.values[Wish.WISH_ID]
-		user_id = request.values[Wish.USER_ID]
-		username = request.values[Wish.USERNAME]
+		user_id = request.values[User.USER_ID]
+		username = request.values[User.USERNAME]
 		status = int(request.values[Wish.STATUS])
 		assert status == 0 or status == 1 or status == 2 or status == 3
 	except:

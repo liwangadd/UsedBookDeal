@@ -46,13 +46,7 @@ class BookDao(BaseDao):
 		book = self.book.find_one({Book.BOOK_ID: book_id})
 		if book is None:
 			return None
-		user_id = book[Book.USER_ID]
-		# find the user and get its username and gender
-		user = self.user.find_one({User.USER_ID: user_id})
-		book[User.USERNAME] = user.get(User.USERNAME)
-		book[User.GENDER] = user.get(User.GENDER)
-		book = self.delete__id(book)
-		return book
+		return self.join_user_info(book)
 
 	def set_book_info(self, book_id, files, **book_info):
 		if files != None and files != []:
@@ -70,8 +64,6 @@ class BookDao(BaseDao):
 	def set_book_status(self, book_id, status):
 		result = self.book.update({Book.BOOK_ID: book_id}, \
 			{'$set':{Book.STATUS: status} })
-		# if status == 1:
-		# 	xapian_tool.delete_document(book_id)
 		return result['updatedExisting']
 
 	def get_book_by_user(self, user_id):
@@ -94,17 +86,43 @@ class BookDao(BaseDao):
 				{'$skip': skip },
 				{'$limit': pagesize}
 		]
-		result = self.book.aggregate(pipeline)
-		cursor = result['result']
-		for unit in cursor:
-			book = self.book.find_one({Book.BOOKNAME: unit['_id']},
-					sort = [(Book.PRICE, pymongo.ASCENDING)])
 
+		cursor = self.book.aggregate(pipeline)
+		result = []
+		for unit in cursor:
+			unit[Book.BOOKNAME] = unit['_id']
+			unit.pop('_id')
+
+			book = self.book.find_one({Book.BOOKNAME: unit[Book.BOOKNAME]},
+					sort = [(Book.PRICE, pymongo.ASCENDING)])
 			try:
 				unit['img'] = book[Book.IMGS][0]
 			except:
 				unit['img'] = None
-		return cursor
+			result.append(unit)
+		return result
+
+	def get_book_by_type_v1_5(self, type_v1_5, university, order_by, audience,
+			page, pagesize):
+		if order_by != User.GENDER:
+			user_ids = self.user.distinct(User.USER_ID, {User.UNIVERSITY: university})
+		else:
+			user_ids = self.user.distinct(User.USER_ID, {User.UNIVERSITY: university, User.GENDER: 0})
+
+		criteria = {Book.USER_ID: {'$in': user_ids}}
+		if type_v1_5 != 0:
+			criteria[Book.TYPE_V1_5] = type_v1_5
+
+		if audience != None and audience != 'null':
+			criteria[Book.AUDIENCE] = audience
+
+		skip = (page - 1) * pagesize
+
+		if order_by == User.GENDER:
+			books = self.book.find(criteria, skip = skip, limit = pagesize)
+		else:
+			books = self.book.find(criteria, skip = skip, limit = pagesize, sort = [(order_by, pymongo.DESCENDING)])
+		return self.join_user_info(books)
 
 	def get_book_by_name(self, bookname):
 		books = self.book.find({Book.BOOKNAME: bookname, Book.STATUS: 0},

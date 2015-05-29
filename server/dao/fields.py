@@ -8,57 +8,65 @@ class User(object):
 	USER_ID = 'user_id'
 	USERNAME = 'username'
 	PASSWORD = 'password'
-	GENDER = 'gender'  # 1: male, 0: female
+	GENDER = 'gender'  # 1: male, 0: female, 2: privacy
 	UNIVERSITY = 'university'
 	SCHOOL = 'school'
-	YEAR = 'year'  # year of attendance
+	YEAR = 'year'  # year of attendence, added in v1.5
 	IMG = 'img'
 	MOBILE = 'mobile'
 	QQ = 'qq'
 	WEIXIN = 'weixin'
 	BOOKS = 'books'
 	WISHES = 'wishes'
-	ALL = [USER_ID, USERNAME, PASSWORD, GENDER, UNIVERSITY, SCHOOL, IMG,
-		MOBILE, QQ, WEIXIN, BOOKS, WISHES]
+	ALL = [USER_ID, USERNAME, PASSWORD, GENDER, UNIVERSITY, SCHOOL, YEAR, IMG,
+			MOBILE, QQ, WEIXIN, BOOKS, WISHES]
 
 class Book(object):
 	"""field names of book collection"""
 	BOOK_ID = 'book_id'
 	USER_ID = 'user_id'
-	USERNAME = 'username'
+	# USERNAME = 'username'
 	ADDED_TIME = 'added_time'
 	BOOKNAME = 'bookname'
 	IMGS = 'imgs'
 	PRICE = 'price'
 	TYPE = 'type'  # 1: 教材资料, 2: 英语强化, 3: 日语强化, 4: 技术养成, 5: 考研相关, 6: 休闲阅读
-
+	TYPE_V1_5 = 'type_v1_5'  # added in v1.5
 	NEWNESS = 'newness'
 	AUDIENCE = 'audience'
 	DESCRIPTION = 'description'
 	CLICKS = 'clicks'
-	MOBILE = 'mobile'
-	QQ = 'qq'
-	WEIXIN = 'weixin'
+	SCORE = 'score'  # added in v1.5, score from douban
+	INTRODUCTION = 'introduction'  # added in v1.5, introduction from douban
+	TAGS = 'tags'   # added in v1.5, tags from douban
+	ORIGINAL_PRICE = 'original_price'  # added in v1.5, original price from douban
+	# MOBILE = 'mobile'
+	# QQ = 'qq'
+	# WEIXIN = 'weixin'
 	STATUS = 'status'  # 0: default, not saled , 1: saled, 2: removed
-	ALL = [BOOK_ID, USER_ID, USERNAME, ADDED_TIME, BOOKNAME, IMGS, PRICE, TYPE,
-		NEWNESS, AUDIENCE, DESCRIPTION, CLICKS, MOBILE, QQ, WEIXIN, STATUS]
+	ALL = [BOOK_ID, USER_ID, ADDED_TIME, BOOKNAME, IMGS, PRICE, TYPE,
+		TYPE_V1_5, NEWNESS, AUDIENCE, DESCRIPTION, CLICKS, SCORE, INTRODUCTION,
+		TAGS, ORIGINAL_PRICE,  STATUS]
 
 class Wish(object):
 	"""field name of wish collection"""
 	WISH_ID = 'wish_id'
 	BOOKNAME = 'bookname'
 	USER_ID = 'user_id'
-	USERNAME = 'username'
+	# USERNAME = 'username'
+	REWARD = 'reward'
+	PRICE = 'price'
 	TYPE = 'type'
 	IMGS = 'imgs'
 	DESCRIPTION = 'description'
-	MOBILE = 'mobile'
-	QQ = 'qq'
-	WEIXIN = 'weixin'
+	# MOBILE = 'mobile'
+	# QQ = 'qq'
+	# WEIXIN = 'weixin'
 	ADDED_TIME = 'added_time'
 	CLICKS = 'clicks'
-	STATUS = 'status'  # 0: default, not achieved, 1: achieved, 2: someone want to help achieve it but it's not done yet, 3: removed
-	ALL = [WISH_ID, BOOKNAME, USER_ID, USERNAME, TYPE, IMGS, DESCRIPTION, MOBILE, QQ, WEIXIN, ADDED_TIME, CLICKS, STATUS]
+	STATUS = 'status'  # 0: default, not achieved, 1: achieved, 2: someone want to help achieve it but it's not done yet
+	ALL = [WISH_ID, BOOKNAME, USER_ID, REWARD, PRICE, TYPE, IMGS, DESCRIPTION,
+			ADDED_TIME, CLICKS, STATUS]
 
 class Image(object):
 	"""field names of image collection"""

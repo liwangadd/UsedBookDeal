@@ -5,6 +5,7 @@
 used for inherited by other data access class '''
 
 from pymongo import MongoClient
+from pymongo.cursor import Cursor
 from gridfs import GridFS
 from bson import ObjectId
 from uuid import uuid1
@@ -236,20 +237,37 @@ class BaseDao(object):
 			result.append(db_object)
 		return result
 
-	def join_user_info(self, cursor):
-		# transfer cursor to list and join user information
-		result = []
+	def join_user_info(self, book):
 
-		for db_object in cursor:
-			db_object.pop('_id')
-			user_id = db_object[User.USER_ID]
+		# if book is a Cursor or a list,  transfer it to list and join user information
+		if isinstance(book, Cursor) or isinstance(book, list):
+			result = []
+			for db_object in book:
+				db_object.pop('_id')
+				user_id = db_object[User.USER_ID]
+				user = self.user.find_one({User.USER_ID: user_id})
+				if user is None:
+					raise Exception('error in join_user_info: can not find user. %s' % db_object)
+				db_object[User.USERNAME] = user.get(User.USERNAME)
+				db_object[User.GENDER] = user.get(User.GENDER)
+				db_object[User.UNIVERSITY] = user.get(User.UNIVERSITY)
+				db_object[User.SCHOOL] = user.get(User.SCHOOL)
+				result.append(db_object)
+			return result
+		else:
+			result = {}
+			for k, v in book.items():
+				if k != '_id':
+					result[k] = v
+
+			user_id = book[User.USER_ID]
 			user = self.user.find_one({User.USER_ID: user_id})
 			if user is None:
-				raise Exception('error in join_user_info: can not find user. %s' % db_object)
-			db_object[User.USERNAME] = user.get(User.USERNAME)
-			db_object[User.GENDER] = user.get(User.GENDER)
-			result.append(db_object)
-
-		return result
+				raise Exception('error in join_user_info: can not find user. %s' % book)
+			result[User.USERNAME] = user.get(User.USERNAME)
+			result[User.GENDER] = user.get(User.GENDER)
+			result[User.UNIVERSITY] = user.get(User.UNIVERSITY)
+			result[User.SCHOOL] = user.get(User.SCHOOL)
+			return result
 
 basedao = BaseDao()

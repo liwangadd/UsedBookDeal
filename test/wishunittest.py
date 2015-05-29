@@ -13,8 +13,8 @@ class WishTestCase(unittest.TestCase):
 	def setUp(self):
 		app.config['TESTING'] = True
 		self.app = app.test_client()
-		self.wish_id = 'b14ca33e-833e-11e4-afcb-642737f58199'
-		self.user_id = '18742513130'
+		self.wish_id = '63e14b24-c85b-11e4-b073-00163e003879'
+		self.user_id = '18640934580'
 
 	def list_wishes(self, page, pagesize, wishtype):
 		data = dict(page = page, pagesize = pagesize, type = wishtype)
@@ -61,6 +61,30 @@ class WishTestCase(unittest.TestCase):
 
 		response = self.set_wish_info(wish_id = 'wrong_wish_id', type = 2)
 		assert response.data == 'failed'
+
+		wish_info['type_v1_5'] = 1
+		wish_info['user_id'] = '18840823333'
+		del wish_info['type']
+		response = self.set_wish_info(**wish_info)
+		assert response.data == 'success'
+
+	def list_wishes_v1_5(self, type_v1_5, university, order_by, page,pagesize):
+		data = dict(type_v1_5 = type_v1_5, university = university,
+				order_by = order_by, page = page, pagesize = pagesize)
+		return self.app.post('/wish/listWishesV1_5', data = data)
+
+	def test_list_wishes_v1_5(self):
+		type_v1_5 = 0
+		university = u'大连理工大学'
+		order_by = 'added_time'
+		page = 1; pagesize = 5;
+		response = self.list_wishes_v1_5(type_v1_5, university, order_by,
+				page, pagesize)
+		data = json.loads(response.data)
+		wishes = data['wishes']
+		assert len(wishes) <= 5 and len(wishes) > 0
+		# for wish in wishes:
+			# assert wish['type'] == wishtype
 
 	def set_wish_status(self, wish_id, user_id, username, status):
 		data = dict(wish_id = wish_id, user_id = user_id, username = username, status = status)

@@ -18,13 +18,14 @@ class UserDao(BaseDao):
 		result = self.user.find_one({User.USER_ID: user_id})
 		if result is not None:
 			if result[User.PASSWORD] == password:
-				return True
+				return 'success'
 			else:
 				return 'wrong_password'
 		else:
 			return 'wrong_user_id'
 
 	def insert_user(self, user_id, password):
+		# set mobile as user_id and user's name as '淘书者' by default
 		result = self.user.find_one({User.USER_ID: user_id})
 		if result == None:
 			self.user.insert({User.USER_ID: user_id, User.PASSWORD:
@@ -37,6 +38,18 @@ class UserDao(BaseDao):
 	def get_user_info(self, user_id):
 		result = self.user.find_one({User.USER_ID: user_id})
 		return self.delete__id(result)
+
+	def is_university_known(self, user_id):
+		user = self.user.find_one({User.USER_ID: user_id})
+		if user is None:
+			return 'unregistered'
+
+		university = user.get(User.UNIVERSITY)
+		school = user.get(User.SCHOOL)
+		if university is not None and school is not None:
+			return 'true'
+		else:
+			return 'false'
 
 	def set_user_info(self, user_id, **kw):
 		if kw == {}:
