@@ -175,12 +175,15 @@ def get_book_by_type_v1_5():
 		type_v1_5 = int(request.values[Book.TYPE_V1_5])
 		university = request.values[User.UNIVERSITY]
 		assert type_v1_5 >= 0 and type_v1_5 <= 7
-		audience = request.values[Book.AUDIENCE]
 		page = int(request.values['page'])
 		pagesize = int(request.values['pagesize'])
 	except:
 		current_app.logger.error('invalid args')
 		return 'failed'
+	try:
+		audience = request.values[Book.AUDIENCE]
+	except KeyError:
+		audience = None
 
 	# order_by is set added_time by default
 	try:
@@ -188,7 +191,8 @@ def get_book_by_type_v1_5():
 	except KeyError:
 		order_by = Book.ADDED_TIME
 	if order_by != Book.ADDED_TIME and order_by != Book.CLICKS and \
-			order_by != User.GENDER and order_by != Book.PRICE:
+			order_by != User.GENDER and order_by != Book.PRICE and \
+			order_by!= Book.SCORE:
 		current_app.logger.error('invalid arg(order_by: %s)' % order_by)
 		return 'failed'
 

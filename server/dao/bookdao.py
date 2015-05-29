@@ -113,7 +113,7 @@ class BookDao(BaseDao):
 		if type_v1_5 != 0:
 			criteria[Book.TYPE_V1_5] = type_v1_5
 
-		if audience != None and audience != 'null':
+		if audience != None and audience != 'null' and audience != '':
 			criteria[Book.AUDIENCE] = audience
 
 		skip = (page - 1) * pagesize
