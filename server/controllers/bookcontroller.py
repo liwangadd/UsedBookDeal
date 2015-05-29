@@ -193,6 +193,21 @@ def get_book_by_type_v1_5():
 	books = bookdao.get_book_by_type_v1_5(type_v1_5, university, order_by, audience, page, pagesize)
 	return jsonify(books = books)
 
+@book_blueprint.route('HomePage', methods = ['GET', 'POST'])
+def home_page():
+	try:
+		university = request.values[User.UNIVERSITY]
+	except:
+		current_app.logger.error('invalid arg(order_by: %s)' % order_by)
+		return 'failed'
+
+	books = bookdao.get_book_by_type_v1_5(0, university, Book.ADDED_TIME,
+			None, 1, 2)
+	books2 = bookdao.get_book_by_type_v1_5(0, university, Book.CLICKS, None,
+			1, 2)
+	books.extend(books2)
+	return jsonify(books = books)
+
 @book_blueprint.route('getRecommendedBooks', methods = ['GET', 'POST'])
 def get_recommended_books():
 	try:

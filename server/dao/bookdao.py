@@ -109,7 +109,7 @@ class BookDao(BaseDao):
 		else:
 			user_ids = self.user.distinct(User.USER_ID, {User.UNIVERSITY: university, User.GENDER: 0})
 
-		criteria = {Book.USER_ID: {'$in': user_ids}}
+		criteria = {Book.USER_ID: {'$in': user_ids}, Book.STATUS: 0}
 		if type_v1_5 != 0:
 			criteria[Book.TYPE_V1_5] = type_v1_5
 
