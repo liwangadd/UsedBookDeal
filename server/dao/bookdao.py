@@ -119,9 +119,18 @@ class BookDao(BaseDao):
 		skip = (page - 1) * pagesize
 
 		if order_by == User.GENDER:
-			books = self.book.find(criteria, skip = skip, limit = pagesize)
+			books = self.book.find(criteria, skip = skip, limit = pagesize,
+				sort = [(Book.ADDED_TIME, pymongo.DESCENDING)])
+		elif order_by == Book.PRICE:
+			books = self.book.find(criteria, skip = skip, limit = pagesize,
+				sort = [(Book.PRICE, pymongo.ASCENDING)])
 		else:
 			books = self.book.find(criteria, skip = skip, limit = pagesize, sort = [(order_by, pymongo.DESCENDING)])
+		return self.join_user_info(books)
+
+	def get_recommended_books(self, page, pagesize):
+		skip = (page - 1) * pagesize
+		books = self.book.find({}, skip = skip, limit = pagesize)
 		return self.join_user_info(books)
 
 	def get_book_by_name(self, bookname):

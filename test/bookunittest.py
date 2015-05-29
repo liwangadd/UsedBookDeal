@@ -126,6 +126,17 @@ class BookTestCase(unittest.TestCase):
 		books = data['books']
 		assert len(books) == 0
 
+	def get_recommended_books(self, page, pagesize):
+		data = dict(page = page, pagesize = pagesize)
+		return self.app.post('/book/getRecommendedBooks', data = data)
+
+	def test_get_recommended_books(self):
+		page = 1; pagesize = 5
+		response = self.get_recommended_books(page, pagesize)
+		data = json.loads(response.data)
+		books = data['books']
+		assert len(books) > 0 and len(books) <= 5
+
 	def get_book_by_name(self, bookname):
 		data = dict(bookname = bookname)
 		return self.app.post('/book/getBooksByName', data = data)

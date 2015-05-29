@@ -188,11 +188,24 @@ def get_book_by_type_v1_5():
 	except KeyError:
 		order_by = Book.ADDED_TIME
 	if order_by != Book.ADDED_TIME and order_by != Book.CLICKS and \
-			order_by != User.GENDER:
+			order_by != User.GENDER and order_by != Book.PRICE:
 		current_app.logger.error('invalid arg(order_by: %s)' % order_by)
 		return 'failed'
 
 	books = bookdao.get_book_by_type_v1_5(type_v1_5, university, order_by, audience, page, pagesize)
+	return jsonify(books = books)
+
+@book_blueprint.route('getRecommendedBooks', methods = ['GET', 'POST'])
+def get_recommended_books():
+	try:
+		page = int(request.values['page'])
+		pagesize = int(request.values['pagesize'])
+	except:
+		current_app.logger.error('invalid args')
+		return 'failed'
+
+	books = bookdao.get_recommended_books(page, pagesize)
+
 	return jsonify(books = books)
 
 @book_blueprint.route('getBooksByName', methods=['GET', 'POST'])
