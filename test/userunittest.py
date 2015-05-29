@@ -11,12 +11,22 @@ class UserTestCase(unittest.TestCase):
 	def setUp(self):
 		app.config['TESTING'] = True
 		self.app = app.test_client()
-		self.user_id = '18742513130'
-		self.password = '1234'
+		self.user_id = '18840823333'
+		self.password = '123456'
 
 	def test_root_url(self):
 		response = self.app.get('/')
-		assert 'hello' == response.data
+		assert 'hello, world!' == response.data
+
+	def register(self, user_id, password):
+		data = dict(user_id=user_id, password=password)
+		return self.app.post('/user/register', data=data)
+
+	def test_register(self):
+		# response = self.register(self.user_id, self.password)
+		# assert response.data == 'success'
+		response = self.register('18840824301', '123456')
+		assert response.data == 'conflict_user_id'
 
 	def login(self, user_id, password):
 		data = dict(user_id=user_id, password=password)
@@ -27,18 +37,8 @@ class UserTestCase(unittest.TestCase):
 		assert response.data == 'success'
 		response = self.login(self.user_id, '123')
 		assert response.data == 'wrong_password'
-		response = self.login('wrong_user_id', '1234')
+		response = self.login('wrong_user_id', '123456')
 		assert response.data == 'wrong_user_id'
-
-	def register(self, user_id, password):
-		data = dict(user_id=user_id, password=password)
-		return self.app.post('/user/register', data=data)
-
-	def test_register(self):
-		response = self.register('18840822453', '123456')
-		assert response.data == 'success'
-		response = self.register(self.user_id, '123456')
-		assert response.data == 'conflict_user_id'
 
 	def get_user_info(self, user_id):
 		data = dict(user_id=user_id)
@@ -47,10 +47,9 @@ class UserTestCase(unittest.TestCase):
 	def test_get_user_info(self):
 		response = self.get_user_info(self.user_id)
 		user = json.loads(response.data)
-		assert user['user_id'] == self.user_id and user['password'] == \
-				self.password and user['mobile'] == self.user_id
+		assert user['user_id'] == self.user_id and user['mobile'] == self.user_id and user['gender'] == 2
 
-		response = self.get_user_info('13784397167')
+		response = self.get_user_info('wrong_user_id')
 		assert response.data == 'failed'
 
 	def set_user_info(self, **userinfo):
@@ -61,14 +60,30 @@ class UserTestCase(unittest.TestCase):
 		response = self.set_user_info(user_id='wrong_user_id', username='hehe')
 		assert response.data == 'failed'
 
-		response = self.set_user_info(user_id='13784397168', username='hehe',
-			mobile='13784397168')
+		response = self.set_user_info(user_id=self.user_id, username='hehe',
+			mobile=self.user_id, university=u'大连理工大学',
+			school=u'软件学院')
 		assert response.data == 'success'
 
-		response = self.get_user_info('13784397168')
+		response = self.get_user_info(self.user_id)
 		data = json.loads(response.data)
-		assert data['user_id'] == '13784397168' and data['username'] == 'hehe'\
-				and data['mobile'] == '13784397168'
+		assert data['user_id'] == self.user_id and data['username'] == 'hehe'\
+				and data['mobile'] == self.user_id and data['university'] == \
+				u'大连理工大学' and data['school'] == u'软件学院'
+
+	def is_university_known(self, user_id):
+		data = dict(user_id = user_id)
+		return self.app.post('/user/isUniversityKonwn', data = data)
+
+	def test_is_university_known(self):
+		response = self.is_university_known(self.user_id)
+		assert response.data == 'true'
+
+		response = self.is_university_known('18840824301')
+		assert response.data == 'false'
+
+		response = self.is_university_known('wrong_user_id')
+		assert response.data == 'unregistered'
 
 	def get_user_message(self, user_id):
 		data = dict(user_id=user_id)
@@ -77,26 +92,26 @@ class UserTestCase(unittest.TestCase):
 	def test_get_messages(self):
 		# calling method wish wrong user_id will return no 'failed' but empty
 		# list of messages
-		response = self.get_user_message('13784397167')
+		response = self.get_user_message(self.user_id)
 		data = json.loads(response.data)
 		assert len(data['messages']) == 0
 
-		response = self.get_user_message(self.user_id)
+		response = self.get_user_message('18763823371')
 		data = json.loads(response.data)
 		messages = data['messages']
 		assert len(messages) != 0
 		for message in messages:
-			assert message['user_id'] == self.user_id
+			assert message['user_id'] == '18763823371'
 
 	def clear_messages_by_user(self, user_id):
 		data = dict(user_id = user_id)
 		return self.app.post('/user/clearMessages', data = data)
 
 	def test_clear_messages(self):
-		response = self.clear_messages_by_user(self.user_id)
+		response = self.clear_messages_by_user('15242605375')
 		assert response.data == 'success'
 
-		response = self.get_user_message(self.user_id)
+		response = self.get_user_message('15242605375')
 		data = json.loads(response.data)
 		messages = data['messages']
 		assert len(messages) == 0

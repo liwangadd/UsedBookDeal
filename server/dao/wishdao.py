@@ -28,16 +28,26 @@ class WishDao(BaseDao):
 				limit=pagesize)
 
 		return self.join_user_info(wishes)
-		# result = []
 
-		# for wish in wishes:
-		# 	user_id = wish[Wish.USER_ID]
-		# 	user = self.user.find_one({User.USER_ID: user_id})
-		# 	wish[User.USERNAME] = user.get(User.USERNAME)
-		# 	wish[User.GENDER] = user.get(User.GENDER)
-		# 	result.append(wish)
+	def list_wishes_v1_5(self, university, order_by, school, page, pagesize):
+		criteria = {User.UNIVERSITY: university}
+		if order_by == User.GENDER:
+			criteria[User.GENDER] = 0
+		elif order_by == User.SCHOOL:
+			criteria[User.SCHOOL] = school
 
-		# return result
+		user_ids = self.user.distinct(User.USER_ID, criteria)
+
+		skip = (page - 1) * pagesize
+
+		if order_by == Wish.PRICE:
+			wishes = self.wish.find({Wish.USER_ID: {'$in': user_ids}},
+					skip = skip, limit = pagesize,
+					sort = [(Wish.PRICE, pymongo.DESCENDING)])
+		else:
+			wishes = self.wish.find({Wish.USER_ID: {'$in': user_ids}}, skip = skip, limit = pagesize)
+
+		return self.join_user_info(wishes)
 
 	def get_wish_info(self, wish_id):
 		wish = self.wish.find_one({Wish.WISH_ID: wish_id})

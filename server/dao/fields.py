@@ -11,7 +11,6 @@ class User(object):
 	GENDER = 'gender'  # 1: male, 0: female, 2: privacy
 	UNIVERSITY = 'university'
 	SCHOOL = 'school'
-	MAJOR = 'major'  # added in v1.5
 	YEAR = 'year'  # year of attendence, added in v1.5
 	IMG = 'img'
 	MOBILE = 'mobile'
@@ -19,8 +18,8 @@ class User(object):
 	WEIXIN = 'weixin'
 	BOOKS = 'books'
 	WISHES = 'wishes'
-	ALL = [USER_ID, USERNAME, PASSWORD, GENDER, UNIVERSITY, SCHOOL, MAJOR,YEAR,
-		IMG, MOBILE, QQ, WEIXIN, BOOKS, WISHES]
+	ALL = [USER_ID, USERNAME, PASSWORD, GENDER, UNIVERSITY, SCHOOL, YEAR, IMG,
+			MOBILE, QQ, WEIXIN, BOOKS, WISHES]
 
 class Book(object):
 	"""field names of book collection"""
@@ -32,7 +31,7 @@ class Book(object):
 	IMGS = 'imgs'
 	PRICE = 'price'
 	TYPE = 'type'
-	TYPE_V1_5 = 'type_v1.5'  # added in v1.5
+	TYPE_V1_5 = 'type_v1_5'  # added in v1.5
 	NEWNESS = 'newness'
 	AUDIENCE = 'audience'
 	DESCRIPTION = 'description'
@@ -55,6 +54,8 @@ class Wish(object):
 	BOOKNAME = 'bookname'
 	USER_ID = 'user_id'
 	# USERNAME = 'username'
+	REWARD = 'reward'
+	PRICE = 'price'
 	TYPE = 'type'
 	IMGS = 'imgs'
 	DESCRIPTION = 'description'
@@ -64,8 +65,8 @@ class Wish(object):
 	ADDED_TIME = 'added_time'
 	CLICKS = 'clicks'
 	STATUS = 'status'  # 0: default, not achieved, 1: achieved, 2: someone want to help achieve it but it's not done yet
-	ALL = [WISH_ID, USER_ID, TYPE, IMGS, DESCRIPTION, ADDED_TIME, CLICKS,
-		STATUS]
+	ALL = [WISH_ID, BOOKNAME, USER_ID, REWARD, PRICE, TYPE, IMGS, DESCRIPTION,
+			ADDED_TIME, CLICKS, STATUS]
 
 class Image(object):
 	"""field names of image collection"""

@@ -11,7 +11,7 @@ import base64, os, logging, sys
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
-sys.path.insert(0, '.')
+# sys.path.insert(0, '.')
 
 def register_blueprint(app):
 	blueprints = [
@@ -67,7 +67,7 @@ app = create_app()
 
 @app.route('/')
 def function():
-	return 'hello'
+	return 'hello, world!'
 
 @app.route('/download/<path:filename>')
 def apk_download(filename):

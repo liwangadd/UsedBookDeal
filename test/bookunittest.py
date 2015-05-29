@@ -13,9 +13,9 @@ class BookTestCase(unittest.TestCase):
 	def setUp(self):
 		app.config['TESTING'] = True
 		self.app = app.test_client()
-		self.book_id = 'afd74cd6-8427-11e4-bb13-642737f58199'
+		self.book_id = '47e3a7c0-c3ef-11e4-b073-00163e003879'
 		self.wrong_book_id = 'hehehehehehe'
-		self.user_id = '18742513130'
+		self.user_id = '18840823333'
 
 	def get_book_info(self, book_id):
 		data = dict(book_id = book_id)
@@ -24,10 +24,12 @@ class BookTestCase(unittest.TestCase):
 	def test_get_book_info(self):
 		response = self.get_book_info(self.book_id)
 		data = json.loads(response.data)
-		assert data['book_id'] == self.book_id and data['bookname'] == \
-				u'工程经济学' and data['username'] == u'呵呵' and \
-				data['mobile'] == '15625253639' and data['qq'] == '86655569'\
-				and data['price'] == 236.0
+		assert data['book_id'] == self.book_id
+		assert data['bookname'] == u'C++语言程序设计'
+		assert data['username'] == u'Neo'
+		assert data['mobile'] == '13998636028'
+		assert data['qq'] == ''
+		assert data['price'] == 4
 
 		response = self.get_book_info(self.wrong_book_id)
 		assert response.data == 'failed'
@@ -44,6 +46,16 @@ class BookTestCase(unittest.TestCase):
 		book_info['type'] = 1
 		book_info['status'] = 0
 		book_info['price'] = 20.73
+		response = self.set_book_info(book_info)
+		assert response.data == 'success'
+
+		book_info['bookname'] = 'ERP'
+		book_info['user_id'] = self.user_id
+		book_info['audience'] = u'学霸'
+		book_info['type_v1_5'] = 1
+		book_info['status'] = 0
+		book_info['price'] = 10
+		book_info['original_price'] = 100
 		response = self.set_book_info(book_info)
 		assert response.data == 'success'
 
@@ -89,6 +101,31 @@ class BookTestCase(unittest.TestCase):
 		for book in books:
 			assert book.get('price') != None
 
+	def get_book_by_type_v1_5(self, type_v1_5, university, audience, order_by,
+			page, pagesize):
+		data = dict(type_v1_5 = type_v1_5, university = university,page = page,
+				pagesize = pagesize, audience = audience, order_by = order_by)
+		return self.app.post('/book/getBooksByTypeV1_5', data = data)
+
+	def test_get_book_by_type_v1_5(self):
+		type_v1_5 = 1
+		university = u'大连理工大学'
+		order_by = 'added_time'
+		audience = 'null'
+		page = 1
+		pagesize = 5
+		response = self.get_book_by_type_v1_5(type_v1_5, university, audience, order_by, page, pagesize)
+		data = json.loads(response.data)
+		books = data['books']
+		for book in books:
+			assert book['university'] == u'大连理工大学'
+
+		order_by = 'gender'
+		response = self.get_book_by_type_v1_5(type_v1_5, university, audience, order_by, page, pagesize)
+		data = json.loads(response.data)
+		books = data['books']
+		assert len(books) == 0
+
 	def get_book_by_name(self, bookname):
 		data = dict(bookname = bookname)
 		return self.app.post('/book/getBooksByName', data = data)
@@ -106,27 +143,27 @@ class BookTestCase(unittest.TestCase):
 		return self.app.post('/book/getSimilarBookname', data = data)
 
 	def test_get_similar_name(self):
-		bookname = u'工程经济'
+		bookname = u'erp'
 		response = self.get_similar_name(bookname, 2)
 		data = json.loads(response.data)
 		booknames = data['booknames']
-		# for name in booknames:
-		# 	print name
+		for name in booknames:
+			print name
 
-	def search_book(self, keyword, page, pagesize):
-		data = dict(keyword = keyword, page = page, pagesize = pagesize)
-		return self.app.post('/book/searchBook', data = data)
+	# def search_book(self, keyword, page, pagesize):
+	# 	data = dict(keyword = keyword, page = page, pagesize = pagesize)
+	# 	return self.app.post('/book/searchBook', data = data)
 
-	def test_search_book(self):
-		keyword = '工程经济'
-		page = 1
-		pagesize = 1
-		response = self.search_book(keyword, page, pagesize)
-		data = json.loads(response.data)
-		books = data['books']
-		for book in books:
-			print book['bookname']
-			assert book['bookname'] == u'工程经济学'
+	# def test_search_book(self):
+	# 	keyword = '工程经济'
+	# 	page = 1
+	# 	pagesize = 1
+	# 	response = self.search_book(keyword, page, pagesize)
+	# 	data = json.loads(response.data)
+	# 	books = data['books']
+	# 	for book in books:
+	# 		print book['bookname']
+	# 		assert book['bookname'] == u'工程经济学'
 
 if __name__ == '__main__':
 	unittest.main()

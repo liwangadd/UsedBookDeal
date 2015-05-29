@@ -41,6 +41,13 @@ def set_book_info():
 				except:
 					current_app.logger.error('invalid type: %s' % value)
 					return 'failed'
+			elif key == Book.TYPE_V1_5:
+				try:
+					value = int(value)
+					assert value > 0 and value <= 7
+				except:
+					current_app.logger.error('invalid type_v1_5: %s' % value)
+					return 'failed'
 			elif key == Book.STATUS:
 				try:
 					value = int(value)
@@ -52,7 +59,13 @@ def set_book_info():
 				try:
 					value = float(value)
 				except:
-					current_app.logger.error('invalid price: %s' % price)
+					current_app.logger.error('invalid price: %s' % value)
+					return 'failed'
+			elif key == Book.ORIGINAL_PRICE:
+				try:
+					value = float(value)
+				except:
+					current_app.logger.error('invalid original price: %s' % value)
 					return 'failed'
 			book_info[key] = value
 
@@ -95,7 +108,6 @@ def get_book_info():
 		return 'failed'
 
 	book = bookdao.get_book_info(book_id)
-
 	try:
 		assert book is not None
 	except AssertionError:
@@ -148,9 +160,6 @@ def get_book_by_type():
 		return 'failed'
 
 	books = bookdao.get_book_by_type(booktype, order_by, page, pagesize)
-	for book in books:
-		book[Book.BOOKNAME] = book['_id']
-		book.pop('_id')
 
 	# return whether there is new messages if user has logged in
 	user_id = request.values.get(User.USER_ID)
@@ -159,6 +168,32 @@ def get_book_by_type():
 		has_messages = bookdao.has_new_messages(user_id)
 
 	return jsonify(books=books, has_messages=has_messages)
+
+@book_blueprint.route('getBooksByTypeV1_5', methods = ['GET', 'POST'])
+def get_book_by_type_v1_5():
+	try:
+		type_v1_5 = int(request.values[Book.TYPE_V1_5])
+		university = request.values[User.UNIVERSITY]
+		assert type_v1_5 >= 0 and type_v1_5 <= 7
+		audience = request.values[Book.AUDIENCE]
+		page = int(request.values['page'])
+		pagesize = int(request.values['pagesize'])
+	except:
+		current_app.logger.error('invalid args')
+		return 'failed'
+
+	# order_by is set added_time by default
+	try:
+		order_by = request.values['order_by']
+	except KeyError:
+		order_by = Book.ADDED_TIME
+	if order_by != Book.ADDED_TIME and order_by != Book.CLICKS and \
+			order_by != User.GENDER:
+		current_app.logger.error('invalid arg(order_by: %s)' % order_by)
+		return 'failed'
+
+	books = bookdao.get_book_by_type_v1_5(type_v1_5, university, order_by, audience, page, pagesize)
+	return jsonify(books = books)
 
 @book_blueprint.route('getBooksByName', methods=['GET', 'POST'])
 def get_book_by_name():
