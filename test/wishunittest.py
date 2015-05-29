@@ -76,10 +76,11 @@ class WishTestCase(unittest.TestCase):
 	def test_list_wishes_v1_5(self):
 		type_v1_5 = 0
 		university = u'大连理工大学'
-		order_by = 'added_time'
+		order_by = 'gender'
 		page = 1; pagesize = 5;
 		response = self.list_wishes_v1_5(type_v1_5, university, order_by,
 				page, pagesize)
+		# print response.data
 		data = json.loads(response.data)
 		wishes = data['wishes']
 		assert len(wishes) <= 5 and len(wishes) > 0
