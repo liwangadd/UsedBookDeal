@@ -61,12 +61,6 @@ def set_book_info():
 				except:
 					current_app.logger.error('invalid price: %s' % value)
 					return 'failed'
-			elif key == Book.ORIGINAL_PRICE:
-				try:
-					value = float(value)
-				except:
-					current_app.logger.error('invalid original price: %s' % value)
-					return 'failed'
 			book_info[key] = value
 
 	imgs = []
