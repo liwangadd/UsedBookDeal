@@ -279,8 +279,12 @@ def search_book():
 			return 'failed'
 
 	keywords = keyword.split(' ')
-	books = bookdao.search_book(keywords, page, pagesize, booktype)
-	return jsonify(books=books)
+	ok, books = bookdao.search_book(keywords, page, pagesize, booktype)
+	if ok:
+		return jsonify(books=books)
+	else:
+		current_app.logger.error('DocNotFoundError, keywords: %s' % keywords)
+		return jsonify(books = [])
 
 @book_blueprint.route('bookClicked', methods=['GET', 'POST'])
 def book_clicked():

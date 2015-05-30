@@ -180,8 +180,11 @@ class BookDao(BaseDao):
 		# 		Book.TYPE: booktype})
 
 	def search_book(self, keywords, page, pagesize, booktype=None):
-		book_ids = xapian_tool.search(keywords, page, pagesize)
-		return self.get_books_by_ids(book_ids, booktype)
+		ok, result = xapian_tool.search(keywords, page, pagesize)
+		if ok:
+			return True, self.get_books_by_ids(result, booktype)
+		else:
+			return False, result
 
 	def book_clicks_plus(self, book_id):
 		# book's clicks increased by one

@@ -200,12 +200,15 @@ def search_book():
 			return 'invalid booktype: %s' % booktype
 
 	keywords = keyword.split(' ')
-	books = bookdao.search_book(keywords, page, pagesize, booktype)
+	ok, books = bookdao.search_book(keywords, page, pagesize, booktype)
 	# total_num = books.count()
-	total_num = len(books)
-	total_page = (total_num + pagesize - 1) / pagesize
-	return render_template('searchbook.html', books = books, page = page,
-		total_page = total_page, keyword = keyword, type = booktype)
+	if ok:
+		total_num = len(books)
+		total_page = (total_num + pagesize - 1) / pagesize
+		return render_template('searchbook.html', books = books, page = page,
+				total_page = total_page, keyword = keyword, type = booktype)
+	else:
+		return 'DocNotFoundError, keywords: %s' % keywords
 
 @admin_blueprint.route('insertDefaultImg', methods=['POST', 'GET'])
 def insert_default_img():

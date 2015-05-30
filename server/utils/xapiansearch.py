@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import xapian
+from xapian import DocNotFoundError
 from mmseg.search import seg_txt_2_dict, seg_txt_search
 from jieba import cut_for_search
 from ..dao.fields import Book
@@ -81,9 +82,7 @@ class XapianTool(object):
 
 	def search(self, keywords, page, limit):
 		query_list = []
-		# print '---------'
 		for key, value in _fields_txt_2_dict(*keywords).iteritems():
-			# print key, value
 			query = xapian.Query(key, value)
 			query_list.append(query)
 
@@ -97,13 +96,11 @@ class XapianTool(object):
 		try:
 			matches = self.enquire.get_mset(offset, limit)
 		except DocNotFoundError:
-			# print 'DocNotFoundError'
-			# print keywords, page, limit
-			return []
+			return False, keywords
 
 		book_ids = []
 		for m in matches:
 			book_ids.append(m.document.get_data())
-		return book_ids
+		return True, book_ids
 
 xapian_tool = XapianTool(XAPIAN_DB_PATH, basedao)
