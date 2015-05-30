@@ -34,6 +34,7 @@ class Book(object):
 	NEWNESS = 'newness'
 	AUDIENCE = 'audience'
 	DESCRIPTION = 'description'
+	LENGTH_OF_DESCRIPTION = 'length_of_description'
 	CLICKS = 'clicks'
 	SCORE = 'score'  # added in v1.5, score from douban
 	INTRODUCTION = 'introduction'  # added in v1.5, introduction from douban

@@ -33,6 +33,12 @@ class BookDao(BaseDao):
 		book_info[Book.CLICKS] = 0
 		book_info[Book.STATUS] = 0
 
+		description = book_info.get(Book.DESCRIPTION)
+		if description is not None:
+			book_info[Book.LENGTH_OF_DESCRIPTION] = len(description)
+		else:
+			book_info[Book.LENGTH_OF_DESCRIPTION] = 0
+
 		# insert book
 		self.book.insert(book_info)
 
@@ -58,6 +64,11 @@ class BookDao(BaseDao):
 					book_info.get(Book.BOOKNAME))
 				imgs.append(img_id)
 			book_info[Book.IMGS] = imgs
+
+		description = book_info.get(Book.DESCRIPTION)
+		if description is not None and description != '':
+			book_info[Book.LENGTH_OF_DESCRIPTION] = len(description)
+
 		result = self.book.update({Book.BOOK_ID: book_id}, {'$set': book_info})
 		return result['updatedExisting']
 
@@ -126,6 +137,14 @@ class BookDao(BaseDao):
 				sort = [(Book.PRICE, pymongo.ASCENDING)])
 		else:
 			books = self.book.find(criteria, skip = skip, limit = pagesize, sort = [(order_by, pymongo.DESCENDING)])
+		return self.join_user_info(books)
+
+	def get_best_reviews(self, university, page, pagesize):
+		skip = (page - 1) * pagesize
+		user_ids = self.user.distinct(User.USER_ID, {User.UNIVERSITY: university})
+		books = db.book.find({Book.USER_ID: {'$in': user_ids}, Book.STATUS: 0},
+				sort = [(Book.LENGTH_OF_DESCRIPTION, pymongo.DESCENDING)],
+				skip = skip, limit = pagesize)
 		return self.join_user_info(books)
 
 	def get_recommended_books(self, page, pagesize):

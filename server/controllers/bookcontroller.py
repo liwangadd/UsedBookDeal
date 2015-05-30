@@ -44,7 +44,7 @@ def set_book_info():
 			elif key == Book.TYPE_V1_5:
 				try:
 					value = int(value)
-					assert value > 0 and value <= 7
+					assert value > 0 and value <= 8
 				except:
 					current_app.logger.error('invalid type_v1_5: %s' % value)
 					return 'failed'
@@ -78,6 +78,7 @@ def set_book_info():
 		# add new book
 		book_id = str(uuid.uuid1())
 		book_info[Book.BOOK_ID] = book_id
+
 		if bookdao.insert_book(imgs, **book_info):
 			# set book removed after specific time setted in config file
 			scheduler.add_set_book_removed_job(book_id)
@@ -168,7 +169,7 @@ def get_book_by_type_v1_5():
 	try:
 		type_v1_5 = int(request.values[Book.TYPE_V1_5])
 		university = request.values[User.UNIVERSITY]
-		assert type_v1_5 >= 0 and type_v1_5 <= 7
+		assert type_v1_5 >= 0 and type_v1_5 <= 8
 		page = int(request.values['page'])
 		pagesize = int(request.values['pagesize'])
 	except:
@@ -206,6 +207,19 @@ def home_page():
 	books2 = bookdao.get_book_by_type_v1_5(0, university, Book.CLICKS, None,
 			1, 2)
 	books.extend(books2)
+	return jsonify(books = books)
+
+@book_blueprint.route('getBestReviews', methods = ['GET', 'POST'])
+def get_best_reviews():
+	try:
+		university = request.values[User.UNIVERSITY]
+		page = int(request.values['page'])
+		pagesize = int(request.values['pagesize'])
+	except:
+		current_app.logger.error('invalid args')
+		return 'failed'
+
+	books = bookdao.get_best_reviews(university, page, pagesize)
 	return jsonify(books = books)
 
 @book_blueprint.route('getRecommendedBooks', methods = ['GET', 'POST'])
