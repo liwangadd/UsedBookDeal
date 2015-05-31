@@ -12,6 +12,17 @@ import base64
 
 user_blueprint = Blueprint('user', __name__)
 
+@user_blueprint.route('getUniversitiesAndSchools', methods = ['GET', 'POST'])
+def get_universities_and_schools():
+	try:
+		university = request.values['university']
+	except KeyError:
+		current_app.logger.error('invalid args')
+		return 'failed'
+
+	data = userdao.get_universities_and_schools(university)
+	return jsonify(data = data)
+
 @user_blueprint.route('login', methods=['GET', 'POST'])
 def login():
 	try:

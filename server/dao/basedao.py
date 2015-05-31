@@ -270,4 +270,8 @@ class BaseDao(object):
 			result[User.SCHOOL] = user.get(User.SCHOOL)
 			return result
 
+	def get_universities_and_schools(self, university):
+		doc = self.db.university.find_one({'university': university})
+		return doc['data']
+
 basedao = BaseDao()

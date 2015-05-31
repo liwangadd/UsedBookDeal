@@ -52,7 +52,7 @@ def list_wishes_v1_5():
 	except KeyError:
 		order_by = Wish.PRICE
 	if order_by != User.SCHOOL and order_by != Wish.PRICE and order_by != \
-			User.GENDER:
+			User.GENDER and order_by != Wish.ADDED_TIME:
 		current_app.logger.error('invalid args')
 		return 'failed'
 
