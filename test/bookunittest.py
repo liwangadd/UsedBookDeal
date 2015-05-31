@@ -51,7 +51,7 @@ class BookTestCase(unittest.TestCase):
 
 		book_info['bookname'] = 'ERP'
 		book_info['user_id'] = self.user_id
-		book_info['audience'] = u'学霸'
+		book_info['audience_v1_5'] = u'学霸'
 		book_info['type_v1_5'] = 1
 		book_info['status'] = 0
 		book_info['price'] = 10
@@ -101,27 +101,30 @@ class BookTestCase(unittest.TestCase):
 		for book in books:
 			assert book.get('price') != None
 
-	def get_book_by_type_v1_5(self, type_v1_5, university, audience, order_by,
-			page, pagesize):
+	def get_book_by_type_v1_5(self, type_v1_5, university, audience_v1_5,
+			order_by, page, pagesize):
 		data = dict(type_v1_5 = type_v1_5, university = university,page = page,
-				pagesize = pagesize, audience = audience, order_by = order_by)
+				pagesize = pagesize, audience_v1_5 = audience_v1_5,
+				order_by = order_by)
 		return self.app.post('/book/getBooksByTypeV1_5', data = data)
 
 	def test_get_book_by_type_v1_5(self):
 		type_v1_5 = 1
 		university = u'大连理工大学'
 		order_by = 'added_time'
-		audience = 'null'
+		audience_v1_5 = 'null'
 		page = 1
 		pagesize = 5
-		response = self.get_book_by_type_v1_5(type_v1_5, university, audience, order_by, page, pagesize)
+		response = self.get_book_by_type_v1_5(type_v1_5, university,
+				audience_v1_5, order_by, page, pagesize)
 		data = json.loads(response.data)
 		books = data['books']
 		for book in books:
 			assert book['university'] == u'大连理工大学'
 
 		order_by = 'gender'
-		response = self.get_book_by_type_v1_5(type_v1_5, university, audience, order_by, page, pagesize)
+		response = self.get_book_by_type_v1_5(type_v1_5, university,
+				audience_v1_5, order_by, page, pagesize)
 		data = json.loads(response.data)
 		books = data['books']
 		assert len(books) == 0

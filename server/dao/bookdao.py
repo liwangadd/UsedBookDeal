@@ -113,8 +113,8 @@ class BookDao(BaseDao):
 			result.append(unit)
 		return result
 
-	def get_book_by_type_v1_5(self, type_v1_5, university, order_by, audience,
-			page, pagesize):
+	def get_book_by_type_v1_5(self, type_v1_5, university, order_by,
+			audience_v1_5, page, pagesize):
 		if order_by != User.GENDER:
 			user_ids = self.user.distinct(User.USER_ID, {User.UNIVERSITY: university})
 		else:
@@ -124,8 +124,9 @@ class BookDao(BaseDao):
 		if type_v1_5 != 0:
 			criteria[Book.TYPE_V1_5] = type_v1_5
 
-		if audience != None and audience != 'null' and audience != '':
-			criteria[Book.AUDIENCE] = audience
+		if audience_v1_5 != None and audience_v1_5 != 'null' and \
+				audience_v1_5 != '':
+			criteria[Book.AUDIENCE_V1_5] = audience_v1_5
 
 		skip = (page - 1) * pagesize
 

@@ -33,6 +33,7 @@ class Book(object):
 	TYPE_V1_5 = 'type_v1_5'  # added in v1.5
 	NEWNESS = 'newness'
 	AUDIENCE = 'audience'
+	AUDIENCE_V1_5 = 'audience_v1_5'
 	DESCRIPTION = 'description'
 	LENGTH_OF_DESCRIPTION = 'length_of_description'
 	CLICKS = 'clicks'
@@ -45,8 +46,8 @@ class Book(object):
 	WEIXIN = 'weixin'
 	STATUS = 'status'  # 0: default, not saled , 1: saled, 2: removed
 	ALL = [BOOK_ID, USER_ID, ADDED_TIME, BOOKNAME, IMGS, PRICE, TYPE,
-		TYPE_V1_5, NEWNESS, AUDIENCE, DESCRIPTION, CLICKS, SCORE, INTRODUCTION,
-		TAGS, ORIGINAL_PRICE, MOBILE, QQ, WEIXIN, STATUS]
+		TYPE_V1_5, NEWNESS, AUDIENCE, AUDIENCE_V1_5, DESCRIPTION, CLICKS,
+		SCORE, INTRODUCTION, TAGS, ORIGINAL_PRICE, MOBILE, QQ, WEIXIN, STATUS]
 
 class Wish(object):
 	"""field name of wish collection"""

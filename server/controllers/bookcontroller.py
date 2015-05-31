@@ -176,9 +176,9 @@ def get_book_by_type_v1_5():
 		current_app.logger.error('invalid args')
 		return 'failed'
 	try:
-		audience = request.values[Book.AUDIENCE]
+		audience_v1_5 = request.values[Book.AUDIENCE_V1_5]
 	except KeyError:
-		audience = None
+		audience_v1_5 = None
 
 	# order_by is set added_time by default
 	try:
@@ -191,7 +191,7 @@ def get_book_by_type_v1_5():
 		current_app.logger.error('invalid arg(order_by: %s)' % order_by)
 		return 'failed'
 
-	books = bookdao.get_book_by_type_v1_5(type_v1_5, university, order_by, audience, page, pagesize)
+	books = bookdao.get_book_by_type_v1_5(type_v1_5, university, order_by, audience_v1_5, page, pagesize)
 	return jsonify(books = books)
 
 @book_blueprint.route('HomePage', methods = ['GET', 'POST'])
@@ -199,7 +199,7 @@ def home_page():
 	try:
 		university = request.values[User.UNIVERSITY]
 	except:
-		current_app.logger.error('invalid arg(order_by: %s)' % order_by)
+		current_app.logger.error('invalid arg')
 		return 'failed'
 
 	books = bookdao.get_book_by_type_v1_5(0, university, Book.ADDED_TIME,
