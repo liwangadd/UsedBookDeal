@@ -164,26 +164,33 @@ class BookDao(BaseDao):
 			limit=limit).distinct(Book.BOOKNAME)
 		return books
 
-	def get_books_by_ids(self, book_ids, booktype):
+	def get_books_by_ids(self, book_ids, booktype, type_v1_5, university):
 
 		selection = {Book.BOOK_ID: {'$in': book_ids}}
 		if booktype is not None and booktype != 0 and booktype != '':
 			selection[Book.TYPE] = booktype
+		elif type_v1_5 is not None and type_v1_5 != 0:
+			selection[Book.TYPE_V1_5] = type_v1_5
+
+		if university is not None:
+			user_ids = self.user.distinct(User.USER_ID,
+					{User.UNIVERSITY: university})
+			selection[Book.USER_ID] = {'$in': user_ids}
 
 		books = self.book.find(selection)
 		return self.join_user_info(books)
 
-		# if booktype is None or booktype == 0 or booktype == '':
-		# 	return self.book.find({Book.BOOK_ID: {'$in': book_ids}})
-		# else:
-		# 	booktype = int(booktype)
-		# 	return self.book.find({Book.BOOK_ID: {'$in': book_ids},
-		# 		Book.TYPE: booktype})
-
 	def search_book(self, keywords, page, pagesize, booktype=None):
 		ok, result = xapian_tool.search(keywords, page, pagesize)
 		if ok:
-			return True, self.get_books_by_ids(result, booktype)
+			return True, self.get_books_by_ids(result, booktype, None, None)
+		else:
+			return False, result
+
+	def search_book_v1_5(self, keywords, page, pagesize, university,type_v1_5):
+		ok, result = xapian_tool.search(keywords, page, pagesize)
+		if ok:
+			return True, self.get_books_by_ids(result, None, type_v1_5, university)
 		else:
 			return False, result
 

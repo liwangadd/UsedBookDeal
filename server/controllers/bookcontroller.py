@@ -278,8 +278,28 @@ def search_book():
 			current_app.logger.error('invalid booktype: %s' % booktype)
 			return 'failed'
 
+	try:
+		type_v1_5 = request.values[Book.TYPE_V1_5]
+	except KeyError:
+		type_v1_5 = None
+	else:
+		try:
+			type_v1_5 = int(type_v1_5)
+		except:
+			current_app.logger.error('invalid type_v1_5: %s' % type_v1_5)
+			return 'failed'
+
+	try:
+		university = request.values[User.UNIVERSITY]
+	except KeyError:
+		university = None
+
 	keywords = keyword.split(' ')
-	ok, books = bookdao.search_book(keywords, page, pagesize, booktype)
+	if type_v1_5 == None:
+		ok, books = bookdao.search_book(keywords, page, pagesize, booktype)
+	else:
+		ok, books = bookdao.search_book_v1_5(keywords, page, pagesize, university, type_v1_5)
+
 	if ok:
 		return jsonify(books=books)
 	else:
