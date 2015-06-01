@@ -41,11 +41,14 @@ class WishDao(BaseDao):
 		skip = (page - 1) * pagesize
 
 		if order_by == Wish.PRICE:
-			wishes = self.wish.find({Wish.USER_ID: {'$in': user_ids}},
+			wishes = self.wish.find( \
+					{Wish.USER_ID: {'$in': user_ids}, Wish.STATUS: 0},
 					skip = skip, limit = pagesize,
 					sort = [(Wish.PRICE, pymongo.DESCENDING)])
 		else:
-			wishes = self.wish.find({Wish.USER_ID: {'$in': user_ids}}, skip = skip, limit = pagesize)
+			wishes = self.wish.find( \
+					{Wish.USER_ID: {'$in': user_ids}, Wish.STATUS: 0},
+					skip = skip, limit = pagesize)
 
 		return self.join_user_info(wishes)
 
