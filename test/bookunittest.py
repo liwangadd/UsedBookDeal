@@ -127,7 +127,7 @@ class BookTestCase(unittest.TestCase):
 				audience_v1_5, order_by, page, pagesize)
 		data = json.loads(response.data)
 		books = data['books']
-		assert len(books) == 0
+		assert len(books) != 0
 
 	def get_recommended_books(self, page, pagesize):
 		data = dict(page = page, pagesize = pagesize)

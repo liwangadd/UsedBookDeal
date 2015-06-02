@@ -30,7 +30,9 @@ class WishDao(BaseDao):
 		return self.join_user_info(wishes)
 
 	def list_wishes_v1_5(self, university, order_by, school, page, pagesize):
-		criteria = {User.UNIVERSITY: university}
+		criteria = {}
+		if university != '':
+			criteria[User.UNIVERSITY] = university
 		if order_by == User.GENDER:
 			criteria[User.GENDER] = 0
 		elif order_by == User.SCHOOL:

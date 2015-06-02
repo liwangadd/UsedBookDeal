@@ -115,29 +115,33 @@ class BookDao(BaseDao):
 
 	def get_book_by_type_v1_5(self, type_v1_5, university, order_by,
 			audience_v1_5, page, pagesize):
-		if order_by != User.GENDER:
-			user_ids = self.user.distinct(User.USER_ID, {User.UNIVERSITY: university})
-		else:
-			user_ids = self.user.distinct(User.USER_ID, {User.UNIVERSITY: university, User.GENDER: 0})
+		criteria = {Book.STATUS: 0}
+		cri = {}
 
-		criteria = {Book.USER_ID: {'$in': user_ids}, Book.STATUS: 0}
+		if university != '':
+			cri[User.UNIVERSITY] = university
+		if order_by == User.GENDER:
+			cri[User.GENDER] = 0
+			sort = [(Book.ADDED_TIME, pymongo.DESCENDING)]
+		elif order_by == Book.PRICE:
+			sort = [(Book.PRICE, pymongo.ASCENDING)]
+		else:
+			sort = [(order_by, pymongo.DESCENDING)]
+
+		if not cri: # if cri is not empty
+			user_ids = self.user.distinct(User.USER_ID, cri)
+			criteria[Book.USER_ID] = {'$in': user_ids}
+
 		if type_v1_5 != 0:
 			criteria[Book.TYPE_V1_5] = type_v1_5
-
 		if audience_v1_5 != None and audience_v1_5 != 'null' and \
 				audience_v1_5 != '':
 			criteria[Book.AUDIENCE_V1_5] = audience_v1_5
 
 		skip = (page - 1) * pagesize
 
-		if order_by == User.GENDER:
-			books = self.book.find(criteria, skip = skip, limit = pagesize,
-				sort = [(Book.ADDED_TIME, pymongo.DESCENDING)])
-		elif order_by == Book.PRICE:
-			books = self.book.find(criteria, skip = skip, limit = pagesize,
-				sort = [(Book.PRICE, pymongo.ASCENDING)])
-		else:
-			books = self.book.find(criteria, skip = skip, limit = pagesize, sort = [(order_by, pymongo.DESCENDING)])
+		books = self.book.find(criteria, skip = skip, limit = pagesize,
+				sort = sort)
 		return self.join_user_info(books)
 
 	def get_best_reviews(self, university, page, pagesize):
