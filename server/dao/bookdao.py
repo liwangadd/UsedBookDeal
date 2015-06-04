@@ -128,7 +128,7 @@ class BookDao(BaseDao):
 		else:
 			sort = [(order_by, pymongo.DESCENDING)]
 
-		if not cri: # if cri is not empty
+		if cri: # if cri is not empty
 			user_ids = self.user.distinct(User.USER_ID, cri)
 			criteria[Book.USER_ID] = {'$in': user_ids}
 
