@@ -137,6 +137,19 @@ def set_user_img():
 	else:
 		return 'failed'
 
+@user_blueprint.route('hasNewMessages', methods = ['POST', 'GET'])
+def has_new_messages():
+	try:
+		user_id = request.values[User.USER_ID]
+	except KeyError:
+		current_app.logger.error('invalid args')
+		return 'failed'
+
+	if userdao.has_new_messages(user_id):
+		return 'true'
+	else:
+		return 'false'
+
 @user_blueprint.route('getMessages', methods=['POST', 'GET'])
 def get_messages_by_user():
 	try:

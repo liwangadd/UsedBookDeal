@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import xapian
-from xapian import DocNotFoundError
+from xapian import DocNotFoundError, DatabaseLockError
 from mmseg.search import seg_txt_2_dict, seg_txt_search
 from jieba import cut_for_search
 from ..dao.fields import Book
@@ -46,8 +46,12 @@ class XapianTool(object):
 		self.index()
 
 	def index(self):
-		self.wirtable_db = xapian.WritableDatabase(self.db_path,
+		try:
+			self.wirtable_db = xapian.WritableDatabase(self.db_path,
 					xapian.DB_CREATE_OR_OVERWRITE)
+		except DatabaseLockError:
+			return
+
 		cursor = self.dao.book.find({Book.STATUS: 0})
 		for book in cursor:
 			fields = []
@@ -70,9 +74,7 @@ class XapianTool(object):
 
 		term_dict = _fields_txt_2_dict(*fields)
 		for key, value in term_dict.iteritems():
-			# print key, value
 			doc.add_term(key, value)
-		# print
 
 		doc.add_boolean_term(book_id)
 		self.wirtable_db.replace_document(book_id, doc)

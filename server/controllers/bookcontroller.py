@@ -202,12 +202,11 @@ def home_page():
 		current_app.logger.error('invalid arg')
 		return 'failed'
 
-	books = bookdao.get_book_by_type_v1_5(0, university, Book.ADDED_TIME,
+	books1 = bookdao.get_book_by_type_v1_5(0, university, Book.ADDED_TIME,
 			None, 1, 2)
 	books2 = bookdao.get_book_by_type_v1_5(0, university, Book.CLICKS, None,
 			1, 2)
-	books.extend(books2)
-	return jsonify(books = books)
+	return jsonify(books1 = books1, books2 = books2)
 
 @book_blueprint.route('getBestReviews', methods = ['GET', 'POST'])
 def get_best_reviews():
