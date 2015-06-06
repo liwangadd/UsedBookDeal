@@ -271,7 +271,12 @@ class BaseDao(object):
 			return result
 
 	def get_universities_and_schools(self, university):
+		if university == '':
+			university = u'全部校区'
 		doc = self.db.university.find_one({'university': university})
-		return doc['data']
+		if doc == None:
+			return None
+		else:
+			return doc['data']
 
 basedao = BaseDao()

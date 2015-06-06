@@ -176,7 +176,7 @@ class BookDao(BaseDao):
 		elif type_v1_5 is not None and type_v1_5 != 0:
 			selection[Book.TYPE_V1_5] = type_v1_5
 
-		if university is not None:
+		if university is not None and university != '':
 			user_ids = self.user.distinct(User.USER_ID,
 					{User.UNIVERSITY: university})
 			selection[Book.USER_ID] = {'$in': user_ids}
