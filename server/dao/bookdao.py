@@ -118,7 +118,7 @@ class BookDao(BaseDao):
 		criteria = {Book.STATUS: 0}
 		cri = {}
 
-		if university != '':
+		if university != '' and university != u'全部校区':
 			cri[User.UNIVERSITY] = university
 		if order_by == User.GENDER:
 			cri[User.GENDER] = 0
@@ -176,7 +176,7 @@ class BookDao(BaseDao):
 		elif type_v1_5 is not None and type_v1_5 != 0:
 			selection[Book.TYPE_V1_5] = type_v1_5
 
-		if university is not None and university != '':
+		if university is not None and university != '' and university != u'全部校区':
 			user_ids = self.user.distinct(User.USER_ID,
 					{User.UNIVERSITY: university})
 			selection[Book.USER_ID] = {'$in': user_ids}
