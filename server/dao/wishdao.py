@@ -31,7 +31,7 @@ class WishDao(BaseDao):
 
 	def list_wishes_v1_5(self, university, order_by, school, page, pagesize):
 		criteria = {}
-		if university != '':
+		if university != '' and university != u'全部校区':
 			criteria[User.UNIVERSITY] = university
 		if order_by == User.GENDER:
 			criteria[User.GENDER] = 0
@@ -44,9 +44,11 @@ class WishDao(BaseDao):
 
 		if order_by == Wish.PRICE:
 			wishes = self.wish.find( \
-					{Wish.USER_ID: {'$in': user_ids}, Wish.STATUS: 0},
-					skip = skip, limit = pagesize,
-					sort = [(Wish.PRICE, pymongo.DESCENDING)])
+					{	Wish.USER_ID: {'$in': user_ids},
+						Wish.STATUS: 0,
+						Wish.REWARD: 0},
+					sort = [(Wish.PRICE, pymongo.DESCENDING)],
+					skip = skip, limit = pagesize)
 		else:
 			wishes = self.wish.find( \
 					{Wish.USER_ID: {'$in': user_ids}, Wish.STATUS: 0},
