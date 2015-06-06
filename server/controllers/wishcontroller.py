@@ -133,6 +133,12 @@ def set_wish_info():
 				except:
 					current_app.logger.error('invalid status: %s' % value)
 					return 'failed'
+			elif key == Wish.PRICE:
+				try:
+					value = float(value)
+				except:
+					current_app.logger.error('invalid status: %s' % value)
+					return 'failed'
 			wish_info[key] = value
 
 	imgs = []

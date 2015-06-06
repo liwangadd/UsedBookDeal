@@ -62,8 +62,9 @@ class WishTestCase(unittest.TestCase):
 		response = self.set_wish_info(wish_id = 'wrong_wish_id', type = 2)
 		assert response.data == 'failed'
 
-		wish_info['type_v1_5'] = 1
 		wish_info['user_id'] = '18840823333'
+		wish_info['reward'] = '0'
+		wish_info['price'] = 5
 		del wish_info['type']
 		response = self.set_wish_info(**wish_info)
 		assert response.data == 'success'

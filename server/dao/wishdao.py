@@ -46,7 +46,7 @@ class WishDao(BaseDao):
 			wishes = self.wish.find( \
 					{	Wish.USER_ID: {'$in': user_ids},
 						Wish.STATUS: 0,
-						Wish.REWARD: 0},
+						Wish.REWARD: '0'},
 					sort = [(Wish.PRICE, pymongo.DESCENDING)],
 					skip = skip, limit = pagesize)
 		else:
